@@ -21,45 +21,64 @@ if (!requireNamespace("brms", quietly = TRUE)) {
 #' @param phiright The shape parameter of the right side beta distribution.
 #' @param kleft The cutoff parameter for the left side beta distribution.
 #' @param kright The cutoff parameter for the right side beta distribution.
-rchoco <- function(n, mu=0.5, delta=0.5, phi=3, k=0.95, muleft=delta, muright=delta, phileft=phi, phiright=phi, kleft=k, kright=k) {
-  # Overall side probabilities.
-  p_left <- 1 - mu
-  p_right <- mu
+#'
+#' @examples
+#' hist(rchoco(3000, mu=0.5, delta=0.5, phi=3, k = 0.95), breaks = 100)
+#' hist(rchoco(3000, mu=0.6, delta=0.8, phi=5, k = 0.99), breaks = 100)
+rchoco <- function(n, mu = 0.5, delta = 0.5, phi = 3, k = 0.95,
+                   muleft = delta, muright = delta, phileft = phi, phiright = phi,
+                   kleft = k, kright = k) {
+  # Overall probabilities for choosing left or right side
+  p_left <- 1 - mu    # probability for the left side
+  p_right <- mu       # probability for the right side
 
-  # Discrete endpoint probabilities.
-  # p0: probability mass at 0 for the left side.
+  # Compute the discrete endpoint probabilities for 0 (left side) and 1 (right side)
+  # p0: probability mass at 0 for the left side
   p0 <- 1 - plogis(qlogis(muleft) - qlogis(1 - kleft))
-  # p1: probability mass at 1 for the right side.
+  # p1: probability mass at 1 for the right side
   p1 <- plogis(qlogis(muright) - qlogis(kright))
 
-  # Prepare output.
+  # Pre-allocate output vector for efficiency
   y <- numeric(n)
 
-  for (i in seq_len(n)) {
-    # Randomly choose left or right according to p_left, p_right.
-    side <- sample(c("left", "right"), size = 1, prob = c(p_left, p_right))
-    if (side == "left") {
-      # On the left side: with probability p0, return 0.
-      if (runif(1) < p0) {
-        y[i] <- 0
-      } else {
-        # Otherwise, simulate a continuous left-hand draw:
-        x0 <- rbeta(1, shape1 = muleft * phileft, shape2 = (1 - muleft) * phileft)
-        # Transform x0 from (0,1) to (0,0.5): note the mapping is y = 0.5 - x0/2.
-        y[i] <- 0.5 - x0 / 2
-      }
-    } else {
-      # On the right side: with probability p1, return 1.
-      if (runif(1) < p1) {
-        y[i] <- 1
-      } else {
-        # Otherwise, simulate a continuous right-hand draw:
-        x1 <- rbeta(1, shape1 = muright * phiright, shape2 = (1 - muright) * phiright)
-        # Transform x1 from (0,1) to (0.5,1): y = 0.5 + x1/2.
-        y[i] <- 0.5 + x1 / 2
-      }
+  # Vectorized random assignment of sides for all n draws
+  # Each draw is assigned "left" or "right" based on the specified probabilities
+  sides <- sample(c("left", "right"), size = n, replace = TRUE, prob = c(p_left, p_right))
+
+  ## Process draws assigned to the left side
+  left_idx <- which(sides == "left")
+  if (length(left_idx) > 0) {
+    # Generate uniform random numbers to decide if each left-side draw is an endpoint (0) or continuous
+    left_u <- runif(length(left_idx))
+    # For draws with a uniform value less than p0, assign 0 (discrete mass)
+    y[left_idx[left_u < p0]] <- 0
+    # For the remaining draws, simulate from the continuous left-side beta distribution
+    left_cont_idx <- left_idx[left_u >= p0]
+    if (length(left_cont_idx) > 0) {
+      # Draw from the beta distribution with parameters based on muleft and phileft
+      x0 <- rbeta(length(left_cont_idx), shape1 = muleft * phileft, shape2 = (1 - muleft) * phileft)
+      # Transform the beta draw from (0,1) to the interval (0,0.5)
+      y[left_cont_idx] <- 0.5 - x0 / 2
     }
   }
+
+  ## Process draws assigned to the right side
+  right_idx <- which(sides == "right")
+  if (length(right_idx) > 0) {
+    # Generate uniform random numbers to decide if each right-side draw is an endpoint (1) or continuous
+    right_u <- runif(length(right_idx))
+    # For draws with a uniform value less than p1, assign 1 (discrete mass)
+    y[right_idx[right_u < p1]] <- 1
+    # For the remaining draws, simulate from the continuous right-side beta distribution
+    right_cont_idx <- right_idx[right_u >= p1]
+    if (length(right_cont_idx) > 0) {
+      # Draw from the beta distribution with parameters based on muright and phiright
+      x1 <- rbeta(length(right_cont_idx), shape1 = muright * phiright, shape2 = (1 - muright) * phiright)
+      # Transform the beta draw from (0,1) to the interval (0.5,1)
+      y[right_cont_idx] <- 0.5 + x1 / 2
+    }
+  }
+
   y
 }
 
@@ -70,7 +89,7 @@ rchoco <- function(n, mu=0.5, delta=0.5, phi=3, k=0.95, muleft=delta, muright=de
 
 
 # Create a stanvars object to pass the custom functions to brms
-stanvars_choco <- stanvar(scode = "
+stanvars_choco <- brms::stanvar(scode = "
 real choco_lpdf(real y, real mu, real muleft, real phileft,
                 real muright, real phiright, real kleft, real kright) {
   real eps = 1e-8;
@@ -123,7 +142,7 @@ real choco_lpdf(real y, real mu, real muleft, real phileft,
 
 
 
-stanvars_chocomini <- stanvar(scode = "
+stanvars_chocomini <- brms::stanvar(scode = "
 real chocomini_lpdf(real y, real mu, real delta, real phi, real k) {
   real eps = 1e-8;
   real d = 0.5 * delta;  // delta in (0,1), d in (0,0.5)
@@ -178,14 +197,14 @@ real chocomini_lpdf(real y, real mu, real delta, real phi, real k) {
 
 
 # Define custom family
-choco <- custom_family(
+choco <- brms::custom_family(
   "choco",
   dpars = c("mu", "muleft", "muright", "phileft", "phiright", "kleft", "kright"),
   links = c("logit", "logit", "logit", "softplus", "softplus", "logit", "logit")
 )
 
 
-chocomini <- custom_family(
+chocomini <- brms::custom_family(
   "chocomini",
   dpars = c("mu", "delta", "phi", "k"),
   links = c("logit", "logit", "softplus", "logit")
@@ -208,37 +227,35 @@ posterior_predict_choco <- function(i, prep, ...) {
   kleft    <- brms::get_dpar(prep, "kleft", i = i)
   kright   <- brms::get_dpar(prep, "kright", i = i)
 
-  # Number of posterior draws
-  ndraws <- prep$ndraws
-
-  # Initialize a vector to store predicted values
-  yrep <- numeric(ndraws)
-
-  for (j in seq_len(ndraws)) {
-    yrep[j] <- rchoco(1,
-                      mu       = mu[j],
-                      muleft   = muleft[j],
-                      muright  = muright[j],
-                      phileft  = phileft[j],
-                      phiright = phiright[j],
-                      kleft    = kleft[j],
-                      kright   = kright[j])
-  }
+  # Use mapply to vectorize over the posterior draws.
+  # For each draw (i.e., each set of parameter values), simulate one response using rchoco.
+  yrep <- mapply(function(mu_i, muleft_i, muright_i, phileft_i, phiright_i, kleft_i, kright_i) {
+    rchoco(1,
+           mu       = mu_i,
+           muleft   = muleft_i,
+           muright  = muright_i,
+           phileft  = phileft_i,
+           phiright = phiright_i,
+           kleft    = kleft_i,
+           kright   = kright_i)
+  }, mu, muleft, muright, phileft, phiright, kleft, kright)
 
   yrep
 }
 
 
 posterior_predict_chocomini <- function(i, prep, ...) {
-  mu <- brms::get_dpar(prep, "mu", i = i)
+  # Extract posterior draws for the mini version parameters
+  mu    <- brms::get_dpar(prep, "mu", i = i)
   delta <- brms::get_dpar(prep, "delta", i = i)
-  phi <- brms::get_dpar(prep, "phi", i = i)
-  k <- brms::get_dpar(prep, "k", i = i)
-  ndraws <- prep$ndraws
-  yrep <- numeric(ndraws)
-  for (j in seq_len(ndraws)) {
-    yrep[j] <- rchoco(1, mu=mu[j], delta=delta[j], phi=phi[j], k=k[j])
-  }
+  phi   <- brms::get_dpar(prep, "phi", i = i)
+  k     <- brms::get_dpar(prep, "k", i = i)
+
+  # Vectorize over the draws: For each posterior draw, simulate one response.
+  yrep <- mapply(function(mu_i, delta_i, phi_i, k_i) {
+    rchoco(1, mu = mu_i, delta = delta_i, phi = phi_i, k = k_i)
+  }, mu, delta, phi, k)
+
   yrep
 }
 
