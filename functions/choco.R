@@ -156,22 +156,22 @@ real chocomini_lpdf(real y, real mu, real delta, real phi, real k) {
   real p_right = mu;
 
   if (y < eps) {
-    real p0 = 1 - inv_logit(logit(muleft) - logit(1 - kleft));
+    real p0 = fmax(1 - inv_logit(logit(muleft) - logit(1 - kleft)), eps);
     return log(p_left) + log(fmax(p0, eps));
   }
   else if (y > (1 - eps)) {
-    real p1 = inv_logit(logit(muright) - logit(kright));
+    real p1 = fmax(inv_logit(logit(muright) - logit(kright)), eps);
     return log(p_right) + log(fmax(p1, eps));
   }
   else {
-    real p0 = 1 - inv_logit(logit(muleft) - logit(1 - kleft));
-    real p1 = inv_logit(logit(muright) - logit(kright));
-    real log1m_p0 = log1m(fmin(p0, 1 - eps));
-    real log1m_p1 = log1m(fmin(p1, 1 - eps));
+    real p0 = fmax(1 - inv_logit(logit(muleft) - logit(1 - kleft)), eps);
+    real p1 = fmin(inv_logit(logit(muright) - logit(kright)), 1 - eps);
+    real log1m_p0 = log1m(fmax(1 - p0, eps));  // Ensures we never take log(0)
+    real log1m_p1 = log1m(fmax(1 - p1, eps));
 
     if (abs(y - 0.5) < eps) {
-      real x0 = 2 * (0.5 - (0.5 - eps));
-      real x1 = 2 * ((0.5 + eps) - 0.5);
+      real x0 = eps;
+      real x1 = eps;
       real dens_left = p_left * exp(log1m_p0 + log(2) +
                                     beta_proportion_lpdf(x0 | fmin(muleft, 1 - eps), phileft));
       real dens_right = p_right * exp(log1m_p1 + log(2) +
