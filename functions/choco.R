@@ -1,63 +1,61 @@
-if (!requireNamespace("brms", quietly = TRUE)) {
-  stop("Package 'brms' is required to run this script.")
-}
-
 # Choice-Confidence (CHOCO) distribution to model bimodal analog/Likert scale data (with zeros and ones).
-# The idea is to have two separate ordered beta distributions (see Kubinec) modeling the left and the right hand side of the scale.
+# The idea is to have two separate ordered beta distributions (see Kubinec, 2023) modeling the left and the right hand side of the scale.
 
+# Regarding Ordered Beta distributions, see:
+# - Stan code: https://github.com/saudiwin/ordbetareg/blob/master/beta_logit.stan
+# - Python code: https://github.com/saudiwin/ordbetareg_py/blob/main/ordbetareg/model.py
 
 # Simulation ---------------------------------------------------------
-
 
 #' Random simulation from the CHOCO distribution:
 #' @param n Number of random draws.
 #' @param mu Probability of choosing the right side (relative to the left side).
-#' @param delta Distance between the two modes (i.e., the separation/discrimination between the two sides)
-#' @param phi Shape parameter of the beta distribution.
-#' @param k Cutoff parameter for the beta distribution (the lower this value, the higher the likelihood of extreme responses - zeros or ones)
 #' @param muleft The center of the left side beta distribution.
-#' @param muright The center of the right side beta distribution.
 #' @param phileft The shape parameter of the left side beta distribution.
-#' @param phiright The shape parameter of the right side beta distribution.
 #' @param kleft The cutoff parameter for the left side beta distribution.
-#' @param kright The cutoff parameter for the right side beta distribution.
+#' @param muright The center of the right side beta distribution (overridden by mud if NULL).
+#' @param phiright The shape parameter of the right side beta distribution (overridden by phid if NULL).
+#' @param kright The cutoff parameter for the right side beta distribution (overridden by kd if NULL).
+#' @param mud Deviation for muright on the logit scale relative to muleft (used if muright is NULL).
+#' @param phid Deviation for phiright as a log-multiplier relative to phileft (used if phiright is NULL).
+#' @param kd Deviation for kright on the logit scale relative to kleft (used if kright is NULL).
 #'
 #' @examples
-#' hist(rchoco(3000, mu=0.5, delta=0.5, phi=3, k = 0.95), breaks = 100)
-#' hist(rchoco(3000, mu=0.6, delta=0.8, phi=5, k = 0.99), breaks = 100)
-rchoco <- function(n, mu = 0.5, delta = 0.5, phi = 3, k = 0.95,
-                   muleft = delta, muright = delta, phileft = phi, phiright = phi,
-                   kleft = k, kright = k) {
+#' hist(rchoco(3000, mu=0.5, muleft=0.5, phileft=3, kleft=0.95), breaks=100)
+#' hist(rchoco(3000, mu=0.6, muleft=0.5, phileft=5, kleft=0.99), breaks=100)
+#' hist(rchoco(3000, mu=0.4, muleft=0.5, phileft=3, kleft=0.85), breaks=100)
+rchoco <- function(n, mu = 0.5, muleft = 0.5, phileft = 3, kleft = 0.95,
+                   muright = NULL, phiright = NULL, kright = NULL,
+                   mud = 0, phid = 0, kd = 0) {
   # Overall probabilities for choosing left or right side
   p_left <- 1 - mu    # probability for the left side
   p_right <- mu       # probability for the right side
 
+  # Use provided right-side parameters if not NULL, else compute using deviation parameters:
+  if (is.null(muright)) muright <- plogis(qlogis(muleft) + mud)
+  if (is.null(phiright)) phiright <- phileft * exp(phid)
+  if (is.null(kright)) kright <- plogis(qlogis(kleft) + kd)
+
   # Compute the discrete endpoint probabilities for 0 (left side) and 1 (right side)
-  # p0: probability mass at 0 for the left side
-  p0 <- 1 - plogis(qlogis(muleft) - qlogis(1 - kleft))
-  # p1: probability mass at 1 for the right side
-  p1 <- plogis(qlogis(muright) - qlogis(kright))
+  p0 <- 1 - plogis(qlogis(muleft) - qlogis(1 - kleft))      # left-side endpoint probability
+  p1 <- plogis(qlogis(muright) - qlogis(kright))              # right-side endpoint probability
 
   # Pre-allocate output vector for efficiency
   y <- numeric(n)
 
   # Vectorized random assignment of sides for all n draws
-  # Each draw is assigned "left" or "right" based on the specified probabilities
   sides <- sample(c("left", "right"), size = n, replace = TRUE, prob = c(p_left, p_right))
 
   ## Process draws assigned to the left side
   left_idx <- which(sides == "left")
   if (length(left_idx) > 0) {
-    # Generate uniform random numbers to decide if each left-side draw is an endpoint (0) or continuous
     left_u <- runif(length(left_idx))
-    # For draws with a uniform value less than p0, assign 0 (discrete mass)
     y[left_idx[left_u < p0]] <- 0
-    # For the remaining draws, simulate from the continuous left-side beta distribution
     left_cont_idx <- left_idx[left_u >= p0]
     if (length(left_cont_idx) > 0) {
-      # Draw from the beta distribution with parameters based on muleft and phileft
-      x0 <- rbeta(length(left_cont_idx), shape1 = muleft * phileft, shape2 = (1 - muleft) * phileft)
-      # Transform the beta draw from (0,1) to the interval (0,0.5)
+      x0 <- rbeta(length(left_cont_idx),
+                  shape1 = muleft * phileft,
+                  shape2 = (1 - muleft) * phileft)
       y[left_cont_idx] <- 0.5 - x0 / 2
     }
   }
@@ -65,16 +63,13 @@ rchoco <- function(n, mu = 0.5, delta = 0.5, phi = 3, k = 0.95,
   ## Process draws assigned to the right side
   right_idx <- which(sides == "right")
   if (length(right_idx) > 0) {
-    # Generate uniform random numbers to decide if each right-side draw is an endpoint (1) or continuous
     right_u <- runif(length(right_idx))
-    # For draws with a uniform value less than p1, assign 1 (discrete mass)
     y[right_idx[right_u < p1]] <- 1
-    # For the remaining draws, simulate from the continuous right-side beta distribution
     right_cont_idx <- right_idx[right_u >= p1]
     if (length(right_cont_idx) > 0) {
-      # Draw from the beta distribution with parameters based on muright and phiright
-      x1 <- rbeta(length(right_cont_idx), shape1 = muright * phiright, shape2 = (1 - muright) * phiright)
-      # Transform the beta draw from (0,1) to the interval (0.5,1)
+      x1 <- rbeta(length(right_cont_idx),
+                  shape1 = muright * phiright,
+                  shape2 = (1 - muright) * phiright)
       y[right_cont_idx] <- 0.5 + x1 / 2
     }
   }
@@ -82,56 +77,41 @@ rchoco <- function(n, mu = 0.5, delta = 0.5, phi = 3, k = 0.95,
   y
 }
 
-
-
 # Stan --------------------------------------------------------------------
-
-
-
 # Create a stanvars object to pass the custom functions to brms
-stanvars_choco <- brms::stanvar(scode = "
-real choco_lpdf(real y, real mu, real muleft, real phileft,
+choco_stanvars <- function(type = "choco7") {
+  if (type == "choco7") { # 7-parameter model with independent right-side parameters
+    stancode <- brms::stanvar(scode = "
+real choco7_lpdf(real y, real mu, real muleft, real phileft,
                 real muright, real phiright, real kleft, real kright) {
   real eps = 1e-8;
   real p_left = 1 - mu;
   real p_right = mu;
-
-  // Handle discrete mass at 0
   if (y < eps) {
     real p0 = 1 - inv_logit(logit(muleft) - logit(1 - kleft));
     return log(p_left) + log(fmax(p0, eps));
-  }
-  // Handle discrete mass at 1
-  else if (y > (1 - eps)) {
+  } else if (y > (1 - eps)) {
     real p1 = inv_logit(logit(muright) - logit(kright));
     return log(p_right) + log(fmax(p1, eps));
-  }
-  // Handle continuous part, with special case for y=0.5
-  else {
+  } else {
     real p0 = 1 - inv_logit(logit(muleft) - logit(1 - kleft));
     real p1 = inv_logit(logit(muright) - logit(kright));
     real log1m_p0 = log1m(fmin(p0, 1 - eps));
     real log1m_p1 = log1m(fmin(p1, 1 - eps));
-
-    // Check if y is approximately 0.5 (within eps)
     if (abs(y - 0.5) < eps) {
-      // For y=0.5, compute densities approaching 0.5 from left and right
-      real x0 = 2 * (0.5 - (0.5 - eps));  // x0 approaches 0+ as y approaches 0.5-
-      real x1 = 2 * ((0.5 + eps) - 0.5);  // x1 approaches 0+ as y approaches 0.5+
+      real x0 = 2 * (0.5 - (0.5 - eps));
+      real x1 = 2 * ((0.5 + eps) - 0.5);
       real dens_left = p_left * exp(log1m_p0 + log(2) +
                                     beta_proportion_lpdf(x0 | fmin(muleft, 1 - eps), phileft));
       real dens_right = p_right * exp(log1m_p1 + log(2) +
                                       beta_proportion_lpdf(x1 | fmin(muright, 1 - eps), phiright));
-      // Average the left and right densities
       real avg_dens = (dens_left + dens_right) / 2;
       return log(fmax(avg_dens, eps));
-    }
-    else if (y < 0.5) {
+    } else if (y < 0.5) {
       real x0 = 2 * (0.5 - y);
       return log(p_left) + log1m_p0 + log(2) +
              beta_proportion_lpdf(x0 | fmin(muleft, 1 - eps), phileft);
-    }
-    else {  // y > 0.5
+    } else {
       real x1 = fmax(2 * (y - 0.5), eps);
       return log(p_right) + log1m_p1 + log(2) +
              beta_proportion_lpdf(x1 | fmin(muright, 1 - eps), phiright);
@@ -139,52 +119,41 @@ real choco_lpdf(real y, real mu, real muleft, real phileft,
   }
 }
 ", block = "functions")
-
-
-
-stanvars_chocomini <- brms::stanvar(scode = "
-real chocomini_lpdf(real y, real mu, real delta, real phi, real k) {
+  } else if (type == "choco7d") { # 7-parameter deviation-based model
+    stancode <- brms::stanvar(scode = "
+real choco7d_lpdf(real y, real mu, real muleft, real mud, real phileft, real phid, real kleft, real kd) {
   real eps = 1e-8;
-  real d = 0.5 * delta;  // delta in (0,1), d in (0,0.5)
-  real muleft = 2 * d;
-  real muright = 2 * d;
-  real phileft = phi;
-  real phiright = phi;
-  real kleft = k;
-  real kright = k;
   real p_left = 1 - mu;
   real p_right = mu;
-
+  // Derive right-side parameters as deviations from the left-side:
+  real muright = inv_logit(logit(muleft) + mud);
+  real phiright = phileft * exp(phid);
+  real kright = inv_logit(logit(kleft) + kd);
   if (y < eps) {
-    real p0 = fmax(1 - inv_logit(logit(muleft) - logit(1 - kleft)), eps);
+    real p0 = 1 - inv_logit(logit(muleft) - logit(1 - kleft));
     return log(p_left) + log(fmax(p0, eps));
-  }
-  else if (y > (1 - eps)) {
-    real p1 = fmax(inv_logit(logit(muright) - logit(kright)), eps);
+  } else if (y > (1 - eps)) {
+    real p1 = inv_logit(logit(muright) - logit(kright));
     return log(p_right) + log(fmax(p1, eps));
-  }
-  else {
-    real p0 = fmax(1 - inv_logit(logit(muleft) - logit(1 - kleft)), eps);
-    real p1 = fmin(inv_logit(logit(muright) - logit(kright)), 1 - eps);
-    real log1m_p0 = log1m(fmax(1 - p0, eps));  // Ensures we never take log(0)
-    real log1m_p1 = log1m(fmax(1 - p1, eps));
-
+  } else {
+    real p0 = 1 - inv_logit(logit(muleft) - logit(1 - kleft));
+    real p1 = inv_logit(logit(muright) - logit(kright));
+    real log1m_p0 = log1m(fmin(p0, 1 - eps));
+    real log1m_p1 = log1m(fmin(p1, 1 - eps));
     if (abs(y - 0.5) < eps) {
-      real x0 = eps;
-      real x1 = eps;
+      real x0 = 2 * (0.5 - (0.5 - eps));
+      real x1 = 2 * ((0.5 + eps) - 0.5);
       real dens_left = p_left * exp(log1m_p0 + log(2) +
                                     beta_proportion_lpdf(x0 | fmin(muleft, 1 - eps), phileft));
       real dens_right = p_right * exp(log1m_p1 + log(2) +
                                       beta_proportion_lpdf(x1 | fmin(muright, 1 - eps), phiright));
       real avg_dens = (dens_left + dens_right) / 2;
       return log(fmax(avg_dens, eps));
-    }
-    else if (y < 0.5) {
+    } else if (y < 0.5) {
       real x0 = 2 * (0.5 - y);
       return log(p_left) + log1m_p0 + log(2) +
              beta_proportion_lpdf(x0 | fmin(muleft, 1 - eps), phileft);
-    }
-    else {
+    } else {
       real x1 = fmax(2 * (y - 0.5), eps);
       return log(p_right) + log1m_p1 + log(2) +
              beta_proportion_lpdf(x1 | fmin(muright, 1 - eps), phiright);
@@ -192,42 +161,40 @@ real chocomini_lpdf(real y, real mu, real delta, real phi, real k) {
   }
 }
 ", block = "functions")
+  } else {
+    stop("Invalid type. Choose either 'choco7' or 'choco7d'.")
+  }
+  stancode
+}
 
-
-
-
-# Define custom family
-choco <- function(link_mu = "logit", link_muleft = "logit", link_muright = "logit",
-                  link_phileft = "softplus", link_phiright = "softplus",
-                  link_kleft = "logit", link_kright = "logit") {
+# Define custom families
+choco7 <- function(link_mu = "logit", link_muleft = "logit", link_muright = "logit",
+                   link_phileft = "softplus", link_phiright = "softplus",
+                   link_kleft = "logit", link_kright = "logit") {
   brms::custom_family(
-    "choco",
+    "choco7",
     dpars = c("mu", "muleft", "muright", "phileft", "phiright", "kleft", "kright"),
-    links = c(
-      link_mu, link_muleft, link_muright,
-      link_phileft, link_phiright,
-      link_kleft, link_kright
-    ),
+    links = c(link_mu, link_muleft, link_muright,
+              link_phileft, link_phiright,
+              link_kleft, link_kright)
   )
 }
 
-
-chocomini <- function(link_mu = "logit", link_delta = "logit", link_phi = "softplus", link_k = "logit") {
+choco7d <- function(link_mu = "logit", link_muleft = "logit", link_mud = "identity",
+                    link_phileft = "softplus", link_phid = "identity",
+                    link_kleft = "logit", link_kd = "identity") {
   brms::custom_family(
-    "chocomini",
-    dpars = c("mu", "delta", "phi", "k"),
-    links = c(link_mu, link_delta, link_phi, link_k)
+    "choco7d",
+    dpars = c("mu", "muleft", "mud", "phileft", "phid", "kleft", "kd"),
+    links = c(link_mu, link_muleft, link_mud,
+              link_phileft, link_phid,
+              link_kleft, link_kd)
   )
 }
-
-
-
 # Predict -----------------------------------------------------------------
 
-
-# Posterior predict function
-posterior_predict_choco <- function(i, prep, ...) {
-  # Extract posterior draws of the distributional parameters
+# Posterior predict function for choco7
+posterior_predict_choco7 <- function(i, prep, ...) {
   mu       <- brms::get_dpar(prep, "mu", i = i)
   muleft   <- brms::get_dpar(prep, "muleft", i = i)
   muright  <- brms::get_dpar(prep, "muright", i = i)
@@ -236,8 +203,6 @@ posterior_predict_choco <- function(i, prep, ...) {
   kleft    <- brms::get_dpar(prep, "kleft", i = i)
   kright   <- brms::get_dpar(prep, "kright", i = i)
 
-  # Use mapply to vectorize over the posterior draws.
-  # For each draw (i.e., each set of parameter values), simulate one response using rchoco.
   yrep <- mapply(function(mu_i, muleft_i, muright_i, phileft_i, phiright_i, kleft_i, kright_i) {
     rchoco(1,
            mu       = mu_i,
@@ -252,19 +217,26 @@ posterior_predict_choco <- function(i, prep, ...) {
   yrep
 }
 
+# Posterior predict function for choco7d (deviation-based)
+posterior_predict_choco7d <- function(i, prep, ...) {
+  mu      <- brms::get_dpar(prep, "mu", i = i)
+  muleft  <- brms::get_dpar(prep, "muleft", i = i)
+  mud     <- brms::get_dpar(prep, "mud", i = i)
+  phileft <- brms::get_dpar(prep, "phileft", i = i)
+  phid    <- brms::get_dpar(prep, "phid", i = i)
+  kleft   <- brms::get_dpar(prep, "kleft", i = i)
+  kd      <- brms::get_dpar(prep, "kd", i = i)
 
-posterior_predict_chocomini <- function(i, prep, ...) {
-  # Extract posterior draws for the mini version parameters
-  mu    <- brms::get_dpar(prep, "mu", i = i)
-  delta <- brms::get_dpar(prep, "delta", i = i)
-  phi   <- brms::get_dpar(prep, "phi", i = i)
-  k     <- brms::get_dpar(prep, "k", i = i)
-
-  # Vectorize over the draws: For each posterior draw, simulate one response.
-  yrep <- mapply(function(mu_i, delta_i, phi_i, k_i) {
-    rchoco(1, mu = mu_i, delta = delta_i, phi = phi_i, k = k_i)
-  }, mu, delta, phi, k)
+  yrep <- mapply(function(mu_i, muleft_i, mud_i, phileft_i, phid_i, kleft_i, kd_i) {
+    rchoco(1,
+           mu      = mu_i,
+           muleft  = muleft_i,
+           mud     = mud_i,
+           phileft = phileft_i,
+           phid    = phid_i,
+           kleft   = kleft_i,
+           kd      = kd_i)
+  }, mu, muleft, mud, phileft, phid, kleft, kd)
 
   yrep
 }
-
