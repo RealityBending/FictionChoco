@@ -197,19 +197,28 @@ real chocomini_lpdf(real y, real mu, real delta, real phi, real k) {
 
 
 # Define custom family
-choco <- brms::custom_family(
-  "choco",
-  dpars = c("mu", "muleft", "muright", "phileft", "phiright", "kleft", "kright"),
-  links = c("logit", "logit", "logit", "softplus", "softplus", "logit", "logit")
-)
+choco <- function(link_mu = "logit", link_muleft = "logit", link_muright = "logit",
+                  link_phileft = "softplus", link_phiright = "softplus",
+                  link_kleft = "logit", link_kright = "logit") {
+  brms::custom_family(
+    "choco",
+    dpars = c("mu", "muleft", "muright", "phileft", "phiright", "kleft", "kright"),
+    links = c(
+      link_mu, link_muleft, link_muright,
+      link_phileft, link_phiright,
+      link_kleft, link_kright
+    ),
+  )
+}
 
 
-chocomini <- brms::custom_family(
-  "chocomini",
-  dpars = c("mu", "delta", "phi", "k"),
-  links = c("logit", "logit", "softplus", "logit")
-)
-
+chocomini <- function(link_mu = "logit", link_delta = "logit", link_phi = "softplus", link_k = "logit") {
+  brms::custom_family(
+    "chocomini",
+    dpars = c("mu", "delta", "phi", "k"),
+    links = c(link_mu, link_delta, link_phi, link_k)
+  )
+}
 
 
 
