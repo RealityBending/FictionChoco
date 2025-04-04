@@ -50,3 +50,4 @@ rsconnect/
 *.RData
 
 analysis/models/
+analysis/server.md
