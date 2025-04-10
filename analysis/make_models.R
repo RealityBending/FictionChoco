@@ -2,6 +2,9 @@
 
 library(brms)
 library(cmdstanr)
+library(cogmod)
+
+options(brms.backend = "cmdstanr")
 
 # Get array task ID from Slurm
 task_id <- as.numeric(commandArgs(trailingOnly = TRUE)[1])
@@ -12,7 +15,7 @@ chains_per_task <- as.numeric(Sys.getenv("SLURM_CPUS_PER_TASK"))
 # Calculate starting chain ID
 start_chain <- (task_id - 1) * chains_per_task + 1
 
-
+iter <- 1000 # 50% of that is warmup
 
 # Test --------------------------------------------------------------------
 
@@ -22,10 +25,8 @@ start_chain <- (task_id - 1) * chains_per_task + 1
 #   family = gaussian(),
 #   chains = chains_per_task,    # 16 chains per task
 #   cores = chains_per_task,     # Use all 16 CPUs
-#   iter = 2000,
-#   warmup = 1000,
+#   iter = 500,
 #   seed = 1234 + start_chain,   # Unique seed per task
-#   backend = "cmdstanr",
 #   file = paste0("./modeltoy_task_", task_id, ".rds")
 # )
 
@@ -35,34 +36,190 @@ start_chain <- (task_id - 1) * chains_per_task + 1
 
 df <- read.csv("https://raw.githubusercontent.com/RealityBending/FakeFace/refs/heads/main/data/data.csv")
 df$Real <- (df$Belief_Answer + 1) / 2  # Rescale
+df$Real[df$Real == 0.5] <- sample(c(0.4999, 0.5001), sum(df$Real == 0.5), replace = TRUE)  # Avoid 0.5
 df$Item <- gsub(".jpg", "", df$Stimulus)
-df <- df[c("Participant", "Item", "Real")]
+df <- df[c("Participant", "Item", "Real", "Attractive", "Beauty")]
+
+# df <- df[df$Participant %in% unique(df$Participant)[1:10],]
+
+# # ZOIB
+# print("===== ZOIB =====")
+# f <- bf(
+#   Real ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item),
+#   phi ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item),
+#   zoi ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item),
+#   coi ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item)
+# )
+#
+# model <- brm(
+#   formula = f,
+#   data = df,
+#   family = zero_one_inflated_beta(),
+#   init = 0,
+#   chains = chains_per_task,    # 16 chains per task
+#   cores = chains_per_task,     # Use all 16 CPUs
+#   iter = iter,  # Number of iterations and warmup must be equal (warmup is 50% iter)
+#   seed = 1234 + start_chain,   # Unique seed per task
+#   file = paste0("./sample1_zoib_task_", task_id, ".rds")
+# )
+
+
+
+# # XBX
+# f <- bf(
+#   Real ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item),
+#   phi ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item),
+#   kappa ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item)
+# )
+#
+# model <- brm(
+#   formula = f,
+#   data = df,
+#   family = xbeta(),
+#   init = 0,
+#   chains = chains_per_task,    # 16 chains per task
+#   cores = chains_per_task,     # Use all 16 CPUs
+#   iter = iter,  # Number of iterations and warmup must be equal (warmup is 50% iter)
+#   seed = 1234 + start_chain,   # Unique seed per task
+#   file = paste0("./sample1_xbx_task_", task_id, ".rds")
+# )
+
+#
+# # BEXT
+# print("===== BEXT =====")
+# f <- bf(
+#   Real ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item),
+#   phi ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item),
+#   pex ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item),
+#   bex ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item)
+# )
+#
+# model <- brm(
+#   formula = f,
+#   data = df,
+#   family = cogmod::bext(),
+#   stanvars = cogmod::bext_stanvars(),
+#   init = 0,
+#   chains = chains_per_task,    # 16 chains per task
+#   cores = chains_per_task,     # Use all 16 CPUs
+#   iter = iter,  # Number of iterations and warmup must be equal (warmup is 50% iter)
+#   seed = 1234 + start_chain,   # Unique seed per task
+#   file = paste0("./sample1_bext_task_", task_id, ".rds")
+# )
+#
+
+
+# CHOCO
+print("===== CHOCO =====")
 
 
 # Define formula and priors
 f <- brms::bf(
-  Real ~ 0 + Intercept + (0 + Intercept | Participant),
-  muleft ~ 0 + Intercept,
-  phileft ~ 0 + Intercept,
-  kleft ~ 0 + Intercept + (0 + Intercept | Participant),
-  mud = 0,
-  phid = 0,
-  kd = 0,
-  family = choco7d(link_mu = "logit", link_muleft = "logit", link_mud = "identity",
-                   link_phileft = "softplus", link_phid = "identity",
-                   link_kleft = "logit", link_kd = "identity")
+  Real ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item),
+  muleft ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item),
+  mudelta ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item),
+  phileft ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item),
+  phidelta ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item),
+  pex ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item),
+  bex ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item),
+  pmid = 0,
+  family = cogmod::choco()
 )
 
 
 # Define priors (brms::default_prior(f, data=df))
 priors <- c(
-  # prior("normal(0, 1)", class = "sd", lb = 0),
-  prior("normal(0, 1)", class = "sd", coef = "", dpar = "", group = "Participant", lb = 0),
-  prior("normal(0, 1)", class = "sd", coef = "", dpar = "kleft", group = "Participant", lb = 0),
-  prior("normal(0, 0.5)", class = "b", coef = "Intercept"),
+  prior("normal(0, 2)", class = "sd", coef = "", group = "Item", dpar = "", lb = 0),
+  prior("normal(0, 2)", class = "sd", coef = "", group = "Item", dpar = "muleft", lb = 0),
+  prior("normal(0, 2)", class = "sd", coef = "", group = "Item", dpar = "mudelta", lb = 0),
+  prior("normal(0, 2)", class = "sd", coef = "", group = "Item", dpar = "phileft", lb = 0),
+  prior("normal(0, 2)", class = "sd", coef = "", group = "Item", dpar = "phidelta", lb = 0),
+  prior("normal(0, 2)", class = "sd", coef = "", group = "Item", dpar = "pex", lb = 0),
+  prior("normal(0, 2)", class = "sd", coef = "", group = "Item", dpar = "bex", lb = 0),
+  prior("normal(0, 3)", class = "sd", coef = "", group = "Participant", dpar = "", lb = 0),
+  prior("normal(0, 2)", class = "sd", coef = "", group = "Participant", dpar = "muleft", lb = 0),
+  prior("normal(0, 2)", class = "sd", coef = "", group = "Participant", dpar = "mudelta", lb = 0),
+  prior("normal(0, 2)", class = "sd", coef = "", group = "Participant", dpar = "phileft", lb = 0),
+  prior("normal(0, 2)", class = "sd", coef = "", group = "Participant", dpar = "phidelta", lb = 0),
+  prior("normal(0, 2)", class = "sd", coef = "", group = "Participant", dpar = "pex", lb = 0),
+  prior("normal(0, 2)", class = "sd", coef = "", group = "Participant", dpar = "bex", lb = 0),
+  prior("normal(0, 0.5)", class = "b", coef = "Intercept", dpar = ""),
   prior("normal(0, 0.3)", class = "b", coef = "Intercept", dpar = "muleft"),
-  prior("normal(3, 0.3)", class = "b", coef = "Intercept", dpar = "phileft"),
-  prior("normal(1, 0.5)", class = "b", coef = "Intercept", dpar = "kleft")
+  prior("normal(0, 0.1)", class = "b", coef = "Intercept", dpar = "mudelta"),
+  prior("normal(3, 2)", class = "b", coef = "Intercept", dpar = "phileft"),
+  prior("normal(0, 1)", class = "b", coef = "Intercept", dpar = "phidelta"),
+  prior("normal(-3, 3)", class = "b", coef = "Intercept", dpar = "pex"),
+  prior("normal(0, 1)", class = "b", coef = "Intercept", dpar = "bex")
+) |> brms::validate_prior(formula = f, data = df)
+
+
+
+model <- brm(
+  formula = f,
+  data = df,
+  prior = priors,
+  family = cogmod::choco(),
+  stanvars = cogmod::choco_stanvars(),
+  init = 0,
+  chains = chains_per_task,    # 16 chains per task
+  cores = chains_per_task,     # Use all 16 CPUs
+  iter = iter,  # Number of iterations and warmup must be equal (warmup is 50% iter)
+  seed = 1234 + start_chain,   # Unique seed per task
+  file = paste0("./sample1_choco_task_", task_id, ".rds")
+)
+
+
+
+
+# CHOCO
+print("===== CHOCO - Attractiveness =====")
+
+
+# Define formula and priors
+f <- brms::bf(
+  Real ~ 0 + Intercept + poly(Attractive, 2) + (0 + Intercept + poly(Attractive, 2) | Participant) + (0 + Intercept | Item),
+  muleft ~ 0 + Intercept + poly(Attractive, 2) + (0 + Intercept + poly(Attractive, 2) | Participant),
+  mudelta ~ 0 + Intercept + poly(Attractive, 2) + (0 + Intercept + poly(Attractive, 2) | Participant),
+  phileft ~ 0 + Intercept + poly(Attractive, 2) + (0 + Intercept + poly(Attractive, 2) | Participant),
+  phidelta ~ 0 + Intercept + poly(Attractive, 2) + (0 + Intercept + poly(Attractive, 2) | Participant),
+  pex ~ 0 + Intercept + poly(Attractive, 2) + (0 + Intercept + poly(Attractive, 2) | Participant),
+  bex ~ 0 + Intercept + poly(Attractive, 2) + (0 + Intercept + poly(Attractive, 2) | Participant),
+  pmid = 0,
+  family = cogmod::choco()
+)
+
+
+# Define priors (brms::default_prior(f, data=df))
+priors <- c(
+  prior("normal(0, 3)", class = "sd", coef = "", group = "Item", dpar = "", lb = 0),
+  prior("normal(0, 3)", class = "sd", coef = "", group = "Participant", dpar = "", lb = 0),
+  prior("normal(0, 2)", class = "sd", coef = "", group = "Participant", dpar = "muleft", lb = 0),
+  prior("normal(0, 2)", class = "sd", coef = "", group = "Participant", dpar = "mudelta", lb = 0),
+  prior("normal(0, 2)", class = "sd", coef = "", group = "Participant", dpar = "phileft", lb = 0),
+  prior("normal(0, 2)", class = "sd", coef = "", group = "Participant", dpar = "phidelta", lb = 0),
+  prior("normal(0, 2)", class = "sd", coef = "", group = "Participant", dpar = "pex", lb = 0),
+  prior("normal(0, 2)", class = "sd", coef = "", group = "Participant", dpar = "bex", lb = 0),
+  prior("normal(0, 0.5)", class = "b", coef = "Intercept", dpar = ""),
+  prior("normal(0, 0.3)", class = "b", coef = "Intercept", dpar = "muleft"),
+  prior("normal(0, 0.1)", class = "b", coef = "Intercept", dpar = "mudelta"),
+  prior("normal(3, 2)", class = "b", coef = "Intercept", dpar = "phileft"),
+  prior("normal(0, 1)", class = "b", coef = "Intercept", dpar = "phidelta"),
+  prior("normal(0, 3)", class = "b", coef = "Intercept", dpar = "pex"),
+  prior("normal(0, 1)", class = "b", coef = "Intercept", dpar = "bex"),
+  prior("normal(0, 1)", class = "b", coef = "polyAttractive21", dpar = ""),
+  prior("normal(0, 1)", class = "b", coef = "polyAttractive21", dpar = "muleft"),
+  prior("normal(0, 1)", class = "b", coef = "polyAttractive21", dpar = "mudelta"),
+  prior("normal(0, 1)", class = "b", coef = "polyAttractive21", dpar = "phileft"),
+  prior("normal(0, 1)", class = "b", coef = "polyAttractive21", dpar = "phidelta"),
+  prior("normal(0, 1)", class = "b", coef = "polyAttractive21", dpar = "pex"),
+  prior("normal(0, 1)", class = "b", coef = "polyAttractive21", dpar = "bex"),
+  prior("normal(0, 0.5)", class = "b", coef = "polyAttractive22", dpar = ""),
+  prior("normal(0, 0.5)", class = "b", coef = "polyAttractive22", dpar = "muleft"),
+  prior("normal(0, 0.5)", class = "b", coef = "polyAttractive22", dpar = "mudelta"),
+  prior("normal(0, 0.5)", class = "b", coef = "polyAttractive22", dpar = "phileft"),
+  prior("normal(0, 0.5)", class = "b", coef = "polyAttractive22", dpar = "phidelta"),
+  prior("normal(0, 0.5)", class = "b", coef = "polyAttractive22", dpar = "pex"),
+  prior("normal(0, 0.5)", class = "b", coef = "polyAttractive22", dpar = "bex")
 ) |> brms::validate_prior(formula = f, data = df)
 
 
@@ -70,13 +227,25 @@ model <- brm(
   formula = f,
   data = df,
   prior = priors,
-  family = choco7d(),
-  stanvars = choco_stanvars("choco7d"),
+  family = cogmod::choco(),
+  stanvars = cogmod::choco_stanvars(),
+  init = 0,
   chains = chains_per_task,    # 16 chains per task
   cores = chains_per_task,     # Use all 16 CPUs
-  iter = 2000,
-  warmup = 1000,
+  iter = iter,  # Number of iterations and warmup must be equal (warmup is 50% iter)
   seed = 1234 + start_chain,   # Unique seed per task
-  backend = "cmdstanr",
-  file = paste0("./sample1_task_", task_id, ".rds")
+  file = paste0("./sample1_chocoattractiveness_task_", task_id, ".rds")
 )
+
+
+
+
+
+
+
+# Sample 2 ----------------------------------------------------------------
+
+# df <- read.csv("https://raw.githubusercontent.com/RealityBending/FakeFace/refs/heads/main/data/data.csv")
+# df$Real <- (df$Belief_Answer + 1) / 2  # Rescale
+# df$Item <- gsub(".jpg", "", df$Stimulus)
+# df <- df[c("Participant", "Item", "Real", "Attractive", "Beauty")]
