@@ -8,7 +8,7 @@ format:
     code-fold: true
     self-contained: false
 execute: 
-  cache: false
+  cache: true
 ---
 
 
@@ -24,6 +24,7 @@ library(patchwork)
 library(ggside)
 library(ggdist)
 library(brms)
+library(cmdtsanr)
 ```
 
 
@@ -32,6 +33,8 @@ library(brms)
 ### Data Preprocessing
 
 ```{r}
+#| eval: false
+
 df <- read.csv("https://raw.githubusercontent.com/RealityBending/FakeFace/refs/heads/main/data/data.csv") |> 
   mutate(Real = (Belief_Answer + 1) / 2,  # Rescale
          Orientation = ifelse(Sexual_Orientation == "Straight ", "Heterosexual", Sexual_Orientation),
@@ -54,25 +57,14 @@ df$Real[df$Real == 0.5] <- sample(c(0.4999, 0.5001), sum(df$Real == 0.5), replac
 
 write.csv(df, "../data/sample1.csv", row.names = FALSE)
 ```
-
+```{r}
+df <- read.csv("https://raw.githubusercontent.com/RealityBending/FictionChoco/refs/heads/main/data/sample1.csv")
+df$Sex <- factor(df$Sex, levels = c("Male", "Female"))
+```
 
 ### Models 
 
 ::: {.panel-tabset}
-
-
-```{r}
-p1 <- df |> 
-  ggplot(aes(x = Real)) +
-  geom_histogram(fill = "blue", bins = 100) +
-  scale_y_sqrt()
-
-
-# p1 + geom_histogram(
-#   data=data.frame(Real = rchoco(nrow(df), mu = plogis(0.4), muleft = plogis(0), phileft = 3, kleft = plogis(1.4), kd=0.3)),
-#   alpha = 0.3, position = "identity", fill = "black", bins = 100)
-```
-
 
 
 #### Empirical
@@ -98,8 +90,11 @@ m1_zoib <- readRDS("models/sample1_zoib.rds")
 
 make_ppcheck  <- function(m, fill = "#FF9800") {
   pred <- m |> 
-    insight::get_predicted(data = df[sample(nrow(df), 1000, replace = FALSE), ], 
-                           predict="prediction", iterations = 100) |>
+    modelbased::estimate_prediction(df[sample(nrow(df), 4000, replace = FALSE), ], keep_iterations = 200) |>
+    select(Sex, starts_with("iter_")) |> 
+    # insight::get_predicted(data = df[sample(nrow(df), 1000, replace = FALSE), ],
+    #                        predict="prediction", iterations = 5) |>
+    # as.data.frame() |> 
     bayestestR::reshape_iterations() 
   
   pred |>
@@ -112,7 +107,8 @@ make_ppcheck  <- function(m, fill = "#FF9800") {
              linewidth = 1, color = "#9C27B0") + 
     scale_y_sqrt() +
     scale_x_continuous(expand = c(0, 0)) +
-    theme_minimal() 
+    theme_minimal() +
+    facet_wrap(~Sex, scales = "free_y")
 }
 
 p1_zoib <- make_ppcheck(m1_zoib, fill = "#FF9800")
@@ -124,14 +120,15 @@ p1_zoib
 ```{r}
 g1_zoib <- modelbased::estimate_grouplevel(m1_zoib)
 plot(g1_zoib)
+performance::performance_dvour(g1_zoib)
 
 features1 <- reshape_grouplevel(g1_zoib, indices = "Median", group = "Participant") |> 
   datawizard::data_addprefix("ZOIB_", exclude = "Participant") |> 
-  full_join(features1, by = "Participant") 
+  full_join(features1, by = "Participant")
 
 # modelbased::estimate_grouplevel(insight::download_model("brms_chocomini_1"))
 # modelbased::estimate_grouplevel(insight::download_model("brms_chocomini_1"), type = "total")
-# performance::performance_dvour(g1)
+
 ```
 
 
@@ -295,15 +292,27 @@ estimate_relation(m1_chocoat, predict = "phi")
 
 ## Sample 2
 
+```{r}
+#| eval: false
+
+df <- read.csv("https://raw.githubusercontent.com/RealityBending/FakeFace2/refs/heads/main/data/data_task.csv") |> 
+  filter(Relevance == "Relevant") |> 
+  mutate(Real = (Realness + 3) / 6,
+         Attractive = Attractiveness / 6,
+         Beauty = Beauty / 6) |> 
+  select(Participant, Sex=Gender, Condition, Item=Stimulus, Real, Attractive, Beauty)
+
+write.csv(df, "../data/sample2.csv", row.names = FALSE)
+```
+```{r}
+df <- read.csv("https://raw.githubusercontent.com/RealityBending/FictionChoco/refs/heads/main/data/sample2.csv")
+df$Sex <- factor(df$Sex, levels = c("Male", "Female"))
+```
+
 
 ### Models 
 
 
-```{r}
-df <- read.csv("https://raw.githubusercontent.com/RealityBending/FakeFace2/refs/heads/main/data/data_task.csv")
-df$Real <- (df$Realness + 1) / 2  
-df <- df[c("Participant", "Item", "Real", "Attractive", "Beauty")]
-```
 
 ```{r}
 p1 <- df |> 

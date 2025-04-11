@@ -34,94 +34,100 @@ iter <- 1000 # 50% of that is warmup
 
 # Sample 1 ----------------------------------------------------------------
 
-df <- read.csv("https://raw.githubusercontent.com/RealityBending/FakeFace/refs/heads/main/data/data.csv")
-df$Real <- (df$Belief_Answer + 1) / 2  # Rescale
-df$Real[df$Real == 0.5] <- sample(c(0.4999, 0.5001), sum(df$Real == 0.5), replace = TRUE)  # Avoid 0.5
-df$Item <- gsub(".jpg", "", df$Stimulus)
-df <- df[c("Participant", "Item", "Real", "Attractive", "Beauty")]
-
+df <- read.csv("https://raw.githubusercontent.com/RealityBending/FictionChoco/refs/heads/main/data/sample1.csv")
+df$Sex <- factor(df$Sex, levels = c("Male", "Female"))
 # df <- df[df$Participant %in% unique(df$Participant)[1:10],]
 
-# # ZOIB
-# print("===== ZOIB =====")
-# f <- bf(
-#   Real ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item),
-#   phi ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item),
-#   zoi ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item),
-#   coi ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item)
-# )
-#
-# model <- brm(
-#   formula = f,
-#   data = df,
-#   family = zero_one_inflated_beta(),
-#   init = 0,
-#   chains = chains_per_task,    # 16 chains per task
-#   cores = chains_per_task,     # Use all 16 CPUs
-#   iter = iter,  # Number of iterations and warmup must be equal (warmup is 50% iter)
-#   seed = 1234 + start_chain,   # Unique seed per task
-#   file = paste0("./sample1_zoib_task_", task_id, ".rds")
-# )
+# ZOIB
+print("===== ZOIB =====")
+print(Sys.time())
+
+f <- bf(
+  Real ~ 0 + Intercept + Sex + (0 + Intercept | Participant) + (0 + Intercept | Item),
+  phi ~ 0 + Intercept + Sex + (0 + Intercept | Participant) + (0 + Intercept | Item),
+  zoi ~ 0 + Intercept + Sex + (0 + Intercept | Participant) + (0 + Intercept | Item),
+  coi ~ 0 + Intercept + Sex + (0 + Intercept | Participant) + (0 + Intercept | Item)
+)
+
+model <- brm(
+  formula = f,
+  data = df,
+  family = zero_one_inflated_beta(),
+  init = 0,
+  chains = chains_per_task,    # 16 chains per task
+  cores = chains_per_task,     # Use all 16 CPUs
+  iter = iter,  # Number of iterations and warmup must be equal (warmup is 50% iter)
+  seed = 1234 + start_chain,   # Unique seed per task
+  file = paste0("./sample1_zoib_task_", task_id, ".rds")
+)
 
 
 
-# # XBX
-# f <- bf(
-#   Real ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item),
-#   phi ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item),
-#   kappa ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item)
-# )
-#
-# model <- brm(
-#   formula = f,
-#   data = df,
-#   family = xbeta(),
-#   init = 0,
-#   chains = chains_per_task,    # 16 chains per task
-#   cores = chains_per_task,     # Use all 16 CPUs
-#   iter = iter,  # Number of iterations and warmup must be equal (warmup is 50% iter)
-#   seed = 1234 + start_chain,   # Unique seed per task
-#   file = paste0("./sample1_xbx_task_", task_id, ".rds")
-# )
 
+# # # DO NOT DO XBX
 #
-# # BEXT
-# print("===== BEXT =====")
-# f <- bf(
-#   Real ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item),
-#   phi ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item),
-#   pex ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item),
-#   bex ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item)
-# )
+# # # # XBX
+# # # print("===== XBX =====")
+# # # f <- bf(
+# # #   Real ~ 0 + Intercept + Sex + (0 + Intercept | Participant) + (0 + Intercept | Item),
+# # #   phi ~ 0 + Intercept + Sex + (0 + Intercept | Participant) + (0 + Intercept | Item),
+# # #   kappa ~ 0 + Intercept + Sex + (0 + Intercept | Participant) + (0 + Intercept | Item)
+# # # )
+# # #
+# # # model <- brm(
+# # #   formula = f,
+# # #   data = df,
+# # #   family = xbeta(),
+# # #   init = 0,
+# # #   chains = chains_per_task,    # 16 chains per task
+# # #   cores = chains_per_task,     # Use all 16 CPUs
+# # #   iter = iter,  # Number of iterations and warmup must be equal (warmup is 50% iter)
+# # #   seed = 1234 + start_chain,   # Unique seed per task
+# # #   file = paste0("./sample1_xbx_task_", task_id, ".rds")
+# # # )
 #
-# model <- brm(
-#   formula = f,
-#   data = df,
-#   family = cogmod::bext(),
-#   stanvars = cogmod::bext_stanvars(),
-#   init = 0,
-#   chains = chains_per_task,    # 16 chains per task
-#   cores = chains_per_task,     # Use all 16 CPUs
-#   iter = iter,  # Number of iterations and warmup must be equal (warmup is 50% iter)
-#   seed = 1234 + start_chain,   # Unique seed per task
-#   file = paste0("./sample1_bext_task_", task_id, ".rds")
-# )
-#
+# # #
+
+
+# BEXT
+print("===== BEXT =====")
+print(Sys.time())
+
+f <- bf(
+  Real ~ 0 + Intercept + Sex + (0 + Intercept | Participant) + (0 + Intercept | Item),
+  phi ~ 0 + Intercept + Sex + (0 + Intercept | Participant) + (0 + Intercept | Item),
+  pex ~ 0 + Intercept + Sex + (0 + Intercept | Participant) + (0 + Intercept | Item),
+  bex ~ 0 + Intercept + Sex + (0 + Intercept | Participant) + (0 + Intercept | Item)
+)
+
+model <- brm(
+  formula = f,
+  data = df,
+  family = cogmod::bext(),
+  stanvars = cogmod::bext_stanvars(),
+  init = 0,
+  chains = chains_per_task,    # 16 chains per task
+  cores = chains_per_task,     # Use all 16 CPUs
+  iter = iter,  # Number of iterations and warmup must be equal (warmup is 50% iter)
+  seed = 1234 + start_chain,   # Unique seed per task
+  file = paste0("./sample1_bext_task_", task_id, ".rds")
+)
+
 
 
 # CHOCO
 print("===== CHOCO =====")
-
+print(Sys.time())
 
 # Define formula and priors
 f <- brms::bf(
-  Real ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item),
-  muleft ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item),
-  mudelta ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item),
-  phileft ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item),
-  phidelta ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item),
-  pex ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item),
-  bex ~ 0 + Intercept + (0 + Intercept | Participant) + (0 + Intercept | Item),
+  Real ~ 0 + Intercept + Sex + (0 + Intercept | Participant) + (0 + Intercept | Item),
+  muleft ~ 0 + Intercept + Sex + (0 + Intercept | Participant) + (0 + Intercept | Item),
+  mudelta ~ 0 + Intercept + Sex + (0 + Intercept | Participant) + (0 + Intercept | Item),
+  phileft ~ 0 + Intercept + Sex + (0 + Intercept | Participant) + (0 + Intercept | Item),
+  phidelta ~ 0 + Intercept + Sex + (0 + Intercept | Participant) + (0 + Intercept | Item),
+  pex ~ 0 + Intercept + Sex + (0 + Intercept | Participant) + (0 + Intercept | Item),
+  bex ~ 0 + Intercept + Sex + (0 + Intercept | Participant) + (0 + Intercept | Item),
   pmid = 0,
   family = cogmod::choco()
 )
@@ -149,7 +155,14 @@ priors <- c(
   prior("normal(3, 2)", class = "b", coef = "Intercept", dpar = "phileft"),
   prior("normal(0, 1)", class = "b", coef = "Intercept", dpar = "phidelta"),
   prior("normal(-3, 3)", class = "b", coef = "Intercept", dpar = "pex"),
-  prior("normal(0, 1)", class = "b", coef = "Intercept", dpar = "bex")
+  prior("normal(0, 1)", class = "b", coef = "Intercept", dpar = "bex"),
+  prior("normal(0, 1)", class = "b", coef = "SexFemale", dpar = ""),
+  prior("normal(0, 1)", class = "b", coef = "SexFemale", dpar = "muleft"),
+  prior("normal(0, 1)", class = "b", coef = "SexFemale", dpar = "mudelta"),
+  prior("normal(0, 1)", class = "b", coef = "SexFemale", dpar = "phileft"),
+  prior("normal(0, 1)", class = "b", coef = "SexFemale", dpar = "phidelta"),
+  prior("normal(0, 1)", class = "b", coef = "SexFemale", dpar = "pex"),
+  prior("normal(0, 1)", class = "b", coef = "SexFemale", dpar = "bex")
 ) |> brms::validate_prior(formula = f, data = df)
 
 
@@ -173,17 +186,17 @@ model <- brm(
 
 # CHOCO
 print("===== CHOCO - Attractiveness =====")
-
+print(Sys.time())
 
 # Define formula and priors
 f <- brms::bf(
-  Real ~ 0 + Intercept + poly(Attractive, 2) + (0 + Intercept + poly(Attractive, 2) | Participant) + (0 + Intercept | Item),
-  muleft ~ 0 + Intercept + poly(Attractive, 2) + (0 + Intercept + poly(Attractive, 2) | Participant),
-  mudelta ~ 0 + Intercept + poly(Attractive, 2) + (0 + Intercept + poly(Attractive, 2) | Participant),
-  phileft ~ 0 + Intercept + poly(Attractive, 2) + (0 + Intercept + poly(Attractive, 2) | Participant),
-  phidelta ~ 0 + Intercept + poly(Attractive, 2) + (0 + Intercept + poly(Attractive, 2) | Participant),
-  pex ~ 0 + Intercept + poly(Attractive, 2) + (0 + Intercept + poly(Attractive, 2) | Participant),
-  bex ~ 0 + Intercept + poly(Attractive, 2) + (0 + Intercept + poly(Attractive, 2) | Participant),
+  Real ~ 0 + Intercept + Sex * poly(Attractive, 2) + (0 + Intercept + poly(Attractive, 2) | Participant) + (0 + Intercept | Item),
+  muleft ~ 0 + Intercept + Sex * poly(Attractive, 2) + (0 + Intercept + poly(Attractive, 2) | Participant),
+  mudelta ~ 0 + Intercept + Sex * poly(Attractive, 2) + (0 + Intercept + poly(Attractive, 2) | Participant),
+  phileft ~ 0 + Intercept + Sex * poly(Attractive, 2) + (0 + Intercept + poly(Attractive, 2) | Participant),
+  phidelta ~ 0 + Intercept + Sex * poly(Attractive, 2) + (0 + Intercept + poly(Attractive, 2) | Participant),
+  pex ~ 0 + Intercept + Sex * poly(Attractive, 2) + (0 + Intercept + poly(Attractive, 2) | Participant),
+  bex ~ 0 + Intercept + Sex * poly(Attractive, 2) + (0 + Intercept + poly(Attractive, 2) | Participant),
   pmid = 0,
   family = cogmod::choco()
 )
@@ -219,7 +232,21 @@ priors <- c(
   prior("normal(0, 0.5)", class = "b", coef = "polyAttractive22", dpar = "phileft"),
   prior("normal(0, 0.5)", class = "b", coef = "polyAttractive22", dpar = "phidelta"),
   prior("normal(0, 0.5)", class = "b", coef = "polyAttractive22", dpar = "pex"),
-  prior("normal(0, 0.5)", class = "b", coef = "polyAttractive22", dpar = "bex")
+  prior("normal(0, 0.5)", class = "b", coef = "polyAttractive22", dpar = "bex"),
+  prior("normal(0, 0.5)", class = "b", coef = "SexFemale:polyAttractive21", dpar = ""),
+  prior("normal(0, 0.5)", class = "b", coef = "SexFemale:polyAttractive21", dpar = "muleft"),
+  prior("normal(0, 0.5)", class = "b", coef = "SexFemale:polyAttractive21", dpar = "mudelta"),
+  prior("normal(0, 0.5)", class = "b", coef = "SexFemale:polyAttractive21", dpar = "phileft"),
+  prior("normal(0, 0.5)", class = "b", coef = "SexFemale:polyAttractive21", dpar = "phidelta"),
+  prior("normal(0, 0.5)", class = "b", coef = "SexFemale:polyAttractive21", dpar = "pex"),
+  prior("normal(0, 0.5)", class = "b", coef = "SexFemale:polyAttractive21", dpar = "bex"),
+  prior("normal(0, 0.5)", class = "b", coef = "SexFemale:polyAttractive22", dpar = ""),
+  prior("normal(0, 0.5)", class = "b", coef = "SexFemale:polyAttractive22", dpar = "muleft"),
+  prior("normal(0, 0.5)", class = "b", coef = "SexFemale:polyAttractive22", dpar = "mudelta"),
+  prior("normal(0, 0.5)", class = "b", coef = "SexFemale:polyAttractive22", dpar = "phileft"),
+  prior("normal(0, 0.5)", class = "b", coef = "SexFemale:polyAttractive22", dpar = "phidelta"),
+  prior("normal(0, 0.5)", class = "b", coef = "SexFemale:polyAttractive22", dpar = "pex"),
+  prior("normal(0, 0.5)", class = "b", coef = "SexFemale:polyAttractive22", dpar = "bex")
 ) |> brms::validate_prior(formula = f, data = df)
 
 
