@@ -1,0 +1,3979 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Analysis - Study 2</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="2_study2_files/libs/clipboard/clipboard.min.js"></script>
+<script src="2_study2_files/libs/quarto-html/quarto.js"></script>
+<script src="2_study2_files/libs/quarto-html/popper.min.js"></script>
+<script src="2_study2_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="2_study2_files/libs/quarto-html/anchor.min.js"></script>
+<link href="2_study2_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="2_study2_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="2_study2_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="2_study2_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="2_study2_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#data-preprocessing" id="toc-data-preprocessing" class="nav-link active" data-scroll-target="#data-preprocessing">Data Preprocessing</a></li>
+  <li><a href="#sample-1" id="toc-sample-1" class="nav-link" data-scroll-target="#sample-1">Sample 1</a>
+  <ul class="collapse">
+  <li><a href="#attractiveness" id="toc-attractiveness" class="nav-link" data-scroll-target="#attractiveness">Attractiveness</a></li>
+  <li><a href="#beauty" id="toc-beauty" class="nav-link" data-scroll-target="#beauty">Beauty</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Analysis - Study 2</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">mc.cores =</span> parallel<span class="sc">::</span><span class="fu">detectCores</span>() <span class="sc">-</span> <span class="dv">2</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(easystats)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggside)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdist)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(brms)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cmdstanr)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rstan)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="data-preprocessing" class="level2">
+<h2 class="anchored" data-anchor-id="data-preprocessing">Data Preprocessing</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"https://raw.githubusercontent.com/RealityBending/FictionChoco/refs/heads/main/data/sample1.csv"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>Sex <span class="ot">&lt;-</span> <span class="fu">factor</span>(df<span class="sc">$</span>Sex, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Male"</span>, <span class="st">"Female"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="sample-1" class="level2">
+<h2 class="anchored" data-anchor-id="sample-1">Sample 1</h2>
+<section id="attractiveness" class="level3">
+<h3 class="anchored" data-anchor-id="attractiveness">Attractiveness</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> lme4<span class="sc">::</span><span class="fu">lmer</span>(Real <span class="sc">~</span> Sex <span class="sc">/</span> <span class="fu">poly</span>(Attractive, <span class="dv">2</span>) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>Participant) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>Item), <span class="at">data =</span> df)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">display</span>(parameters<span class="sc">::</span><span class="fu">parameters</span>(m, <span class="at">effects =</span> <span class="st">"fixed"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Fixed Effects</caption>
+<colgroup>
+<col style="width: 41%">
+<col style="width: 14%">
+<col style="width: 6%">
+<col style="width: 17%">
+<col style="width: 10%">
+<col style="width: 9%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Parameter</th>
+<th style="text-align: center;">Coefficient</th>
+<th style="text-align: center;">SE</th>
+<th style="text-align: center;">95% CI</th>
+<th style="text-align: center;">t(8244)</th>
+<th style="text-align: center;">p</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: center;">0.50</td>
+<td style="text-align: center;">0.02</td>
+<td style="text-align: center;">(0.47, 0.53)</td>
+<td style="text-align: center;">32.04</td>
+<td style="text-align: center;">&lt; .001</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sex (Female)</td>
+<td style="text-align: center;">0.08</td>
+<td style="text-align: center;">0.03</td>
+<td style="text-align: center;">(0.02, 0.13)</td>
+<td style="text-align: center;">2.84</td>
+<td style="text-align: center;">0.005</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Sex (Male) × poly(Attractive, 2)1</td>
+<td style="text-align: center;">3.63</td>
+<td style="text-align: center;">0.47</td>
+<td style="text-align: center;">(2.71, 4.56)</td>
+<td style="text-align: center;">7.71</td>
+<td style="text-align: center;">&lt; .001</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sex (Female) × poly(Attractive, 2)1</td>
+<td style="text-align: center;">1.16</td>
+<td style="text-align: center;">0.96</td>
+<td style="text-align: center;">(-0.72, 3.05)</td>
+<td style="text-align: center;">1.21</td>
+<td style="text-align: center;">0.227</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Sex (Male) × poly(Attractive, 2)2</td>
+<td style="text-align: center;">0.34</td>
+<td style="text-align: center;">0.42</td>
+<td style="text-align: center;">(-0.49, 1.17)</td>
+<td style="text-align: center;">0.81</td>
+<td style="text-align: center;">0.420</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sex (Female) × poly(Attractive, 2)2</td>
+<td style="text-align: center;">1.06</td>
+<td style="text-align: center;">0.95</td>
+<td style="text-align: center;">(-0.79, 2.92)</td>
+<td style="text-align: center;">1.12</td>
+<td style="text-align: center;">0.261</td>
+</tr>
+</tbody>
+</table>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">estimate_relation</span>(m, <span class="at">length =</span> <span class="dv">30</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>Attractive, <span class="at">y =</span> Predicted)) <span class="sc">+</span> </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> CI_low, <span class="at">ymax =</span> CI_high,, <span class="at">fill =</span> Sex), <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">color =</span> Sex), <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">data=</span>df, <span class="fu">aes</span>(<span class="at">color =</span> Sex, <span class="at">y =</span> Real), <span class="at">method =</span> <span class="st">"loess"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">formula =</span> <span class="st">'y ~ x'</span>) <span class="sc">+</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Male"</span><span class="ot">=</span><span class="st">"#2196F3"</span>, <span class="st">"Female"</span><span class="ot">=</span><span class="st">"#E91E63"</span>)) <span class="sc">+</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Male"</span><span class="ot">=</span><span class="st">"#2196F3"</span>, <span class="st">"Female"</span><span class="ot">=</span><span class="st">"#E91E63"</span>)) <span class="sc">+</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="2_study2_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="model-description" class="level4">
+<h4 class="anchored" data-anchor-id="model-description">Model Description</h4>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Effect of Attractiveness</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Random Effects</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">Full</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>m1_chocoat <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"models/sample1_chocoattractiveness.rds"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>params_table <span class="ot">&lt;-</span> <span class="cf">function</span>(m, <span class="at">keep =</span> <span class="st">"polyAttractive"</span>) {</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  params <span class="ot">&lt;-</span> insight<span class="sc">::</span><span class="fu">find_parameters</span>(m, <span class="at">effects =</span> <span class="st">"fixed"</span>, <span class="at">flatten  =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  d <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(m, <span class="at">variable =</span> params[<span class="fu">str_detect</span>(params, keep)])</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  tab <span class="ot">&lt;-</span> bayestestR<span class="sc">::</span><span class="fu">describe_posterior</span>(d, <span class="at">effects =</span> <span class="st">"fixed"</span>, <span class="at">component =</span> <span class="st">"all"</span>, </span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">ci_method =</span> <span class="st">"hdi"</span>, <span class="at">test =</span> <span class="st">"p_direction"</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  tab <span class="sc">|&gt;</span> </span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Parameter =</span> <span class="fu">str_replace</span>(Parameter, <span class="st">"b_Sex"</span>, <span class="st">"b_p_Sex"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">separate</span>(Parameter, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"temp"</span>, <span class="st">"Parameter"</span>, <span class="st">"Effect"</span>), <span class="at">sep =</span> <span class="st">"_"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    insight<span class="sc">::</span><span class="fu">format_table</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">-</span>temp) <span class="sc">|&gt;</span> </span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">col =</span> tab<span class="sc">$</span>pd) <span class="sc">|&gt;</span> </span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">gt</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">data_color</span>(<span class="at">columns =</span> <span class="st">"Parameter"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">data_color</span>(<span class="at">columns =</span> <span class="st">"col"</span>, <span class="at">method =</span> <span class="st">"numeric"</span>, <span class="at">target_columns =</span> <span class="st">"pd"</span>, </span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>                   <span class="at">row =</span> col <span class="sc">&gt;</span> <span class="fl">0.95</span>, <span class="at">palette =</span> <span class="st">"yellow"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">data_color</span>(<span class="at">columns =</span> <span class="st">"col"</span>, <span class="at">method =</span> <span class="st">"numeric"</span>, <span class="at">target_columns =</span> <span class="st">"pd"</span>, </span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>                   <span class="at">row =</span> col <span class="sc">&gt;</span> <span class="fl">0.97</span>, <span class="at">palette =</span> <span class="st">"green"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">cols_hide</span>(<span class="st">"col"</span>)</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="fu">params_table</span>(m1_chocoat, <span class="at">keep =</span> <span class="st">"polyAttractive"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="gyezjbnfgc" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#gyezjbnfgc table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#gyezjbnfgc thead, #gyezjbnfgc tbody, #gyezjbnfgc tfoot, #gyezjbnfgc tr, #gyezjbnfgc td, #gyezjbnfgc th {
+  border-style: none;
+}
+
+#gyezjbnfgc p {
+  margin: 0;
+  padding: 0;
+}
+
+#gyezjbnfgc .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#gyezjbnfgc .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#gyezjbnfgc .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#gyezjbnfgc .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#gyezjbnfgc .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#gyezjbnfgc .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gyezjbnfgc .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#gyezjbnfgc .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#gyezjbnfgc .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#gyezjbnfgc .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#gyezjbnfgc .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#gyezjbnfgc .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#gyezjbnfgc .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#gyezjbnfgc .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#gyezjbnfgc .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#gyezjbnfgc .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#gyezjbnfgc .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#gyezjbnfgc .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#gyezjbnfgc .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gyezjbnfgc .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#gyezjbnfgc .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#gyezjbnfgc .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#gyezjbnfgc .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gyezjbnfgc .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#gyezjbnfgc .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#gyezjbnfgc .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gyezjbnfgc .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gyezjbnfgc .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#gyezjbnfgc .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gyezjbnfgc .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#gyezjbnfgc .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gyezjbnfgc .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#gyezjbnfgc .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gyezjbnfgc .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#gyezjbnfgc .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gyezjbnfgc .gt_left {
+  text-align: left;
+}
+
+#gyezjbnfgc .gt_center {
+  text-align: center;
+}
+
+#gyezjbnfgc .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#gyezjbnfgc .gt_font_normal {
+  font-weight: normal;
+}
+
+#gyezjbnfgc .gt_font_bold {
+  font-weight: bold;
+}
+
+#gyezjbnfgc .gt_font_italic {
+  font-style: italic;
+}
+
+#gyezjbnfgc .gt_super {
+  font-size: 65%;
+}
+
+#gyezjbnfgc .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#gyezjbnfgc .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#gyezjbnfgc .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#gyezjbnfgc .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#gyezjbnfgc .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#gyezjbnfgc .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#gyezjbnfgc .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#gyezjbnfgc .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#gyezjbnfgc div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="header gt_col_headings">
+<th id="Parameter" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Parameter</th>
+<th id="Effect" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Effect</th>
+<th id="Median" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Median</th>
+<th id="a95%-CI" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">95% CI</th>
+<th id="pd" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">pd</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #2297E6; color: #FFFFFF">p</td>
+<td class="gt_row gt_left" headers="Effect">SexMale:polyAttractive21</td>
+<td class="gt_row gt_right" headers="Median">14.19</td>
+<td class="gt_row gt_left" headers="95% CI">[ 8.97, 19.47]</td>
+<td class="gt_row gt_right" headers="pd" style="background-color: #00FF00; color: #000000">100%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #2297E6; color: #FFFFFF">p</td>
+<td class="gt_row gt_left" headers="Effect">SexFemale:polyAttractive21</td>
+<td class="gt_row gt_right" headers="Median">4.43</td>
+<td class="gt_row gt_left" headers="95% CI">[ -3.44, 12.16]</td>
+<td class="gt_row gt_right" headers="pd">86.64%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #2297E6; color: #FFFFFF">p</td>
+<td class="gt_row gt_left" headers="Effect">SexMale:polyAttractive22</td>
+<td class="gt_row gt_right" headers="Median">3.05</td>
+<td class="gt_row gt_left" headers="95% CI">[ -1.87, 7.89]</td>
+<td class="gt_row gt_right" headers="pd">89.03%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #2297E6; color: #FFFFFF">p</td>
+<td class="gt_row gt_left" headers="Effect">SexFemale:polyAttractive22</td>
+<td class="gt_row gt_right" headers="Median">1.21</td>
+<td class="gt_row gt_left" headers="95% CI">[ -6.58, 8.86]</td>
+<td class="gt_row gt_right" headers="pd">62.05%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #61D04F; color: #000000">confright</td>
+<td class="gt_row gt_left" headers="Effect">SexMale:polyAttractive21</td>
+<td class="gt_row gt_right" headers="Median">2.37</td>
+<td class="gt_row gt_left" headers="95% CI">[ -0.49, 5.29]</td>
+<td class="gt_row gt_right" headers="pd">94.65%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #61D04F; color: #000000">confright</td>
+<td class="gt_row gt_left" headers="Effect">SexFemale:polyAttractive21</td>
+<td class="gt_row gt_right" headers="Median">0.07</td>
+<td class="gt_row gt_left" headers="95% CI">[ -5.10, 5.53]</td>
+<td class="gt_row gt_right" headers="pd">51.08%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #61D04F; color: #000000">confright</td>
+<td class="gt_row gt_left" headers="Effect">SexMale:polyAttractive22</td>
+<td class="gt_row gt_right" headers="Median">3.66</td>
+<td class="gt_row gt_left" headers="95% CI">[ 0.78, 6.47]</td>
+<td class="gt_row gt_right" headers="pd" style="background-color: #00FF00; color: #000000">99.38%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #61D04F; color: #000000">confright</td>
+<td class="gt_row gt_left" headers="Effect">SexFemale:polyAttractive22</td>
+<td class="gt_row gt_right" headers="Median">2.57</td>
+<td class="gt_row gt_left" headers="95% CI">[ -2.84, 7.99]</td>
+<td class="gt_row gt_right" headers="pd">82.17%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #DF536B; color: #FFFFFF">confleft</td>
+<td class="gt_row gt_left" headers="Effect">SexMale:polyAttractive21</td>
+<td class="gt_row gt_right" headers="Median">-5.99</td>
+<td class="gt_row gt_left" headers="95% CI">[ -9.35, -2.58]</td>
+<td class="gt_row gt_right" headers="pd" style="background-color: #00FF00; color: #000000">99.97%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #DF536B; color: #FFFFFF">confleft</td>
+<td class="gt_row gt_left" headers="Effect">SexFemale:polyAttractive21</td>
+<td class="gt_row gt_right" headers="Median">-1.28</td>
+<td class="gt_row gt_left" headers="95% CI">[ -7.84, 4.90]</td>
+<td class="gt_row gt_right" headers="pd">65.45%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #DF536B; color: #FFFFFF">confleft</td>
+<td class="gt_row gt_left" headers="Effect">SexMale:polyAttractive22</td>
+<td class="gt_row gt_right" headers="Median">1.91</td>
+<td class="gt_row gt_left" headers="95% CI">[ -1.58, 5.48]</td>
+<td class="gt_row gt_right" headers="pd">85.72%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #DF536B; color: #FFFFFF">confleft</td>
+<td class="gt_row gt_left" headers="Effect">SexFemale:polyAttractive22</td>
+<td class="gt_row gt_right" headers="Median">3.75</td>
+<td class="gt_row gt_left" headers="95% CI">[ -2.81, 10.56]</td>
+<td class="gt_row gt_right" headers="pd">86.45%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #F5C710; color: #000000">precright</td>
+<td class="gt_row gt_left" headers="Effect">SexMale:polyAttractive21</td>
+<td class="gt_row gt_right" headers="Median">5.19</td>
+<td class="gt_row gt_left" headers="95% CI">[ -6.98, 17.97]</td>
+<td class="gt_row gt_right" headers="pd">79.01%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #F5C710; color: #000000">precright</td>
+<td class="gt_row gt_left" headers="Effect">SexFemale:polyAttractive21</td>
+<td class="gt_row gt_right" headers="Median">-3.70</td>
+<td class="gt_row gt_left" headers="95% CI">[-20.99, 12.61]</td>
+<td class="gt_row gt_right" headers="pd">66.69%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #F5C710; color: #000000">precright</td>
+<td class="gt_row gt_left" headers="Effect">SexMale:polyAttractive22</td>
+<td class="gt_row gt_right" headers="Median">-10.54</td>
+<td class="gt_row gt_left" headers="95% CI">[-21.80, 0.56]</td>
+<td class="gt_row gt_right" headers="pd" style="background-color: #FFFF00; color: #000000">96.79%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #F5C710; color: #000000">precright</td>
+<td class="gt_row gt_left" headers="Effect">SexFemale:polyAttractive22</td>
+<td class="gt_row gt_right" headers="Median">-3.13</td>
+<td class="gt_row gt_left" headers="95% CI">[-19.96, 13.71]</td>
+<td class="gt_row gt_right" headers="pd">64.53%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #CD0BBC; color: #FFFFFF">precleft</td>
+<td class="gt_row gt_left" headers="Effect">SexMale:polyAttractive21</td>
+<td class="gt_row gt_right" headers="Median">5.72</td>
+<td class="gt_row gt_left" headers="95% CI">[ -6.63, 18.36]</td>
+<td class="gt_row gt_right" headers="pd">81.51%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #CD0BBC; color: #FFFFFF">precleft</td>
+<td class="gt_row gt_left" headers="Effect">SexFemale:polyAttractive21</td>
+<td class="gt_row gt_right" headers="Median">1.87</td>
+<td class="gt_row gt_left" headers="95% CI">[-15.51, 19.40]</td>
+<td class="gt_row gt_right" headers="pd">58.37%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #CD0BBC; color: #FFFFFF">precleft</td>
+<td class="gt_row gt_left" headers="Effect">SexMale:polyAttractive22</td>
+<td class="gt_row gt_right" headers="Median">-10.29</td>
+<td class="gt_row gt_left" headers="95% CI">[-22.26, 1.85]</td>
+<td class="gt_row gt_right" headers="pd" style="background-color: #FFFF00; color: #000000">95.30%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #CD0BBC; color: #FFFFFF">precleft</td>
+<td class="gt_row gt_left" headers="Effect">SexFemale:polyAttractive22</td>
+<td class="gt_row gt_right" headers="Median">-3.63</td>
+<td class="gt_row gt_left" headers="95% CI">[-21.28, 14.02]</td>
+<td class="gt_row gt_right" headers="pd">65.67%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #28E2E5; color: #000000">pex</td>
+<td class="gt_row gt_left" headers="Effect">SexMale:polyAttractive21</td>
+<td class="gt_row gt_right" headers="Median">-3.22</td>
+<td class="gt_row gt_left" headers="95% CI">[-10.63, 4.17]</td>
+<td class="gt_row gt_right" headers="pd">80.25%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #28E2E5; color: #000000">pex</td>
+<td class="gt_row gt_left" headers="Effect">SexFemale:polyAttractive21</td>
+<td class="gt_row gt_right" headers="Median">-2.52</td>
+<td class="gt_row gt_left" headers="95% CI">[-11.68, 6.57]</td>
+<td class="gt_row gt_right" headers="pd">70.37%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #28E2E5; color: #000000">pex</td>
+<td class="gt_row gt_left" headers="Effect">SexMale:polyAttractive22</td>
+<td class="gt_row gt_right" headers="Median">2.67</td>
+<td class="gt_row gt_left" headers="95% CI">[ -5.06, 10.19]</td>
+<td class="gt_row gt_right" headers="pd">75.39%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #28E2E5; color: #000000">pex</td>
+<td class="gt_row gt_left" headers="Effect">SexFemale:polyAttractive22</td>
+<td class="gt_row gt_right" headers="Median">5.13</td>
+<td class="gt_row gt_left" headers="95% CI">[ -4.11, 14.25]</td>
+<td class="gt_row gt_right" headers="pd">86.18%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #000000; color: #FFFFFF">bex</td>
+<td class="gt_row gt_left" headers="Effect">SexMale:polyAttractive21</td>
+<td class="gt_row gt_right" headers="Median">9.74</td>
+<td class="gt_row gt_left" headers="95% CI">[ 2.51, 17.12]</td>
+<td class="gt_row gt_right" headers="pd" style="background-color: #00FF00; color: #000000">99.58%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #000000; color: #FFFFFF">bex</td>
+<td class="gt_row gt_left" headers="Effect">SexFemale:polyAttractive21</td>
+<td class="gt_row gt_right" headers="Median">-0.54</td>
+<td class="gt_row gt_left" headers="95% CI">[ -9.69, 8.80]</td>
+<td class="gt_row gt_right" headers="pd">54.73%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #000000; color: #FFFFFF">bex</td>
+<td class="gt_row gt_left" headers="Effect">SexMale:polyAttractive22</td>
+<td class="gt_row gt_right" headers="Median">1.01</td>
+<td class="gt_row gt_left" headers="95% CI">[ -6.16, 8.26]</td>
+<td class="gt_row gt_right" headers="pd">60.88%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #000000; color: #FFFFFF">bex</td>
+<td class="gt_row gt_left" headers="Effect">SexFemale:polyAttractive22</td>
+<td class="gt_row gt_right" headers="Median">0.63</td>
+<td class="gt_row gt_left" headers="95% CI">[ -8.94, 9.66]</td>
+<td class="gt_row gt_right" headers="pd">55.23%</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>table_dvour <span class="ot">&lt;-</span> <span class="cf">function</span>(g) {</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  performance<span class="sc">::</span><span class="fu">performance_dvour</span>(g) <span class="sc">|&gt;</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(<span class="fu">desc</span>(D_vour)) <span class="sc">|&gt;</span> </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">gt</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">data_color</span>(<span class="st">"D_vour"</span>, <span class="at">palette =</span> <span class="fu">c</span>(<span class="st">"red"</span>, <span class="st">"red"</span>, <span class="st">"orange"</span>, <span class="st">"yellow"</span>, <span class="st">"green"</span>), <span class="at">domain =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">fmt_auto</span>()</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>g1 <span class="ot">&lt;-</span> modelbased<span class="sc">::</span><span class="fu">estimate_grouplevel</span>(m1_chocoat)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="fu">table_dvour</span>(g1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="gqvpcljwzo" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#gqvpcljwzo table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#gqvpcljwzo thead, #gqvpcljwzo tbody, #gqvpcljwzo tfoot, #gqvpcljwzo tr, #gqvpcljwzo td, #gqvpcljwzo th {
+  border-style: none;
+}
+
+#gqvpcljwzo p {
+  margin: 0;
+  padding: 0;
+}
+
+#gqvpcljwzo .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#gqvpcljwzo .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#gqvpcljwzo .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#gqvpcljwzo .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#gqvpcljwzo .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#gqvpcljwzo .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gqvpcljwzo .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#gqvpcljwzo .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#gqvpcljwzo .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#gqvpcljwzo .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#gqvpcljwzo .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#gqvpcljwzo .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#gqvpcljwzo .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#gqvpcljwzo .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#gqvpcljwzo .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#gqvpcljwzo .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#gqvpcljwzo .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#gqvpcljwzo .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#gqvpcljwzo .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gqvpcljwzo .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#gqvpcljwzo .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#gqvpcljwzo .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#gqvpcljwzo .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gqvpcljwzo .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#gqvpcljwzo .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#gqvpcljwzo .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gqvpcljwzo .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gqvpcljwzo .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#gqvpcljwzo .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gqvpcljwzo .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#gqvpcljwzo .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gqvpcljwzo .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#gqvpcljwzo .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gqvpcljwzo .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#gqvpcljwzo .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gqvpcljwzo .gt_left {
+  text-align: left;
+}
+
+#gqvpcljwzo .gt_center {
+  text-align: center;
+}
+
+#gqvpcljwzo .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#gqvpcljwzo .gt_font_normal {
+  font-weight: normal;
+}
+
+#gqvpcljwzo .gt_font_bold {
+  font-weight: bold;
+}
+
+#gqvpcljwzo .gt_font_italic {
+  font-style: italic;
+}
+
+#gqvpcljwzo .gt_super {
+  font-size: 65%;
+}
+
+#gqvpcljwzo .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#gqvpcljwzo .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#gqvpcljwzo .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#gqvpcljwzo .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#gqvpcljwzo .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#gqvpcljwzo .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#gqvpcljwzo .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#gqvpcljwzo .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#gqvpcljwzo div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="header gt_col_headings">
+<th id="Component" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Component</th>
+<th id="Group" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Group</th>
+<th id="Parameter" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Parameter</th>
+<th id="D_vour" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">D_vour</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="Component">confright</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">Intercept</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #77FF00; color: #000000">0.94</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Component">confleft</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">Intercept</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #8FFF00; color: #000000">0.914</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Component">conditional</td>
+<td class="gt_row gt_left" headers="Group">Item</td>
+<td class="gt_row gt_left" headers="Parameter">Intercept</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #BCFF00; color: #000000">0.855</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Component">pex</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">Intercept</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #DBFF00; color: #000000">0.809</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Component">precright</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">Intercept</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #E1FF00; color: #000000">0.799</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Component">conditional</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">Intercept</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #FFF000; color: #000000">0.708</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Component">precleft</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">Intercept</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #FFEF00; color: #000000">0.705</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Component">confright</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">polyAttractive22</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #FF0000; color: #FFFFFF">0.004</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Component">confright</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">polyAttractive21</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #FF0000; color: #FFFFFF">6.216&nbsp;×&nbsp;10<sup>−4</sup></td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Component">conditional</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">polyAttractive21</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #FF0000; color: #FFFFFF">5.495&nbsp;×&nbsp;10<sup>−4</sup></td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Component">confleft</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">polyAttractive22</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #FF0000; color: #FFFFFF">2.610&nbsp;×&nbsp;10<sup>−4</sup></td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Component">conditional</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">polyAttractive22</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #FF0000; color: #FFFFFF">1.247&nbsp;×&nbsp;10<sup>−4</sup></td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Component">pex</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">polyAttractive22</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #FF0000; color: #FFFFFF">9.144&nbsp;×&nbsp;10<sup>−5</sup></td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Component">precleft</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">polyAttractive21</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #FF0000; color: #FFFFFF">4.279&nbsp;×&nbsp;10<sup>−5</sup></td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Component">confleft</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">polyAttractive21</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #FF0000; color: #FFFFFF">3.902&nbsp;×&nbsp;10<sup>−5</sup></td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Component">precright</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">polyAttractive21</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #FF0000; color: #FFFFFF">3.245&nbsp;×&nbsp;10<sup>−5</sup></td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Component">precright</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">polyAttractive22</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #FF0000; color: #FFFFFF">3.049&nbsp;×&nbsp;10<sup>−5</sup></td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Component">pex</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">polyAttractive21</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #FF0000; color: #FFFFFF">1.559&nbsp;×&nbsp;10<sup>−5</sup></td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Component">precleft</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">polyAttractive22</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #FF0000; color: #FFFFFF">5.077&nbsp;×&nbsp;10<sup>−6</sup></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m1_chocoat, <span class="at">robust =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code> Family: choco 
+  Links: mu = logit; confright = logit; precright = softplus; confleft = logit; precleft = softplus; pex = logit; bex = logit; pmid = identity 
+Formula: Real ~ 0 + Intercept + Sex/poly(Attractive, 2) + (poly(Attractive, 2) | Participant) + (1 | Item) 
+         confright ~ 0 + Intercept + Sex/poly(Attractive, 2) + (poly(Attractive, 2) | Participant)
+         confleft ~ 0 + Intercept + Sex/poly(Attractive, 2) + (poly(Attractive, 2) | Participant)
+         precright ~ 0 + Intercept + Sex/poly(Attractive, 2) + (poly(Attractive, 2) | Participant)
+         precleft ~ 0 + Intercept + Sex/poly(Attractive, 2) + (poly(Attractive, 2) | Participant)
+         pex ~ 0 + Intercept + Sex/poly(Attractive, 2) + (poly(Attractive, 2) | Participant)
+         bex ~ 0 + Intercept + Sex/poly(Attractive, 2)
+         pmid = 0
+   Data: df (Number of observations: 8253) 
+  Draws: 96 chains, each with iter = 1500; warmup = 750; thin = 1;
+         total post-warmup draws = 72000
+
+Multilevel Hyperparameters:
+~Item (Number of levels: 109) 
+              Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+sd(Intercept)     0.64      0.05     0.55     0.75 1.00    27560    45692
+
+~Participant (Number of levels: 147) 
+                                                           Estimate Est.Error
+sd(Intercept)                                                  0.55      0.05
+sd(polyAttractive21)                                           0.34      0.30
+sd(polyAttractive22)                                           0.34      0.30
+sd(confright_Intercept)                                        0.99      0.06
+sd(confright_polyAttractive21)                                 0.35      0.30
+sd(confright_polyAttractive22)                                 0.35      0.31
+sd(confleft_Intercept)                                         0.98      0.07
+sd(confleft_polyAttractive21)                                  0.34      0.29
+sd(confleft_polyAttractive22)                                  0.34      0.30
+sd(precright_Intercept)                                        2.69      0.23
+sd(precright_polyAttractive21)                                 0.34      0.30
+sd(precright_polyAttractive22)                                 0.34      0.30
+sd(precleft_Intercept)                                         2.25      0.20
+sd(precleft_polyAttractive21)                                  0.34      0.29
+sd(precleft_polyAttractive22)                                  0.34      0.30
+sd(pex_Intercept)                                              1.81      0.11
+sd(pex_polyAttractive21)                                       0.34      0.30
+sd(pex_polyAttractive22)                                       0.34      0.30
+cor(Intercept,polyAttractive21)                               -0.07      0.59
+cor(Intercept,polyAttractive22)                               -0.03      0.59
+cor(polyAttractive21,polyAttractive22)                         0.00      0.60
+cor(confright_Intercept,confright_polyAttractive21)            0.06      0.59
+cor(confright_Intercept,confright_polyAttractive22)           -0.13      0.58
+cor(confright_polyAttractive21,confright_polyAttractive22)    -0.00      0.59
+cor(confleft_Intercept,confleft_polyAttractive21)              0.01      0.59
+cor(confleft_Intercept,confleft_polyAttractive22)             -0.04      0.59
+cor(confleft_polyAttractive21,confleft_polyAttractive22)       0.00      0.60
+cor(precright_Intercept,precright_polyAttractive21)           -0.02      0.60
+cor(precright_Intercept,precright_polyAttractive22)            0.02      0.59
+cor(precright_polyAttractive21,precright_polyAttractive22)    -0.00      0.60
+cor(precleft_Intercept,precleft_polyAttractive21)             -0.02      0.60
+cor(precleft_Intercept,precleft_polyAttractive22)              0.01      0.60
+cor(precleft_polyAttractive21,precleft_polyAttractive22)      -0.00      0.60
+cor(pex_Intercept,pex_polyAttractive21)                       -0.01      0.60
+cor(pex_Intercept,pex_polyAttractive22)                        0.03      0.59
+cor(pex_polyAttractive21,pex_polyAttractive22)                 0.00      0.59
+                                                           l-95% CI u-95% CI
+sd(Intercept)                                                  0.46     0.65
+sd(polyAttractive21)                                           0.02     1.14
+sd(polyAttractive22)                                           0.02     1.13
+sd(confright_Intercept)                                        0.87     1.12
+sd(confright_polyAttractive21)                                 0.02     1.16
+sd(confright_polyAttractive22)                                 0.02     1.16
+sd(confleft_Intercept)                                         0.86     1.12
+sd(confleft_polyAttractive21)                                  0.02     1.12
+sd(confleft_polyAttractive22)                                  0.02     1.11
+sd(precright_Intercept)                                        2.27     3.16
+sd(precright_polyAttractive21)                                 0.02     1.12
+sd(precright_polyAttractive22)                                 0.02     1.13
+sd(precleft_Intercept)                                         1.88     2.69
+sd(precleft_polyAttractive21)                                  0.02     1.11
+sd(precleft_polyAttractive22)                                  0.02     1.12
+sd(pex_Intercept)                                              1.62     2.03
+sd(pex_polyAttractive21)                                       0.02     1.12
+sd(pex_polyAttractive22)                                       0.02     1.12
+cor(Intercept,polyAttractive21)                               -0.89     0.86
+cor(Intercept,polyAttractive22)                               -0.88     0.87
+cor(polyAttractive21,polyAttractive22)                        -0.88     0.88
+cor(confright_Intercept,confright_polyAttractive21)           -0.86     0.89
+cor(confright_Intercept,confright_polyAttractive22)           -0.90     0.84
+cor(confright_polyAttractive21,confright_polyAttractive22)    -0.88     0.88
+cor(confleft_Intercept,confleft_polyAttractive21)             -0.88     0.88
+cor(confleft_Intercept,confleft_polyAttractive22)             -0.88     0.87
+cor(confleft_polyAttractive21,confleft_polyAttractive22)      -0.88     0.88
+cor(precright_Intercept,precright_polyAttractive21)           -0.88     0.88
+cor(precright_Intercept,precright_polyAttractive22)           -0.88     0.88
+cor(precright_polyAttractive21,precright_polyAttractive22)    -0.88     0.88
+cor(precleft_Intercept,precleft_polyAttractive21)             -0.88     0.87
+cor(precleft_Intercept,precleft_polyAttractive22)             -0.88     0.88
+cor(precleft_polyAttractive21,precleft_polyAttractive22)      -0.88     0.88
+cor(pex_Intercept,pex_polyAttractive21)                       -0.88     0.88
+cor(pex_Intercept,pex_polyAttractive22)                       -0.87     0.88
+cor(pex_polyAttractive21,pex_polyAttractive22)                -0.88     0.88
+                                                           Rhat Bulk_ESS
+sd(Intercept)                                              1.00    28193
+sd(polyAttractive21)                                       1.00    59885
+sd(polyAttractive22)                                       1.00    59093
+sd(confright_Intercept)                                    1.01    14674
+sd(confright_polyAttractive21)                             1.00    56150
+sd(confright_polyAttractive22)                             1.00    58335
+sd(confleft_Intercept)                                     1.00    16886
+sd(confleft_polyAttractive21)                              1.00    59575
+sd(confleft_polyAttractive22)                              1.00    60634
+sd(precright_Intercept)                                    1.00    22407
+sd(precright_polyAttractive21)                             1.00    59224
+sd(precright_polyAttractive22)                             1.00    59140
+sd(precleft_Intercept)                                     1.00    23104
+sd(precleft_polyAttractive21)                              1.00    61522
+sd(precleft_polyAttractive22)                              1.00    62254
+sd(pex_Intercept)                                          1.00    56531
+sd(pex_polyAttractive21)                                   1.00    59936
+sd(pex_polyAttractive22)                                   1.00    62301
+cor(Intercept,polyAttractive21)                            1.00   151547
+cor(Intercept,polyAttractive22)                            1.00   147581
+cor(polyAttractive21,polyAttractive22)                     1.00    74334
+cor(confright_Intercept,confright_polyAttractive21)        1.00   147514
+cor(confright_Intercept,confright_polyAttractive22)        1.00   154146
+cor(confright_polyAttractive21,confright_polyAttractive22) 1.00    75066
+cor(confleft_Intercept,confleft_polyAttractive21)          1.00   156648
+cor(confleft_Intercept,confleft_polyAttractive22)          1.00   161795
+cor(confleft_polyAttractive21,confleft_polyAttractive22)   1.00    74854
+cor(precright_Intercept,precright_polyAttractive21)        1.00   159981
+cor(precright_Intercept,precright_polyAttractive22)        1.00   158997
+cor(precright_polyAttractive21,precright_polyAttractive22) 1.00    72274
+cor(precleft_Intercept,precleft_polyAttractive21)          1.00   156463
+cor(precleft_Intercept,precleft_polyAttractive22)          1.00   154552
+cor(precleft_polyAttractive21,precleft_polyAttractive22)   1.00    73228
+cor(pex_Intercept,pex_polyAttractive21)                    1.00   152848
+cor(pex_Intercept,pex_polyAttractive22)                    1.00   153340
+cor(pex_polyAttractive21,pex_polyAttractive22)             1.00    71476
+                                                           Tail_ESS
+sd(Intercept)                                                 46931
+sd(polyAttractive21)                                          36783
+sd(polyAttractive22)                                          36607
+sd(confright_Intercept)                                       28305
+sd(confright_polyAttractive21)                                36575
+sd(confright_polyAttractive22)                                37760
+sd(confleft_Intercept)                                        31702
+sd(confleft_polyAttractive21)                                 37118
+sd(confleft_polyAttractive22)                                 37037
+sd(precright_Intercept)                                       40109
+sd(precright_polyAttractive21)                                35211
+sd(precright_polyAttractive22)                                36480
+sd(precleft_Intercept)                                        42213
+sd(precleft_polyAttractive21)                                 37685
+sd(precleft_polyAttractive22)                                 35022
+sd(pex_Intercept)                                             60395
+sd(pex_polyAttractive21)                                      35513
+sd(pex_polyAttractive22)                                      37712
+cor(Intercept,polyAttractive21)                               46493
+cor(Intercept,polyAttractive22)                               47217
+cor(polyAttractive21,polyAttractive22)                        54790
+cor(confright_Intercept,confright_polyAttractive21)           46166
+cor(confright_Intercept,confright_polyAttractive22)           49745
+cor(confright_polyAttractive21,confright_polyAttractive22)    58393
+cor(confleft_Intercept,confleft_polyAttractive21)             44350
+cor(confleft_Intercept,confleft_polyAttractive22)             46591
+cor(confleft_polyAttractive21,confleft_polyAttractive22)      56055
+cor(precright_Intercept,precright_polyAttractive21)           45453
+cor(precright_Intercept,precright_polyAttractive22)           44667
+cor(precright_polyAttractive21,precright_polyAttractive22)    51228
+cor(precleft_Intercept,precleft_polyAttractive21)             45597
+cor(precleft_Intercept,precleft_polyAttractive22)             46137
+cor(precleft_polyAttractive21,precleft_polyAttractive22)      53935
+cor(pex_Intercept,pex_polyAttractive21)                       43829
+cor(pex_Intercept,pex_polyAttractive22)                       45783
+cor(pex_polyAttractive21,pex_polyAttractive22)                54140
+
+Regression Coefficients:
+                                     Estimate Est.Error l-95% CI u-95% CI Rhat
+Intercept                                0.11      0.09    -0.07     0.29 1.00
+SexFemale                                0.40      0.16     0.07     0.73 1.00
+SexMale:polyAttractive21                14.19      2.70     8.98    19.48 1.00
+SexFemale:polyAttractive21               4.43      3.99    -3.41    12.20 1.00
+SexMale:polyAttractive22                 3.05      2.48    -1.85     7.92 1.00
+SexFemale:polyAttractive22               1.21      3.95    -6.51     8.94 1.00
+confright_Intercept                      0.36      0.11     0.14     0.59 1.02
+confright_SexFemale                     -0.13      0.17    -0.45     0.20 1.02
+confright_SexMale:polyAttractive21       2.37      1.48    -0.50     5.28 1.00
+confright_SexFemale:polyAttractive21     0.07      2.71    -5.20     5.45 1.00
+confright_SexMale:polyAttractive22       3.66      1.45     0.81     6.51 1.00
+confright_SexFemale:polyAttractive22     2.57      2.78    -2.83     8.00 1.00
+precright_Intercept                      4.05      0.32     3.43     4.68 1.01
+precright_SexFemale                     -0.55      0.48    -1.49     0.40 1.00
+precright_SexMale:polyAttractive21       5.19      6.39    -7.35    17.62 1.00
+precright_SexFemale:polyAttractive21    -3.70      8.55   -20.51    13.11 1.00
+precright_SexMale:polyAttractive22     -10.54      5.74   -21.75     0.63 1.00
+precright_SexFemale:polyAttractive22    -3.13      8.49   -20.06    13.64 1.00
+confleft_Intercept                       0.45      0.11     0.23     0.67 1.02
+confleft_SexFemale                      -0.40      0.17    -0.73    -0.07 1.01
+confleft_SexMale:polyAttractive21       -5.99      1.73    -9.35    -2.59 1.00
+confleft_SexFemale:polyAttractive21     -1.28      3.26    -7.68     5.08 1.00
+confleft_SexMale:polyAttractive22        1.91      1.79    -1.62     5.45 1.00
+confleft_SexFemale:polyAttractive22      3.75      3.38    -2.97    10.41 1.00
+precleft_Intercept                       3.27      0.28     2.74     3.83 1.00
+precleft_SexFemale                       0.13      0.44    -0.73     1.02 1.00
+precleft_SexMale:polyAttractive21        5.72      6.44    -6.80    18.22 1.00
+precleft_SexFemale:polyAttractive21      1.87      8.86   -15.59    19.34 1.00
+precleft_SexMale:polyAttractive22      -10.29      6.17   -22.34     1.78 1.00
+precleft_SexFemale:polyAttractive22     -3.63      9.00   -21.24    14.11 1.00
+pex_Intercept                           -1.78      0.22    -2.22    -1.35 1.01
+pex_SexFemale                           -0.78      0.34    -1.45    -0.12 1.00
+pex_SexMale:polyAttractive21            -3.22      3.76   -10.61     4.21 1.00
+pex_SexFemale:polyAttractive21          -2.52      4.69   -11.68     6.58 1.00
+pex_SexMale:polyAttractive22             2.67      3.87    -4.97    10.31 1.00
+pex_SexFemale:polyAttractive22           5.13      4.68    -4.04    14.36 1.00
+bex_Intercept                           -0.30      0.07    -0.44    -0.15 1.00
+bex_SexFemale                            0.49      0.22     0.07     0.93 1.00
+bex_SexMale:polyAttractive21             9.74      3.72     2.40    17.04 1.00
+bex_SexFemale:polyAttractive21          -0.54      4.71    -9.79     8.71 1.00
+bex_SexMale:polyAttractive22             1.01      3.67    -6.19     8.25 1.00
+bex_SexFemale:polyAttractive22           0.63      4.79    -8.65     9.95 1.00
+                                     Bulk_ESS Tail_ESS
+Intercept                               22112    36617
+SexFemale                               30719    45763
+SexMale:polyAttractive21                98038    60898
+SexFemale:polyAttractive21             139989    59735
+SexMale:polyAttractive22               117322    61447
+SexFemale:polyAttractive22             144585    59054
+confright_Intercept                      4385     9518
+confright_SexFemale                      6181    12827
+confright_SexMale:polyAttractive21     125424    58448
+confright_SexFemale:polyAttractive21   115701    60475
+confright_SexMale:polyAttractive22     126494    58223
+confright_SexFemale:polyAttractive22   128057    59236
+precright_Intercept                     14282    27027
+precright_SexFemale                     17445    32418
+precright_SexMale:polyAttractive21     124867    61769
+precright_SexFemale:polyAttractive21   135006    58685
+precright_SexMale:polyAttractive22     124160    61025
+precright_SexFemale:polyAttractive22   143334    57574
+confleft_Intercept                       5484    10332
+confleft_SexFemale                       8285    16648
+confleft_SexMale:polyAttractive21      122127    59220
+confleft_SexFemale:polyAttractive21    120107    58696
+confleft_SexMale:polyAttractive22      119598    59917
+confleft_SexFemale:polyAttractive22    122812    60010
+precleft_Intercept                      16781    28971
+precleft_SexFemale                      22838    38344
+precleft_SexMale:polyAttractive21      118532    60716
+precleft_SexFemale:polyAttractive21    135743    57118
+precleft_SexMale:polyAttractive22      128334    60926
+precleft_SexFemale:polyAttractive22    139632    56490
+pex_Intercept                           15167    27966
+pex_SexFemale                           25611    42904
+pex_SexMale:polyAttractive21           142068    58772
+pex_SexFemale:polyAttractive21         154094    55920
+pex_SexMale:polyAttractive22           143083    57778
+pex_SexFemale:polyAttractive22         159699    52585
+bex_Intercept                          103148    62065
+bex_SexFemale                           99180    61637
+bex_SexMale:polyAttractive21           148352    56527
+bex_SexFemale:polyAttractive21         162770    53700
+bex_SexMale:polyAttractive22           149616    55851
+bex_SexFemale:polyAttractive22         157314    53070
+
+Further Distributional Parameters:
+     Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+pmid     0.00      0.00     0.00     0.00   NA       NA       NA
+
+Draws were sampled using sample(hmc). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<ul>
+<li>p: poly1 male</li>
+<li>confright: poly2 male</li>
+<li>confleft: poly1 male (neg)</li>
+<li>bex: poly1 male</li>
+<li>Suggests that (related to the original FakeFace1 hypothesis) reality would be driven by extremes degrees of attractiveness.</li>
+</ul>
+</section>
+<section id="model-visualization" class="level4">
+<h4 class="anchored" data-anchor-id="model-visualization">Model Visualization</h4>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>visualize_dchoco <span class="ot">&lt;-</span> <span class="cf">function</span>(m, newdata) {</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> modelbased<span class="sc">::</span><span class="fu">estimate_prediction</span>(m, <span class="at">data =</span> newdata, <span class="at">predict =</span> <span class="st">"mu"</span>, <span class="at">iterations =</span> <span class="dv">50</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  confright <span class="ot">&lt;-</span> modelbased<span class="sc">::</span><span class="fu">estimate_prediction</span>(m, <span class="at">data =</span> newdata, <span class="at">predict =</span> <span class="st">"confright"</span>, <span class="at">iterations =</span> <span class="dv">50</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  confleft <span class="ot">&lt;-</span> modelbased<span class="sc">::</span><span class="fu">estimate_prediction</span>(m, <span class="at">data =</span> newdata, <span class="at">predict =</span> <span class="st">"confleft"</span>, <span class="at">iterations =</span> <span class="dv">50</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  precright <span class="ot">&lt;-</span> modelbased<span class="sc">::</span><span class="fu">estimate_prediction</span>(m, <span class="at">data =</span> newdata, <span class="at">predict =</span> <span class="st">"precright"</span>, <span class="at">iterations =</span> <span class="dv">50</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  precleft <span class="ot">&lt;-</span> modelbased<span class="sc">::</span><span class="fu">estimate_prediction</span>(m, <span class="at">data =</span> newdata, <span class="at">predict =</span> <span class="st">"precleft"</span>, <span class="at">iterations =</span> <span class="dv">50</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  pex <span class="ot">&lt;-</span> modelbased<span class="sc">::</span><span class="fu">estimate_prediction</span>(m, <span class="at">data =</span> newdata, <span class="at">predict =</span> <span class="st">"pex"</span>, <span class="at">iterations =</span> <span class="dv">50</span>)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  bex <span class="ot">&lt;-</span> modelbased<span class="sc">::</span><span class="fu">estimate_prediction</span>(m, <span class="at">data =</span> newdata, <span class="at">predict =</span> <span class="st">"bex"</span>, <span class="at">iterations =</span> <span class="dv">50</span>)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="st">"pmid"</span> <span class="sc">%in%</span> <span class="fu">names</span>(insight<span class="sc">::</span><span class="fu">find_parameters</span>(m))) {</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    pmid <span class="ot">&lt;-</span> modelbased<span class="sc">::</span><span class="fu">estimate_prediction</span>(m, <span class="at">data =</span> newdata, <span class="at">predict =</span> <span class="st">"pmid"</span>, <span class="at">iterations =</span> <span class="dv">50</span>)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    pmid <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">Predicted =</span> <span class="fu">rep</span>(<span class="dv">0</span>, <span class="fu">nrow</span>(newdata)))</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  densities <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  mus <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">length.out =</span> <span class="dv">1001</span>)</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(newdata)) {</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    d <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.005</span>, x, <span class="fl">1.005</span>),</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="fu">c</span>(<span class="dv">0</span>, cogmod<span class="sc">::</span><span class="fu">dchoco</span>(x, <span class="at">p=</span>p<span class="sc">$</span>Predicted[i], <span class="at">confright=</span>confright<span class="sc">$</span>Predicted[i], <span class="at">confleft =</span> confleft<span class="sc">$</span>Predicted[i],</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>                          <span class="at">precright =</span> precright<span class="sc">$</span>Predicted[i], <span class="at">precleft =</span> precleft<span class="sc">$</span>Predicted[i],</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>                          <span class="at">pex =</span> pex<span class="sc">$</span>Predicted[i], <span class="at">bex =</span> bex<span class="sc">$</span>Predicted[i], <span class="at">pmid =</span> pmid<span class="sc">$</span>Predicted[i]), <span class="dv">0</span>)</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>     )</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>    densities <span class="ot">&lt;-</span> <span class="fu">rbind</span>(densities,  <span class="fu">merge</span>(d, newdata[i, ]))</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>    y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">max</span>(d[d<span class="sc">$</span>x <span class="sc">&gt;</span> <span class="fl">0.5</span>, <span class="st">"y"</span>]), <span class="fu">max</span>(d[d<span class="sc">$</span>x <span class="sc">&lt;</span> <span class="fl">0.5</span>, <span class="st">"y"</span>]))</span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>    mu <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>     <span class="at">y =</span> y ,</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>     <span class="at">x =</span> <span class="fu">c</span>(d[d<span class="sc">$</span>x <span class="sc">&gt;</span> <span class="fl">0.5</span> <span class="sc">&amp;</span> d<span class="sc">$</span>y <span class="sc">==</span> y[<span class="dv">1</span>], <span class="st">"x"</span>], </span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>           d[d<span class="sc">$</span>x <span class="sc">&lt;</span> <span class="fl">0.5</span> <span class="sc">&amp;</span> d<span class="sc">$</span>y <span class="sc">==</span> y[<span class="dv">2</span>], <span class="st">"x"</span>]),</span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>     <span class="at">side =</span> <span class="fu">c</span>(<span class="st">"confright"</span>, <span class="st">"confleft"</span>)</span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>    mus <span class="ot">&lt;-</span> <span class="fu">rbind</span>(mus,  <span class="fu">merge</span>(mu, newdata[i, ]))</span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">densities=</span>densities, <span class="at">mu=</span>mus)</span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">visualize_dchoco</span>(m1_chocoat,</span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>                         <span class="at">newdata=</span>insight<span class="sc">::</span><span class="fu">get_datagrid</span>(m1_chocoat, <span class="at">length =</span> <span class="dv">5</span>, <span class="at">preserve_range =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>p3_density <span class="ot">&lt;-</span> pred<span class="sc">$</span>densities <span class="sc">|&gt;</span> </span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Attractive =</span> <span class="fu">as.factor</span>(Attractive),</span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> <span class="fu">ifelse</span>(x <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), y <span class="sc">*</span> <span class="dv">3</span>, y)) <span class="sc">|&gt;</span>  <span class="co"># Inflate extremes for visibility</span></span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>x, <span class="at">y=</span>y)) <span class="sc">+</span></span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">color=</span>Attractive), <span class="at">linewidth =</span> <span class="fl">1.25</span>) <span class="sc">+</span></span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ggforce::geom_link2(data = pred$mu, aes(group = side, linewidth = Attractive, color = as.factor(Attractive)), </span></span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a>  <span class="co">#                     lineend = 'round', n = 500) +</span></span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>(<span class="at">data =</span> pred<span class="sc">$</span>mu, <span class="fu">aes</span>(<span class="at">group =</span> side), <span class="at">linewidth=</span><span class="dv">0</span>, <span class="at">lineend =</span> <span class="st">'round'</span>, </span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a>            <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.025</span>, <span class="st">"npc"</span>), <span class="at">type =</span> <span class="st">"closed"</span>)) <span class="sc">+</span></span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>Sex) <span class="sc">+</span></span>
+<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"Distribution"</span>, <span class="at">x =</span> <span class="st">"Do you think this image is real?"</span>, <span class="at">color =</span> <span class="st">"Attractiveness"</span>) <span class="sc">+</span></span>
+<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values=</span>scales<span class="sc">::</span><span class="fu">seq_gradient_pal</span>(<span class="st">"#FFCDD2"</span>, <span class="st">"#B71C1C"</span>, <span class="st">"Lab"</span>)(<span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="at">length.out=</span><span class="dv">5</span>))) <span class="sc">+</span></span>
+<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>), <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"      0%"</span>, <span class="st">"25%"</span>, <span class="st">"50%"</span>, <span class="st">"75%"</span>, <span class="st">"100%      "</span>)) <span class="sc">+</span></span>
+<span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_linewidth_continuous</span>(<span class="at">range =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="dv">2</span>), <span class="at">guide =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
+<span id="cb9-60"><a href="#cb9-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb9-61"><a href="#cb9-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.title.x =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>), </span>
+<span id="cb9-62"><a href="#cb9-62" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.y =</span> <span class="fu">element_blank</span>(), </span>
+<span id="cb9-63"><a href="#cb9-63" aria-hidden="true" tabindex="-1"></a>        <span class="co"># axis.title.y = element_blank(), </span></span>
+<span id="cb9-64"><a href="#cb9-64" aria-hidden="true" tabindex="-1"></a>        <span class="at">strip.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"lightgrey"</span>, <span class="at">color =</span> <span class="cn">NA</span>)) </span>
+<span id="cb9-65"><a href="#cb9-65" aria-hidden="true" tabindex="-1"></a>p3_density</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="2_study2_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>colors <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"p"</span> <span class="ot">=</span> <span class="st">"#9C27B0"</span>, <span class="st">"confright"</span> <span class="ot">=</span> <span class="st">"#795548"</span>, <span class="st">"confleft"</span> <span class="ot">=</span> <span class="st">"#795548"</span>,</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>            <span class="st">"precright"</span> <span class="ot">=</span> <span class="st">"#607D8B"</span>,<span class="st">"precleft"</span> <span class="ot">=</span> <span class="st">"#607D8B"</span>, <span class="st">"pex"</span> <span class="ot">=</span> <span class="st">"#FF9800"</span>, <span class="st">"bex"</span> <span class="ot">=</span> <span class="st">"#F44336"</span>, <span class="st">"pmid"</span> <span class="ot">=</span> <span class="st">"black"</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>plot_params1 <span class="ot">&lt;-</span> <span class="cf">function</span>(m, <span class="at">xlabel =</span> <span class="st">"Attractiveness"</span>) {</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  pred_params <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(param <span class="cf">in</span> <span class="fu">c</span>(<span class="st">"mu"</span>, <span class="st">"confright"</span>, <span class="st">"confleft"</span>, <span class="st">"precright"</span>, <span class="st">"precleft"</span>, <span class="st">"pex"</span>, <span class="st">"bex"</span>)) {</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    pred_params <span class="ot">&lt;-</span> m <span class="sc">|&gt;</span> </span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>      modelbased<span class="sc">::</span><span class="fu">estimate_prediction</span>(<span class="at">data =</span> <span class="st">"grid"</span>, <span class="at">length =</span> <span class="dv">20</span>, <span class="at">preserve_range =</span> <span class="cn">FALSE</span>, <span class="at">predict =</span> param, <span class="at">iterations =</span> <span class="dv">50</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">Parameter =</span> param) <span class="sc">|&gt;</span> </span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rbind</span>(pred_params)</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  pred_params <span class="sc">|&gt;</span> </span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Parameter =</span> <span class="fu">ifelse</span>(Parameter <span class="sc">==</span> <span class="st">"mu"</span>, <span class="st">"p"</span>, Parameter),</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>           <span class="at">Parameter =</span> <span class="fu">fct_relevel</span>(Parameter, <span class="st">"p"</span>, <span class="st">"confright"</span>, <span class="st">"precright"</span>, <span class="st">"pex"</span>, <span class="st">"confleft"</span>, <span class="st">"precleft"</span>, <span class="st">"bex"</span>),</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>           <span class="at">x =</span> <span class="fu">ifelse</span>(xlabel <span class="sc">==</span> <span class="st">"Attractiveness"</span>, pred_params<span class="sc">$</span>Attractive, pred_params<span class="sc">$</span>Beauty)) <span class="sc">|&gt;</span> </span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(Parameter <span class="sc">!=</span> <span class="st">"bex"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> Predicted)) <span class="sc">+</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> CI_low, <span class="at">ymax =</span> CI_high, <span class="at">fill =</span> Parameter, <span class="at">group =</span> Sex), <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">color =</span> Parameter, <span class="at">linetype =</span> Sex), <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span>Parameter, <span class="at">scales =</span> <span class="st">"free_y"</span>, <span class="at">ncol=</span><span class="dv">3</span>, <span class="at">strip.position =</span> <span class="st">"left"</span>) <span class="sc">+</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> xlabel) <span class="sc">+</span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> colors, <span class="at">guide =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_manual</span>(<span class="at">values =</span> colors, <span class="at">guide =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># scale_x_continuous(expand = c(0, 0), breaks = c(0, 0.5, 1), labels = c("      0%", "50%", "100%      ")) +</span></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">strip.placement =</span> <span class="st">"outside"</span>,</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>          <span class="at">axis.title.y =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>          <span class="at">axis.title.x =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>          <span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="fu">rel</span>(<span class="dv">1</span>), <span class="at">face =</span> <span class="st">"italic"</span>),</span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>          <span class="at">panel.grid.minor.x =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_params1</span>(m1_chocoat, <span class="at">xlabel =</span> <span class="st">"Attractiveness"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="2_study2_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="beauty" class="level3">
+<h3 class="anchored" data-anchor-id="beauty">Beauty</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> lme4<span class="sc">::</span><span class="fu">lmer</span>(Real <span class="sc">~</span> Sex <span class="sc">/</span> <span class="fu">poly</span>(Beauty, <span class="dv">2</span>) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>Participant) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>Item), <span class="at">data =</span> df)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">::</span><span class="fu">parameters</span>(m, <span class="at">effects =</span> <span class="st">"fixed"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># Fixed Effects
+
+Parameter                       | Coefficient |   SE |        95% CI | t(8244) |      p
+---------------------------------------------------------------------------------------
+(Intercept)                     |        0.50 | 0.02 | [ 0.47, 0.53] |   31.90 | &lt; .001
+Sex [Female]                    |        0.07 | 0.03 | [ 0.02, 0.13] |    2.66 | 0.008 
+Sex [Male] × poly(Beauty, 2)1   |        3.04 | 0.45 | [ 2.15, 3.93] |    6.73 | &lt; .001
+Sex [Female] × poly(Beauty, 2)1 |        2.16 | 1.00 | [ 0.20, 4.12] |    2.16 | 0.030 
+Sex [Male] × poly(Beauty, 2)2   |        0.53 | 0.42 | [-0.29, 1.34] |    1.26 | 0.208 
+Sex [Female] × poly(Beauty, 2)2 |       -0.24 | 1.04 | [-2.28, 1.80] |   -0.23 | 0.820 </code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Uncertainty intervals (equal-tailed) and p-values (two-tailed) computed
+  using a Wald t-distribution approximation.</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">estimate_relation</span>(m, <span class="at">length =</span> <span class="dv">30</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>Beauty, <span class="at">y =</span> Predicted)) <span class="sc">+</span> </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> CI_low, <span class="at">ymax =</span> CI_high,, <span class="at">fill =</span> Sex), <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">color =</span> Sex), <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">data=</span>df, <span class="fu">aes</span>(<span class="at">color =</span> Sex, <span class="at">y =</span> Real), <span class="at">method =</span> <span class="st">"loess"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">formula =</span> <span class="st">'y ~ x'</span>) <span class="sc">+</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Male"</span><span class="ot">=</span><span class="st">"#2196F3"</span>, <span class="st">"Female"</span><span class="ot">=</span><span class="st">"#E91E63"</span>)) <span class="sc">+</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Male"</span><span class="ot">=</span><span class="st">"#2196F3"</span>, <span class="st">"Female"</span><span class="ot">=</span><span class="st">"#E91E63"</span>)) <span class="sc">+</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="2_study2_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="model-description-1" class="level4">
+<h4 class="anchored" data-anchor-id="model-description-1">Model Description</h4>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">Effect of Beauty</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href="">Random Effects</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false" href="">Full</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>m1_chocobeauty <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"models/sample1_chocobeauty.rds"</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">params_table</span>(m1_chocobeauty, <span class="at">keep =</span> <span class="st">"polyBeauty"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Identical densities found along different segments of the distribution,
+  choosing rightmost.</code></pre>
+</div>
+<div class="cell-output-display">
+<div id="againvrgri" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#againvrgri table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#againvrgri thead, #againvrgri tbody, #againvrgri tfoot, #againvrgri tr, #againvrgri td, #againvrgri th {
+  border-style: none;
+}
+
+#againvrgri p {
+  margin: 0;
+  padding: 0;
+}
+
+#againvrgri .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#againvrgri .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#againvrgri .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#againvrgri .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#againvrgri .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#againvrgri .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#againvrgri .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#againvrgri .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#againvrgri .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#againvrgri .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#againvrgri .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#againvrgri .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#againvrgri .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#againvrgri .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#againvrgri .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#againvrgri .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#againvrgri .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#againvrgri .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#againvrgri .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#againvrgri .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#againvrgri .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#againvrgri .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#againvrgri .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#againvrgri .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#againvrgri .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#againvrgri .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#againvrgri .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#againvrgri .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#againvrgri .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#againvrgri .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#againvrgri .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#againvrgri .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#againvrgri .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#againvrgri .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#againvrgri .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#againvrgri .gt_left {
+  text-align: left;
+}
+
+#againvrgri .gt_center {
+  text-align: center;
+}
+
+#againvrgri .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#againvrgri .gt_font_normal {
+  font-weight: normal;
+}
+
+#againvrgri .gt_font_bold {
+  font-weight: bold;
+}
+
+#againvrgri .gt_font_italic {
+  font-style: italic;
+}
+
+#againvrgri .gt_super {
+  font-size: 65%;
+}
+
+#againvrgri .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#againvrgri .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#againvrgri .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#againvrgri .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#againvrgri .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#againvrgri .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#againvrgri .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#againvrgri .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#againvrgri div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="header gt_col_headings">
+<th id="Parameter" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Parameter</th>
+<th id="Effect" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Effect</th>
+<th id="Median" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Median</th>
+<th id="a95%-CI" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">95% CI</th>
+<th id="pd" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">pd</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #2297E6; color: #FFFFFF">p</td>
+<td class="gt_row gt_left" headers="Effect">SexMale:polyBeauty21</td>
+<td class="gt_row gt_right" headers="Median">12.11</td>
+<td class="gt_row gt_left" headers="95% CI">[ 7.01, 17.33]</td>
+<td class="gt_row gt_right" headers="pd" style="background-color: #00FF00; color: #000000">100%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #2297E6; color: #FFFFFF">p</td>
+<td class="gt_row gt_left" headers="Effect">SexFemale:polyBeauty21</td>
+<td class="gt_row gt_right" headers="Median">7.02</td>
+<td class="gt_row gt_left" headers="95% CI">[ -0.90, 14.97]</td>
+<td class="gt_row gt_right" headers="pd" style="background-color: #FFFF00; color: #000000">95.91%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #2297E6; color: #FFFFFF">p</td>
+<td class="gt_row gt_left" headers="Effect">SexMale:polyBeauty22</td>
+<td class="gt_row gt_right" headers="Median">3.73</td>
+<td class="gt_row gt_left" headers="95% CI">[ -1.10, 8.60]</td>
+<td class="gt_row gt_right" headers="pd">93.38%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #2297E6; color: #FFFFFF">p</td>
+<td class="gt_row gt_left" headers="Effect">SexFemale:polyBeauty22</td>
+<td class="gt_row gt_right" headers="Median">-0.38</td>
+<td class="gt_row gt_left" headers="95% CI">[ -8.39, 7.65]</td>
+<td class="gt_row gt_right" headers="pd">53.78%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #61D04F; color: #000000">confright</td>
+<td class="gt_row gt_left" headers="Effect">SexMale:polyBeauty21</td>
+<td class="gt_row gt_right" headers="Median">2.25</td>
+<td class="gt_row gt_left" headers="95% CI">[ -0.66, 5.02]</td>
+<td class="gt_row gt_right" headers="pd">93.87%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #61D04F; color: #000000">confright</td>
+<td class="gt_row gt_left" headers="Effect">SexFemale:polyBeauty21</td>
+<td class="gt_row gt_right" headers="Median">0.05</td>
+<td class="gt_row gt_left" headers="95% CI">[ -5.17, 5.37]</td>
+<td class="gt_row gt_right" headers="pd">50.77%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #61D04F; color: #000000">confright</td>
+<td class="gt_row gt_left" headers="Effect">SexMale:polyBeauty22</td>
+<td class="gt_row gt_right" headers="Median">3.75</td>
+<td class="gt_row gt_left" headers="95% CI">[ 0.82, 6.67]</td>
+<td class="gt_row gt_right" headers="pd" style="background-color: #00FF00; color: #000000">99.36%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #61D04F; color: #000000">confright</td>
+<td class="gt_row gt_left" headers="Effect">SexFemale:polyBeauty22</td>
+<td class="gt_row gt_right" headers="Median">2.81</td>
+<td class="gt_row gt_left" headers="95% CI">[ -2.86, 8.38]</td>
+<td class="gt_row gt_right" headers="pd">83.65%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #DF536B; color: #FFFFFF">confleft</td>
+<td class="gt_row gt_left" headers="Effect">SexMale:polyBeauty21</td>
+<td class="gt_row gt_right" headers="Median">-5.35</td>
+<td class="gt_row gt_left" headers="95% CI">[ -8.63, -2.01]</td>
+<td class="gt_row gt_right" headers="pd" style="background-color: #00FF00; color: #000000">99.92%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #DF536B; color: #FFFFFF">confleft</td>
+<td class="gt_row gt_left" headers="Effect">SexFemale:polyBeauty21</td>
+<td class="gt_row gt_right" headers="Median">-0.12</td>
+<td class="gt_row gt_left" headers="95% CI">[ -6.70, 6.19]</td>
+<td class="gt_row gt_right" headers="pd">51.47%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #DF536B; color: #FFFFFF">confleft</td>
+<td class="gt_row gt_left" headers="Effect">SexMale:polyBeauty22</td>
+<td class="gt_row gt_right" headers="Median">2.94</td>
+<td class="gt_row gt_left" headers="95% CI">[ -0.59, 6.56]</td>
+<td class="gt_row gt_right" headers="pd">94.63%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #DF536B; color: #FFFFFF">confleft</td>
+<td class="gt_row gt_left" headers="Effect">SexFemale:polyBeauty22</td>
+<td class="gt_row gt_right" headers="Median">8.36</td>
+<td class="gt_row gt_left" headers="95% CI">[ 1.38, 15.36]</td>
+<td class="gt_row gt_right" headers="pd" style="background-color: #00FF00; color: #000000">99.04%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #F5C710; color: #000000">precright</td>
+<td class="gt_row gt_left" headers="Effect">SexMale:polyBeauty21</td>
+<td class="gt_row gt_right" headers="Median">4.69</td>
+<td class="gt_row gt_left" headers="95% CI">[ -8.12, 17.43]</td>
+<td class="gt_row gt_right" headers="pd">76.18%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #F5C710; color: #000000">precright</td>
+<td class="gt_row gt_left" headers="Effect">SexFemale:polyBeauty21</td>
+<td class="gt_row gt_right" headers="Median">0.77</td>
+<td class="gt_row gt_left" headers="95% CI">[-16.27, 17.27]</td>
+<td class="gt_row gt_right" headers="pd">53.62%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #F5C710; color: #000000">precright</td>
+<td class="gt_row gt_left" headers="Effect">SexMale:polyBeauty22</td>
+<td class="gt_row gt_right" headers="Median">-3.05</td>
+<td class="gt_row gt_left" headers="95% CI">[-14.90, 8.46]</td>
+<td class="gt_row gt_right" headers="pd">69.46%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #F5C710; color: #000000">precright</td>
+<td class="gt_row gt_left" headers="Effect">SexFemale:polyBeauty22</td>
+<td class="gt_row gt_right" headers="Median">-0.06</td>
+<td class="gt_row gt_left" headers="95% CI">[-17.24, 17.06]</td>
+<td class="gt_row gt_right" headers="pd">50.23%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #CD0BBC; color: #FFFFFF">precleft</td>
+<td class="gt_row gt_left" headers="Effect">SexMale:polyBeauty21</td>
+<td class="gt_row gt_right" headers="Median">6.62</td>
+<td class="gt_row gt_left" headers="95% CI">[ -5.72, 19.24]</td>
+<td class="gt_row gt_right" headers="pd">85.22%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #CD0BBC; color: #FFFFFF">precleft</td>
+<td class="gt_row gt_left" headers="Effect">SexFemale:polyBeauty21</td>
+<td class="gt_row gt_right" headers="Median">-1.18</td>
+<td class="gt_row gt_left" headers="95% CI">[-18.89, 16.27]</td>
+<td class="gt_row gt_right" headers="pd">55.33%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #CD0BBC; color: #FFFFFF">precleft</td>
+<td class="gt_row gt_left" headers="Effect">SexMale:polyBeauty22</td>
+<td class="gt_row gt_right" headers="Median">-9.01</td>
+<td class="gt_row gt_left" headers="95% CI">[-20.64, 2.96]</td>
+<td class="gt_row gt_right" headers="pd">93.23%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #CD0BBC; color: #FFFFFF">precleft</td>
+<td class="gt_row gt_left" headers="Effect">SexFemale:polyBeauty22</td>
+<td class="gt_row gt_right" headers="Median">1.52</td>
+<td class="gt_row gt_left" headers="95% CI">[-16.42, 19.45]</td>
+<td class="gt_row gt_right" headers="pd">56.65%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #28E2E5; color: #000000">pex</td>
+<td class="gt_row gt_left" headers="Effect">SexMale:polyBeauty21</td>
+<td class="gt_row gt_right" headers="Median">-2.94</td>
+<td class="gt_row gt_left" headers="95% CI">[-10.37, 4.26]</td>
+<td class="gt_row gt_right" headers="pd">78.38%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #28E2E5; color: #000000">pex</td>
+<td class="gt_row gt_left" headers="Effect">SexFemale:polyBeauty21</td>
+<td class="gt_row gt_right" headers="Median">-0.56</td>
+<td class="gt_row gt_left" headers="95% CI">[ -9.79, 8.81]</td>
+<td class="gt_row gt_right" headers="pd">54.87%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #28E2E5; color: #000000">pex</td>
+<td class="gt_row gt_left" headers="Effect">SexMale:polyBeauty22</td>
+<td class="gt_row gt_right" headers="Median">1.30</td>
+<td class="gt_row gt_left" headers="95% CI">[ -5.99, 8.97]</td>
+<td class="gt_row gt_right" headers="pd">63.48%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #28E2E5; color: #000000">pex</td>
+<td class="gt_row gt_left" headers="Effect">SexFemale:polyBeauty22</td>
+<td class="gt_row gt_right" headers="Median">2.97</td>
+<td class="gt_row gt_left" headers="95% CI">[ -6.49, 12.18]</td>
+<td class="gt_row gt_right" headers="pd">73.35%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #000000; color: #FFFFFF">bex</td>
+<td class="gt_row gt_left" headers="Effect">SexMale:polyBeauty21</td>
+<td class="gt_row gt_right" headers="Median">7.47</td>
+<td class="gt_row gt_left" headers="95% CI">[ 0.45, 14.39]</td>
+<td class="gt_row gt_right" headers="pd" style="background-color: #00FF00; color: #000000">98.20%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #000000; color: #FFFFFF">bex</td>
+<td class="gt_row gt_left" headers="Effect">SexFemale:polyBeauty21</td>
+<td class="gt_row gt_right" headers="Median">0.56</td>
+<td class="gt_row gt_left" headers="95% CI">[ -8.68, 10.23]</td>
+<td class="gt_row gt_right" headers="pd">54.55%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #000000; color: #FFFFFF">bex</td>
+<td class="gt_row gt_left" headers="Effect">SexMale:polyBeauty22</td>
+<td class="gt_row gt_right" headers="Median">-0.37</td>
+<td class="gt_row gt_left" headers="95% CI">[ -7.18, 6.56]</td>
+<td class="gt_row gt_right" headers="pd">54.23%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Parameter" style="background-color: #000000; color: #FFFFFF">bex</td>
+<td class="gt_row gt_left" headers="Effect">SexFemale:polyBeauty22</td>
+<td class="gt_row gt_right" headers="Median">-1.34</td>
+<td class="gt_row gt_left" headers="95% CI">[-10.65, 8.23]</td>
+<td class="gt_row gt_right" headers="pd">60.70%</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table_dvour</span>(modelbased<span class="sc">::</span><span class="fu">estimate_grouplevel</span>(m1_chocobeauty))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="hmzthfwaky" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#hmzthfwaky table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#hmzthfwaky thead, #hmzthfwaky tbody, #hmzthfwaky tfoot, #hmzthfwaky tr, #hmzthfwaky td, #hmzthfwaky th {
+  border-style: none;
+}
+
+#hmzthfwaky p {
+  margin: 0;
+  padding: 0;
+}
+
+#hmzthfwaky .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#hmzthfwaky .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#hmzthfwaky .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#hmzthfwaky .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#hmzthfwaky .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#hmzthfwaky .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#hmzthfwaky .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#hmzthfwaky .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#hmzthfwaky .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#hmzthfwaky .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#hmzthfwaky .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#hmzthfwaky .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#hmzthfwaky .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#hmzthfwaky .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#hmzthfwaky .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#hmzthfwaky .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#hmzthfwaky .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#hmzthfwaky .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#hmzthfwaky .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#hmzthfwaky .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#hmzthfwaky .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#hmzthfwaky .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#hmzthfwaky .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#hmzthfwaky .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#hmzthfwaky .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#hmzthfwaky .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#hmzthfwaky .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#hmzthfwaky .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#hmzthfwaky .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#hmzthfwaky .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#hmzthfwaky .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#hmzthfwaky .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#hmzthfwaky .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#hmzthfwaky .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#hmzthfwaky .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#hmzthfwaky .gt_left {
+  text-align: left;
+}
+
+#hmzthfwaky .gt_center {
+  text-align: center;
+}
+
+#hmzthfwaky .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#hmzthfwaky .gt_font_normal {
+  font-weight: normal;
+}
+
+#hmzthfwaky .gt_font_bold {
+  font-weight: bold;
+}
+
+#hmzthfwaky .gt_font_italic {
+  font-style: italic;
+}
+
+#hmzthfwaky .gt_super {
+  font-size: 65%;
+}
+
+#hmzthfwaky .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#hmzthfwaky .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#hmzthfwaky .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#hmzthfwaky .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#hmzthfwaky .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#hmzthfwaky .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#hmzthfwaky .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#hmzthfwaky .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#hmzthfwaky div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="header gt_col_headings">
+<th id="Component" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Component</th>
+<th id="Group" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Group</th>
+<th id="Parameter" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Parameter</th>
+<th id="D_vour" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">D_vour</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="Component">confright</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">Intercept</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #76FF00; color: #000000">0.941</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Component">confleft</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">Intercept</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #90FF00; color: #000000">0.913</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Component">conditional</td>
+<td class="gt_row gt_left" headers="Group">Item</td>
+<td class="gt_row gt_left" headers="Parameter">Intercept</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #BDFF00; color: #000000">0.854</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Component">pex</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">Intercept</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #D9FF00; color: #000000">0.811</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Component">precright</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">Intercept</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #E0FF00; color: #000000">0.8</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Component">conditional</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">Intercept</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #FFF100; color: #000000">0.712</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Component">precleft</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">Intercept</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #FFEF00; color: #000000">0.705</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Component">confright</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">polyBeauty22</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #FF0000; color: #FFFFFF">0.002</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Component">conditional</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">polyBeauty22</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #FF0000; color: #FFFFFF">7.135&nbsp;×&nbsp;10<sup>−4</sup></td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Component">confleft</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">polyBeauty22</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #FF0000; color: #FFFFFF">2.688&nbsp;×&nbsp;10<sup>−4</sup></td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Component">precleft</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">polyBeauty21</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #FF0000; color: #FFFFFF">1.331&nbsp;×&nbsp;10<sup>−4</sup></td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Component">conditional</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">polyBeauty21</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #FF0000; color: #FFFFFF">1.288&nbsp;×&nbsp;10<sup>−4</sup></td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Component">confright</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">polyBeauty21</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #FF0000; color: #FFFFFF">1.174&nbsp;×&nbsp;10<sup>−4</sup></td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Component">precright</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">polyBeauty22</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #FF0000; color: #FFFFFF">7.791&nbsp;×&nbsp;10<sup>−5</sup></td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Component">precright</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">polyBeauty21</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #FF0000; color: #FFFFFF">7.108&nbsp;×&nbsp;10<sup>−5</sup></td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Component">confleft</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">polyBeauty21</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #FF0000; color: #FFFFFF">5.966&nbsp;×&nbsp;10<sup>−5</sup></td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Component">pex</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">polyBeauty21</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #FF0000; color: #FFFFFF">3.480&nbsp;×&nbsp;10<sup>−5</sup></td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Component">pex</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">polyBeauty22</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #FF0000; color: #FFFFFF">7.309&nbsp;×&nbsp;10<sup>−6</sup></td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Component">precleft</td>
+<td class="gt_row gt_left" headers="Group">Participant</td>
+<td class="gt_row gt_left" headers="Parameter">polyBeauty22</td>
+<td class="gt_row gt_right" headers="D_vour" style="background-color: #FF0000; color: #FFFFFF">3.455&nbsp;×&nbsp;10<sup>−6</sup></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m1_chocobeauty, <span class="at">robust =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code> Family: choco 
+  Links: mu = logit; confright = logit; precright = softplus; confleft = logit; precleft = softplus; pex = logit; bex = logit; pmid = identity 
+Formula: Real ~ 0 + Intercept + Sex/poly(Beauty, 2) + (poly(Beauty, 2) | Participant) + (1 | Item) 
+         confright ~ 0 + Intercept + Sex/poly(Beauty, 2) + (poly(Beauty, 2) | Participant)
+         confleft ~ 0 + Intercept + Sex/poly(Beauty, 2) + (poly(Beauty, 2) | Participant)
+         precright ~ 0 + Intercept + Sex/poly(Beauty, 2) + (poly(Beauty, 2) | Participant)
+         precleft ~ 0 + Intercept + Sex/poly(Beauty, 2) + (poly(Beauty, 2) | Participant)
+         pex ~ 0 + Intercept + Sex/poly(Beauty, 2) + (poly(Beauty, 2) | Participant)
+         bex ~ 0 + Intercept + Sex/poly(Beauty, 2)
+         pmid = 0
+   Data: df (Number of observations: 8253) 
+  Draws: 96 chains, each with iter = 1500; warmup = 750; thin = 1;
+         total post-warmup draws = 72000
+
+Multilevel Hyperparameters:
+~Item (Number of levels: 109) 
+              Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+sd(Intercept)     0.64      0.05     0.55     0.74 1.00    27239    45494
+
+~Participant (Number of levels: 147) 
+                                                   Estimate Est.Error l-95% CI
+sd(Intercept)                                          0.55      0.05     0.47
+sd(polyBeauty21)                                       0.34      0.30     0.02
+sd(polyBeauty22)                                       0.34      0.30     0.02
+sd(confright_Intercept)                                0.99      0.06     0.87
+sd(confright_polyBeauty21)                             0.34      0.30     0.02
+sd(confright_polyBeauty22)                             0.34      0.30     0.02
+sd(confleft_Intercept)                                 0.97      0.07     0.85
+sd(confleft_polyBeauty21)                              0.34      0.30     0.02
+sd(confleft_polyBeauty22)                              0.34      0.30     0.02
+sd(precright_Intercept)                                2.70      0.23     2.29
+sd(precright_polyBeauty21)                             0.33      0.30     0.02
+sd(precright_polyBeauty22)                             0.34      0.30     0.02
+sd(precleft_Intercept)                                 2.26      0.20     1.89
+sd(precleft_polyBeauty21)                              0.34      0.30     0.02
+sd(precleft_polyBeauty22)                              0.34      0.30     0.02
+sd(pex_Intercept)                                      1.82      0.11     1.62
+sd(pex_polyBeauty21)                                   0.34      0.29     0.02
+sd(pex_polyBeauty22)                                   0.34      0.29     0.01
+cor(Intercept,polyBeauty21)                           -0.03      0.60    -0.89
+cor(Intercept,polyBeauty22)                           -0.08      0.59    -0.89
+cor(polyBeauty21,polyBeauty22)                         0.01      0.60    -0.88
+cor(confright_Intercept,confright_polyBeauty21)        0.02      0.59    -0.87
+cor(confright_Intercept,confright_polyBeauty22)       -0.09      0.59    -0.90
+cor(confright_polyBeauty21,confright_polyBeauty22)     0.01      0.61    -0.88
+cor(confleft_Intercept,confleft_polyBeauty21)          0.01      0.59    -0.87
+cor(confleft_Intercept,confleft_polyBeauty22)         -0.04      0.60    -0.89
+cor(confleft_polyBeauty21,confleft_polyBeauty22)      -0.00      0.59    -0.87
+cor(precright_Intercept,precright_polyBeauty21)       -0.02      0.60    -0.88
+cor(precright_Intercept,precright_polyBeauty22)       -0.03      0.59    -0.88
+cor(precright_polyBeauty21,precright_polyBeauty22)     0.00      0.60    -0.88
+cor(precleft_Intercept,precleft_polyBeauty21)         -0.04      0.60    -0.89
+cor(precleft_Intercept,precleft_polyBeauty22)          0.00      0.60    -0.88
+cor(precleft_polyBeauty21,precleft_polyBeauty22)      -0.00      0.60    -0.88
+cor(pex_Intercept,pex_polyBeauty21)                   -0.02      0.60    -0.88
+cor(pex_Intercept,pex_polyBeauty22)                    0.01      0.60    -0.88
+cor(pex_polyBeauty21,pex_polyBeauty22)                 0.00      0.60    -0.87
+                                                   u-95% CI Rhat Bulk_ESS
+sd(Intercept)                                          0.65 1.00    28325
+sd(polyBeauty21)                                       1.13 1.00    62318
+sd(polyBeauty22)                                       1.14 1.00    59012
+sd(confright_Intercept)                                1.13 1.01    13628
+sd(confright_polyBeauty21)                             1.13 1.00    57715
+sd(confright_polyBeauty22)                             1.15 1.00    59787
+sd(confleft_Intercept)                                 1.11 1.00    15858
+sd(confleft_polyBeauty21)                              1.12 1.00    57568
+sd(confleft_polyBeauty22)                              1.12 1.00    60482
+sd(precright_Intercept)                                3.18 1.00    20758
+sd(precright_polyBeauty21)                             1.13 1.00    61441
+sd(precright_polyBeauty22)                             1.13 1.00    60899
+sd(precleft_Intercept)                                 2.69 1.00    22590
+sd(precleft_polyBeauty21)                              1.14 1.00    61479
+sd(precleft_polyBeauty22)                              1.12 1.00    60907
+sd(pex_Intercept)                                      2.04 1.00    56799
+sd(pex_polyBeauty21)                                   1.12 1.00    61538
+sd(pex_polyBeauty22)                                   1.12 1.00    61661
+cor(Intercept,polyBeauty21)                            0.87 1.00   148922
+cor(Intercept,polyBeauty22)                            0.86 1.00   150429
+cor(polyBeauty21,polyBeauty22)                         0.88 1.00    73251
+cor(confright_Intercept,confright_polyBeauty21)        0.88 1.00   151563
+cor(confright_Intercept,confright_polyBeauty22)        0.85 1.00   149863
+cor(confright_polyBeauty21,confright_polyBeauty22)     0.88 1.00    75442
+cor(confleft_Intercept,confleft_polyBeauty21)          0.88 1.00   145767
+cor(confleft_Intercept,confleft_polyBeauty22)          0.87 1.00   151937
+cor(confleft_polyBeauty21,confleft_polyBeauty22)       0.87 1.00    73971
+cor(precright_Intercept,precright_polyBeauty21)        0.87 1.00   150553
+cor(precright_Intercept,precright_polyBeauty22)        0.87 1.00   157426
+cor(precright_polyBeauty21,precright_polyBeauty22)     0.88 1.00    76162
+cor(precleft_Intercept,precleft_polyBeauty21)          0.87 1.00   166932
+cor(precleft_Intercept,precleft_polyBeauty22)          0.88 1.00   154232
+cor(precleft_polyBeauty21,precleft_polyBeauty22)       0.88 1.00    72919
+cor(pex_Intercept,pex_polyBeauty21)                    0.87 1.00   154290
+cor(pex_Intercept,pex_polyBeauty22)                    0.88 1.00   165724
+cor(pex_polyBeauty21,pex_polyBeauty22)                 0.88 1.00    76465
+                                                   Tail_ESS
+sd(Intercept)                                         47513
+sd(polyBeauty21)                                      37100
+sd(polyBeauty22)                                      36725
+sd(confright_Intercept)                               25721
+sd(confright_polyBeauty21)                            35512
+sd(confright_polyBeauty22)                            36099
+sd(confleft_Intercept)                                30587
+sd(confleft_polyBeauty21)                             34674
+sd(confleft_polyBeauty22)                             37726
+sd(precright_Intercept)                               38034
+sd(precright_polyBeauty21)                            36138
+sd(precright_polyBeauty22)                            36081
+sd(precleft_Intercept)                                40168
+sd(precleft_polyBeauty21)                             33675
+sd(precleft_polyBeauty22)                             35390
+sd(pex_Intercept)                                     57875
+sd(pex_polyBeauty21)                                  35527
+sd(pex_polyBeauty22)                                  34169
+cor(Intercept,polyBeauty21)                           45879
+cor(Intercept,polyBeauty22)                           45931
+cor(polyBeauty21,polyBeauty22)                        54173
+cor(confright_Intercept,confright_polyBeauty21)       45196
+cor(confright_Intercept,confright_polyBeauty22)       47369
+cor(confright_polyBeauty21,confright_polyBeauty22)    55595
+cor(confleft_Intercept,confleft_polyBeauty21)         47647
+cor(confleft_Intercept,confleft_polyBeauty22)         46282
+cor(confleft_polyBeauty21,confleft_polyBeauty22)      54347
+cor(precright_Intercept,precright_polyBeauty21)       46587
+cor(precright_Intercept,precright_polyBeauty22)       47047
+cor(precright_polyBeauty21,precright_polyBeauty22)    52478
+cor(precleft_Intercept,precleft_polyBeauty21)         45838
+cor(precleft_Intercept,precleft_polyBeauty22)         45888
+cor(precleft_polyBeauty21,precleft_polyBeauty22)      53302
+cor(pex_Intercept,pex_polyBeauty21)                   45708
+cor(pex_Intercept,pex_polyBeauty22)                   45400
+cor(pex_polyBeauty21,pex_polyBeauty22)                53934
+
+Regression Coefficients:
+                                 Estimate Est.Error l-95% CI u-95% CI Rhat
+Intercept                            0.11      0.09    -0.07     0.30 1.00
+SexFemale                            0.39      0.17     0.06     0.71 1.00
+SexMale:polyBeauty21                12.11      2.62     6.95    17.29 1.00
+SexFemale:polyBeauty21               7.02      4.09    -0.87    15.00 1.00
+SexMale:polyBeauty22                 3.73      2.48    -1.14     8.56 1.00
+SexFemale:polyBeauty22              -0.38      4.06    -8.37     7.67 1.00
+confright_Intercept                  0.36      0.11     0.14     0.59 1.02
+confright_SexFemale                 -0.12      0.17    -0.45     0.20 1.02
+confright_SexMale:polyBeauty21       2.25      1.46    -0.62     5.08 1.00
+confright_SexFemale:polyBeauty21     0.05      2.71    -5.20     5.34 1.00
+confright_SexMale:polyBeauty22       3.75      1.51     0.81     6.67 1.00
+confright_SexFemale:polyBeauty22     2.81      2.86    -2.81     8.43 1.00
+precright_Intercept                  4.04      0.32     3.42     4.68 1.01
+precright_SexFemale                 -0.53      0.49    -1.48     0.44 1.01
+precright_SexMale:polyBeauty21       4.69      6.55    -8.23    17.35 1.00
+precright_SexFemale:polyBeauty21     0.77      8.63   -16.06    17.50 1.00
+precright_SexMale:polyBeauty22      -3.05      6.02   -14.68     8.70 1.00
+precright_SexFemale:polyBeauty22    -0.06      8.79   -17.19    17.15 1.00
+confleft_Intercept                   0.44      0.11     0.23     0.67 1.01
+confleft_SexFemale                  -0.37      0.17    -0.70    -0.04 1.01
+confleft_SexMale:polyBeauty21       -5.35      1.69    -8.67    -2.03 1.00
+confleft_SexFemale:polyBeauty21     -0.12      3.28    -6.58     6.33 1.00
+confleft_SexMale:polyBeauty22        2.94      1.82    -0.64     6.50 1.00
+confleft_SexFemale:polyBeauty22      8.36      3.59     1.38    15.36 1.00
+precleft_Intercept                   3.28      0.28     2.74     3.85 1.00
+precleft_SexFemale                   0.15      0.45    -0.70     1.05 1.00
+precleft_SexMale:polyBeauty21        6.62      6.35    -5.87    19.11 1.00
+precleft_SexFemale:polyBeauty21     -1.18      8.98   -18.76    16.44 1.00
+precleft_SexMale:polyBeauty22       -9.01      5.99   -20.76     2.88 1.00
+precleft_SexFemale:polyBeauty22      1.52      9.14   -16.38    19.50 1.00
+pex_Intercept                       -1.78      0.22    -2.21    -1.36 1.00
+pex_SexFemale                       -0.78      0.34    -1.44    -0.12 1.00
+pex_SexMale:polyBeauty21            -2.94      3.75   -10.27     4.38 1.00
+pex_SexFemale:polyBeauty21          -0.56      4.67    -9.90     8.72 1.00
+pex_SexMale:polyBeauty22             1.30      3.79    -6.19     8.80 1.00
+pex_SexFemale:polyBeauty22           2.97      4.75    -6.43    12.26 1.00
+bex_Intercept                       -0.31      0.07    -0.45    -0.17 1.00
+bex_SexFemale                        0.52      0.22     0.10     0.94 1.00
+bex_SexMale:polyBeauty21             7.47      3.56     0.50    14.44 1.00
+bex_SexFemale:polyBeauty21           0.56      4.85    -8.88    10.07 1.00
+bex_SexMale:polyBeauty22            -0.37      3.49    -7.18     6.56 1.00
+bex_SexFemale:polyBeauty22          -1.34      4.85   -10.77     8.13 1.00
+                                 Bulk_ESS Tail_ESS
+Intercept                           20516    33831
+SexFemale                           29584    44162
+SexMale:polyBeauty21                99705    60334
+SexFemale:polyBeauty21             144084    58214
+SexMale:polyBeauty22               115100    62741
+SexFemale:polyBeauty22             154999    55391
+confright_Intercept                  3827     9193
+confright_SexFemale                  6152    12505
+confright_SexMale:polyBeauty21     132869    56573
+confright_SexFemale:polyBeauty21   128573    59504
+confright_SexMale:polyBeauty22     128356    57220
+confright_SexFemale:polyBeauty22   130208    58125
+precright_Intercept                 13097    26358
+precright_SexFemale                 15999    29949
+precright_SexMale:polyBeauty21     128036    59453
+precright_SexFemale:polyBeauty21   146855    57747
+precright_SexMale:polyBeauty22     124691    58742
+precright_SexFemale:polyBeauty22   154266    56124
+confleft_Intercept                   5508    10779
+confleft_SexFemale                   8385    19496
+confleft_SexMale:polyBeauty21      126351    59153
+confleft_SexFemale:polyBeauty21    128340    60801
+confleft_SexMale:polyBeauty22      128282    58329
+confleft_SexFemale:polyBeauty22    130009    60743
+precleft_Intercept                  14711    26318
+precleft_SexFemale                  20353    36211
+precleft_SexMale:polyBeauty21      126174    57554
+precleft_SexFemale:polyBeauty21    145239    57563
+precleft_SexMale:polyBeauty22      131270    59553
+precleft_SexFemale:polyBeauty22    151143    57731
+pex_Intercept                       14761    28054
+pex_SexFemale                       25389    42606
+pex_SexMale:polyBeauty21           148263    57450
+pex_SexFemale:polyBeauty21         157618    53253
+pex_SexMale:polyBeauty22           136966    59165
+pex_SexFemale:polyBeauty22         162350    53686
+bex_Intercept                      102621    61620
+bex_SexFemale                       94039    61765
+bex_SexMale:polyBeauty21           145119    57742
+bex_SexFemale:polyBeauty21         171033    51479
+bex_SexMale:polyBeauty22           150625    57007
+bex_SexFemale:polyBeauty22         169128    53082
+
+Further Distributional Parameters:
+     Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+pmid     0.00      0.00     0.00     0.00   NA       NA       NA
+
+Draws were sampled using sample(hmc). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="model-visualization-1" class="level4">
+<h4 class="anchored" data-anchor-id="model-visualization-1">Model Visualization</h4>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">visualize_dchoco</span>(m1_chocobeauty,</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">newdata=</span>insight<span class="sc">::</span><span class="fu">get_datagrid</span>(m1_chocobeauty, <span class="at">length =</span> <span class="dv">5</span>, <span class="at">preserve_range =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>p4_density <span class="ot">&lt;-</span> pred<span class="sc">$</span>densities <span class="sc">|&gt;</span> </span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Attractive =</span> <span class="fu">as.factor</span>(Beauty),</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> <span class="fu">ifelse</span>(x <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), y <span class="sc">*</span> <span class="dv">3</span>, y)) <span class="sc">|&gt;</span>  <span class="co"># Inflate extremes for visibility</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>x, <span class="at">y=</span>y)) <span class="sc">+</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">color=</span>Attractive), <span class="at">linewidth =</span> <span class="fl">1.25</span>) <span class="sc">+</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ggforce::geom_link2(data = pred$mu, aes(group = side, linewidth = Attractive, color = as.factor(Attractive)), </span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>  <span class="co">#                     lineend = 'round', n = 500) +</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>(<span class="at">data =</span> pred<span class="sc">$</span>mu, <span class="fu">aes</span>(<span class="at">group =</span> side), <span class="at">linewidth=</span><span class="dv">0</span>, <span class="at">lineend =</span> <span class="st">'round'</span>, </span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.025</span>, <span class="st">"npc"</span>), <span class="at">type =</span> <span class="st">"closed"</span>)) <span class="sc">+</span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>Sex) <span class="sc">+</span></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"Distribution"</span>, <span class="at">x =</span> <span class="st">"Do you think this image is real?"</span>, <span class="at">color =</span> <span class="st">"Attractiveness"</span>) <span class="sc">+</span></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values=</span>scales<span class="sc">::</span><span class="fu">seq_gradient_pal</span>(<span class="st">"#C5CAE9"</span>, <span class="st">"#283593"</span>, <span class="st">"Lab"</span>)(<span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="at">length.out=</span><span class="dv">5</span>))) <span class="sc">+</span></span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>), <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"      0%"</span>, <span class="st">"25%"</span>, <span class="st">"50%"</span>, <span class="st">"75%"</span>, <span class="st">"100%      "</span>)) <span class="sc">+</span></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_linewidth_continuous</span>(<span class="at">range =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="dv">2</span>), <span class="at">guide =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.title.x =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>), </span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.y =</span> <span class="fu">element_blank</span>(), </span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a>        <span class="co"># axis.title.y = element_blank(), </span></span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>        <span class="at">strip.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"lightgrey"</span>, <span class="at">color =</span> <span class="cn">NA</span>)) </span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a>p4_density</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="2_study2_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_params1</span>(m1_chocobeauty, <span class="at">xlabel =</span> <span class="st">"Beauty"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="2_study2_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -1,0 +1,1081 @@
+\documentclass[
+  jou,
+  floatsintext,
+  longtable,
+  nolmodern,
+  notxfonts,
+  notimes,
+  colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{apa7}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+
+
+
+\RequirePackage{longtable}
+\RequirePackage{threeparttablex}
+
+\makeatletter
+\renewcommand{\paragraph}{\@startsection{paragraph}{4}{\parindent}%
+	{0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
+	{-.5em}%
+	{\normalfont\normalsize\bfseries\typesectitle}}
+
+\renewcommand{\subparagraph}[1]{\@startsection{subparagraph}{5}{0.5em}%
+	{0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
+	{-\z@\relax}%
+	{\normalfont\normalsize\bfseries\itshape\hspace{\parindent}{#1}\textit{\addperi}}{\relax}}
+\makeatother
+
+
+
+
+\usepackage{longtable, booktabs, multirow, multicol, colortbl, hhline, caption, array, float, xpatch}
+\usepackage{subcaption}
+\renewcommand\thesubfigure{\Alph{subfigure}}
+\setcounter{topnumber}{2}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{4}
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\bottomfraction}{0.85}
+\renewcommand{\textfraction}{0.15}
+\renewcommand{\floatpagefraction}{0.7}
+
+\usepackage{tcolorbox}
+\tcbuselibrary{listings,theorems, breakable, skins}
+\usepackage{fontawesome5}
+
+\definecolor{quarto-callout-color}{HTML}{909090}
+\definecolor{quarto-callout-note-color}{HTML}{0758E5}
+\definecolor{quarto-callout-important-color}{HTML}{CC1914}
+\definecolor{quarto-callout-warning-color}{HTML}{EB9113}
+\definecolor{quarto-callout-tip-color}{HTML}{00A047}
+\definecolor{quarto-callout-caution-color}{HTML}{FC5300}
+\definecolor{quarto-callout-color-frame}{HTML}{ACACAC}
+\definecolor{quarto-callout-note-color-frame}{HTML}{4582EC}
+\definecolor{quarto-callout-important-color-frame}{HTML}{D9534F}
+\definecolor{quarto-callout-warning-color-frame}{HTML}{F0AD4E}
+\definecolor{quarto-callout-tip-color-frame}{HTML}{02B875}
+\definecolor{quarto-callout-caution-color-frame}{HTML}{FD7E14}
+
+%\newlength\Oldarrayrulewidth
+%\newlength\Oldtabcolsep
+
+
+\usepackage{hyperref}
+
+
+
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+
+% definitions for citeproc citations
+\NewDocumentCommand\citeproctext{}{}
+\NewDocumentCommand\citeproc{mm}{%
+  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
+\makeatletter
+ % allow citations to break across lines
+ \let\@cite@ofmt\@firstofone
+ % avoid brackets around text for \cite:
+ \def\@biblabel#1{}
+ \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
+\makeatother
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
+ {\begin{list}{}{%
+  \setlength{\itemindent}{0pt}
+  \setlength{\leftmargin}{0pt}
+  \setlength{\parsep}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+   \setlength{\leftmargin}{\cslhangindent}
+   \setlength{\itemindent}{-1\cslhangindent}
+  \fi
+  % set entry spacing
+  \setlength{\itemsep}{#2\baselineskip}}}
+ {\end{list}}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+
+
+
+
+
+\usepackage{newtx}
+
+\defaultfontfeatures{Scale=MatchLowercase}
+\defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+
+
+
+
+
+\title{\textbf{Introducing the Choice-Confidence (CHOCO) Model for
+Bimodal Scales Data: Application to the Relationship between Reality
+Beliefs about AI-Generated Faces and Beauty}}
+
+
+\shorttitle{Choice-Confidence (CHOCO) Model}
+
+
+\usepackage{etoolbox}
+
+
+
+
+
+
+
+
+
+\authorsnames[{1,2},{1},{1}]{Dominique Makowski,Ana Neves,Andy Field}
+
+
+
+
+
+
+
+\authorsaffiliations{
+{School of Psychology, University of Sussex},{Sussex Centre for
+Consciousness Science, University of Sussex}}
+
+
+
+
+\leftheader{Makowski, Neves and Field}
+
+
+
+\abstract{TO DO. }
+
+\keywords{subjective scales, choice confidence model, reality beliefs,
+AI-generated faces, attractiveness}
+
+\authornote{\par{\addORCIDlink{Dominique
+Makowski}{0000-0001-5375-9967}}\par{\addORCIDlink{Ana
+Neves}{0009-0006-0020-7599}}\par{\addORCIDlink{Andy Field}{true}} 
+\par{ }
+\par{     \begin{tcolorbox}[enhanced jigsaw, left=2mm, arc=.35mm, bottomrule=.15mm, colframe=quarto-callout-note-color-frame, leftrule=.75mm, breakable, rightrule=.15mm, toprule=.15mm, colback=white, opacityback=0]
+
+This preprint is a non-peer-reviewed work from the
+\href{https://realitybending.github.io/}{\textbf{Reality Bending Lab}}.
+\begin{center}
+\includegraphics[width=0.2\textwidth,height=\textheight]{manuscript_files/mediabag/ReBeL_LogoOnly_hu114.png}
+\end{center}
+
+\end{tcolorbox}  Author roles were classified using the Contributor Role
+Taxonomy (CRediT; https://credit.niso.org/) as follows:  Dominique
+Makowski:   Conceptualization, Data curation, Formal Analysis, Funding
+acquisition, Investigation, Methodology, Project
+administration, Resources, Software, Supervision, Validation, Visualization, Writing
+-- original draft; Ana Neves:   Data curation, Writing -- original
+draft, Writing -- review \& editing; Andy Field:   Writing -- original
+draft, Writing -- review \& editing}
+\par{Correspondence concerning this article should be addressed
+to Dominique
+Makowski, Email: \href{mailto:D.Makowski@sussex.ac.uk}{D.Makowski@sussex.ac.uk}}
+}
+
+\usepackage{pbalance} 
+\usepackage{float}
+\makeatletter
+\let\oldtpt\ThreePartTable
+\let\endoldtpt\endThreePartTable
+\def\ThreePartTable{\@ifnextchar[\ThreePartTable@i \ThreePartTable@ii}
+\def\ThreePartTable@i[#1]{\begin{figure}[!htbp]
+\onecolumn
+\begin{minipage}{0.5\textwidth}
+\oldtpt[#1]
+}
+\def\ThreePartTable@ii{\begin{figure}[!htbp]
+\onecolumn
+\begin{minipage}{0.5\textwidth}
+\oldtpt
+}
+\def\endThreePartTable{
+\endoldtpt
+\end{minipage}
+\twocolumn
+\end{figure}}
+\makeatother
+
+
+\makeatletter
+\let\endoldlt\endlongtable		
+\def\endlongtable{
+\hline
+\endoldlt}
+\makeatother
+
+\newenvironment{twocolumntable}% environment name
+{% begin code
+\begin{table*}[!htbp]%
+\onecolumn%
+}%
+{%
+\twocolumn%
+\end{table*}%
+}% end code
+
+\urlstyle{same}
+
+
+
+\makeatletter
+\@ifpackageloaded{tcolorbox}{}{\usepackage[skins,breakable]{tcolorbox}}
+\@ifpackageloaded{fontawesome5}{}{\usepackage{fontawesome5}}
+\definecolor{quarto-callout-color}{HTML}{909090}
+\definecolor{quarto-callout-note-color}{HTML}{0758E5}
+\definecolor{quarto-callout-important-color}{HTML}{CC1914}
+\definecolor{quarto-callout-warning-color}{HTML}{EB9113}
+\definecolor{quarto-callout-tip-color}{HTML}{00A047}
+\definecolor{quarto-callout-caution-color}{HTML}{FC5300}
+\definecolor{quarto-callout-color-frame}{HTML}{acacac}
+\definecolor{quarto-callout-note-color-frame}{HTML}{4582ec}
+\definecolor{quarto-callout-important-color-frame}{HTML}{d9534f}
+\definecolor{quarto-callout-warning-color-frame}{HTML}{f0ad4e}
+\definecolor{quarto-callout-tip-color-frame}{HTML}{02b875}
+\definecolor{quarto-callout-caution-color-frame}{HTML}{fd7e14}
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Table of contents}
+\else
+  \newcommand\contentsname{Table of contents}
+\fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{List of Figures}
+\else
+  \newcommand\listfigurename{List of Figures}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{List of Tables}
+\else
+  \newcommand\listtablename{List of Tables}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Figure}
+\else
+  \newcommand\figurename{Figure}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Table}
+\else
+  \newcommand\tablename{Table}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+
+% From https://tex.stackexchange.com/a/645996/211326
+%%% apa7 doesn't want to add appendix section titles in the toc
+%%% let's make it do it
+\makeatletter
+\xpatchcmd{\appendix}
+  {\par}
+  {\addcontentsline{toc}{section}{\@currentlabelname}\par}
+  {}{}
+\makeatother
+
+%% Disable longtable counter
+%% https://tex.stackexchange.com/a/248395/211326
+
+\usepackage{etoolbox}
+
+\makeatletter
+\patchcmd{\LT@caption}
+  {\bgroup}
+  {\bgroup\global\LTpatch@captiontrue}
+  {}{}
+\patchcmd{\longtable}
+  {\par}
+  {\par\global\LTpatch@captionfalse}
+  {}{}
+\apptocmd{\endlongtable}
+  {\ifLTpatch@caption\else\addtocounter{table}{-1}\fi}
+  {}{}
+\newif\ifLTpatch@caption
+\makeatother
+
+\begin{document}
+
+\maketitle
+
+
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+
+\setlength\LTleft{0pt}
+
+
+\section{Introduction}\label{introduction}
+
+Despite significant advancements in psychological science following the
+replication crisis (\citeproc{ref-open2015estimating}{Collaboration,
+2015}), its progress is still hindered by its sub-optimal (or
+inappropriate) usage of statistical tools
+(\citeproc{ref-makowski2023we}{Makowski \& Waggoner, 2023}). A prevalent
+issue is the continued reliance on linear models that assume normally
+distributed (Gaussian) data - as this assumption often does not hold
+true for many types of psychological outcomes. For instance, reaction
+times typically exhibit skewed distributions, choices can be represented
+as binary variables, and count data consists of strictly positive
+integers. Applying models that presume normality and model the ``mean''
+of the outcome variable can lead to misinterpretation and potentially
+misleading conclusions when applied indiscriminately. It is thus
+important that psychologists use models that can best describe the data
+they collect, to fully exploit them and bring more nuance and accuracy
+to their conclusions.
+
+Among the most commonly collected data in psychology are responses on
+subjective scales, such as Likert-type items or visual analog scales,
+which exhibit some fundamental properties: these responses are bounded
+(and can be rescaled to a 0-1 range) and frequently display clustering
+at the extremes. Traditional linear models being ill-suited for such
+data, researchers have turned to using Beta distributions to model this
+data (instead of Gaussian), suited for continuous data within the (0,1)
+interval (i.e., excluding extreme responses). To address the frequent
+occurrence of exact zeros and ones (i.e., extreme values), zero-one
+inflated beta (ZOIB) models have been developed
+(\citeproc{ref-ospina2012general}{Ospina \& Ferrari, 2012}) to
+accommodate the excess of boundary values by incorporating additional
+components that model the probabilities of responses at 0 and 1 as a
+separate, independent process.
+
+\subsection{The Beta-Gate Model}\label{the-beta-gate-model}
+
+The Beta-Gate model is a reparametrized Ordered Beta model
+(\citeproc{ref-kubinec2023ordered}{Kubinec, 2023})\footnote{In the
+  Ordered Beta model, the cutpoints on the log-scale are directly used
+  as parameters, instead of being derived from \emph{pex} and
+  \emph{bex}.} available in the \emph{cogmod} package in R
+(https://github.com/DominiqueMakowski/cogmod), in which participants'
+answers on bounded scales are conceptualized as latent responses that
+can fall past a pair of probabilistic ``gates'' (or cutpoints) that
+control whether the response is recorded as an extreme (0 or 1) or as a
+nuanced, continuous value in between (Figure~\ref{fig-one}). These
+distance of these gates from the edges of the scale varies based on two
+interpretable parameters: \emph{pex} (the propensity by which people are
+likely to answer extreme values), and \emph{bex}, a bias toward the
+upper extreme (1) versus the lower (0). A person's internal response
+that lies close to the edge might be ``caught'' by a gate and recorded
+as an extreme, while others pass through to express a continuous
+response (Beta-distributed with \(\mu\) (\emph{mu}) and \(\phi\)
+(\emph{phi}) as its mean and precision parameters). The Beta-Gate model
+is based on the idea that extreme values can emerge not just from a
+fundamentally different underlying processes - as assumed in ZOIB models
+- but from a common process governed by thresholds of decisiveness and
+confidence.
+
+\begin{figure}
+
+\caption{\label{fig-one}The Beta-Gate Distribution is a reparametrized
+ordered Beta model (Kubinec, 2023) that is governed by 4 parameters.
+`Mu' and `phi' correspond to the mean and precision of the continuous
+part of the distribution (between 0 and 1), and `pex' (propensity of
+extremes) and `bex' (balance of extremes) indirectly control the
+proportion of zeros and ones by specifying the location of the
+``gates'', past which the latent response process is likely to generate
+extreme values. Specifically, `pex' defines the total distance of both
+gates from the extremes (in yellow), and `bex' determines the proportion
+of the right gate distance relative to the left. In this example, the
+total distance from the extremes is `pex' = 0.1, with 40\% (`bex' = 0.4)
+of that distance being on the right (and 60\% on the left). The left
+gate is thus located at 0.6, and the right at 1-0.04 = 0.96.}
+
+\centering{
+
+\includegraphics[width=0.5\textwidth,height=\textheight]{./figures/fig1.png}
+
+}
+
+\end{figure}%
+
+Mathematically, the Beta-Gate distribution defines the observed outcome
+\(x \in [0, 1]\) as a mixture of three components; a point mass at 0, a
+point mass at 1, and a continuous Beta density over \(x \in (0,1)\),
+scaled by the remaining probability mass. The probability of these
+components are:
+
+\begin{itemize}
+\tightlist
+\item
+  \(P(x = 0) = \text{logistic}\left( \text{logit}(pex \cdot (1 - bex)) - \text{logit}(\mu) \right)\)
+\item
+  \(P(x = 1) = 1 - \text{logistic}\left( \text{logit}(1 - pex \cdot bex) - \text{logit}(\mu) \right)\)
+\item
+  \(P(x \in (0,1)) = 1 - P(x = 0) - P(x = 1)\)
+\end{itemize}
+
+The continuous part follows a Beta distribution with
+parameters\footnote{Note that \emph{phi} is scaled in Beta-Gate models
+  relative to the traditional mu/phi Beta particularization so that a
+  phi of 1 corresponds to a uniform distribution - to facilitate setting
+  priors on this parameter}:
+
+\[
+Beta(\alpha = \mu \cdot 2 \phi, \quad \beta = (1 - \mu) \cdot 2 \phi)
+\]
+
+\subsection{The Choice-Confidence (CHOCO)
+Model}\label{the-choice-confidence-choco-model}
+
+Decision-making is often conceptualized as involving distinct processes:
+the choice itself, and the confidence associated with that choice. In
+experimental paradigms, these can be somewhat disentangled by prompting
+participants to make a discrete choice selection (e.g., ``True''
+vs.~``False''), followed by a separate confidence rating. However, this
+artificial separation makes its joint analysis difficulty, and may not
+reflect real-world decision-making, where individuals often express both
+choice and confidence simultaneously using a single, continuous scale.
+In such scales, each side can represent a distinct latent category, and
+the distance from the midpoint can indicates the level of confidence or
+certainty. This integrated response format typically results in bimodal
+distributions, with peaks corresponding to the mean confidence on either
+side. Traditional beta regression models, which assume unimodal
+distributions within the (0,1) interval, are ill-suited for such data.
+One alternative is to transform the data into two variables a
+posteriori: binarizing the side to represent choice and calculating the
+absolute distance from the midpoint to represent confidence. These can
+then be modeled separately, for instance, using logistic regression for
+choice and beta regression for confidence (see
+\citeproc{ref-makowski2025too}{Makowski et al., 2025} for an example).
+While this approach can provide additional insights into underlying
+mechanisms compared to a unique model, it assumes psychological and
+statistical independence between choice and confidence, which may not
+hold true in practice.
+
+\begin{figure}
+
+\caption{\label{fig-two}The CHOCO Model uses a mixture of Beta-Gate
+distributions to model separately the right and left sides of the scale
+(e.g., a rating of whether a statement was `Truth' vs.~`Lie'), as well
+as their relative proportion. In this example, the participants are more
+likely overall (p = 60\%) to select the right side of the scale (`Lie')
+than the left (`Truth'). They are also more confident in their choice
+(confright = 0.6 vs.~confleft = 0.3). Extreme values (zeros and ones)
+are governed by the same mechanism as for Beta-Gate models.}
+
+\centering{
+
+\includegraphics[width=0.5\textwidth,height=\textheight]{./figures/fig2.png}
+
+}
+
+\end{figure}%
+
+To model data of subjective scales in which the left and right sides can
+be conceptualized as two different choices (e.g., True/False,
+Agree/Disagree, etc.) and the magnitude of the response (how much the
+cursor is set away from the mid-point) as the confidence, we introduce
+the Choice-Confidence (CHOCO) model (Figure~\ref{fig-two}). It consists
+of a three‐part mixture on \(x \in [0, 1]\):
+
+\begin{itemize}
+\tightlist
+\item
+  An (optional) point-mass at the midpoint \emph{mid} (typically 0.5) of
+  weight \(p_{\text{mid}}\) for undecided or neutral responses.\\
+\item
+  A left-choice component governed by a Beta-Gate density on the
+  rescaled variable \(x/mid\) with mean \emph{1 - confleft}, precision
+  \emph{precleft}, and boundary-excess parameter \emph{pex(1 - bex)}.\\
+\item
+  A right-choice component governed by a Beta-Gate density on the
+  rescaled variable \((x - mid)/(1 - mid)\) with mean \emph{confright},
+  precision \emph{precright}, and boundary-excess parameter \emph{pex x
+  bex}.
+\end{itemize}
+
+The overall probability of the right choice (relative to the left
+choice) is controlled by a main parameter \emph{p}. The full CHOCO
+density is:
+
+\[
+\small
+\begin{cases}
+pmid, & x = mid, \\[6pt]
+(1 - pmid)(1 - p)\,\dfrac{1}{mid} \cdot \mathrm{BetaGate}\left(\dfrac{x}{mid}\right), & 0 < x < mid, \\[6pt]
+(1 - pmid)\,p\,\dfrac{1}{1 - mid} \cdot \mathrm{BetaGate}\left(\dfrac{x - mid}{1 - mid}\right), & mid < x < 1. \\
+\end{cases}
+\]
+
+By coupling choice probability \(p\), midpoint mass \(p_{\text{mid}}\),
+and side‐specific Beta-Gate parameters (\(conf\), \(prec\), \(pex\),
+\(bex\)), CHOCO flexibly captures both bimodality and confidence
+intensity in a single unified model. Despite this theoretical appeal, it
+is unclear whether this heavily parametrized model can be estimated
+reliably from data, and whether it can provide more useful insights than
+simpler alternatives.
+
+\subsection{Aim of the Present Study}\label{aim-of-the-present-study}
+
+\textbf{Study 1} aims to evaluate the CHOCO model's ability to better
+capture subjective scale responses that (potentially) reflect an
+underlying discrete choice, in comparison to existing models such as the
+ZOIB and Beta-Gate. Specifically, we will assess whether 1) CHOCO
+provides improved model fit, 2) yields deeper insights into
+population-level effects than traditional approaches (gender differences
+in reality beliefs), and 3) allows for the reliable estimation of
+interpretable individual-level parameters through random effects.
+
+To this end, we analyze data from two separate studies in which
+participants judged whether a face image was AI-generated (``fake'') or
+a real photograph. \textbf{Study 2} will apply this model to more subtle
+effects, such as the effect perceived facial attractiveness and beauty
+on reality judgments.
+
+\section{Study 1}\label{study-1}
+
+\textbf{TODO}: Write some introduction about reality beliefs in the
+context of ambiguity. Underline that what drives judgments and beliefs
+of reality remains unclear. And this is important in today's post-truth
+era.
+
+Another unknown is whether these beliefs are fully stimuli-driven or
+whether there are some stable individual tendencies that are at stake.
+
+\subsection{Methods}\label{methods}
+
+\subsubsection{Participants}\label{participants}
+
+The sample is the same as in (\citeproc{ref-makowski2025too}{Makowski et
+al., 2025}). We included all heterosexual male and female participants,
+for a final sample of 125 participants (Mean age = 28.6, SD = 9.2,
+range: {[}19, 66{]}; Sex: 44.8\% females). We included only sexually
+relevant stimuli for men and women (i.e., all 89 female faces for men
+and 20 male faces for women).
+
+\subsubsection{Procedure}\label{procedure}
+
+In the first phase, participants viewed 109 neutral-expression
+photographs of faces (random order, display time of 500 ms) from the
+American Multiracial Face Database
+(\citeproc{ref-chen2021broadening}{Chen et al., 2021}). After each
+image, participants rated the face on trustworthiness, familiarity,
+attractiveness, and beauty using visual analog scales. In the second
+phase, participants were informed that ``about half of the previously
+seen images were AI-generated''. The same faces were presented again in
+a new random order (same display time), followed by ratings of
+``reality'' (whether they believed the image was AI-generated - left
+anchor - or a real photograph - right anchor). Makowski et al.
+(\citeproc{ref-makowski2025too}{2025}) showed that most stimuli yielded
+highly variable reality ratings, suggesting that idiosyncratic cognitive
+processes were at play.
+
+\subsubsection{Data Analysis}\label{data-analysis}
+
+We fitted 3 models to predict the reality ratings: a ZOIB model, a
+Beta-Gate model, and the CHOCO model. For all models and each parameter,
+the full formula was entered:
+\(Real\sim Sex + (1 | Participant) + (1 | Item)\) (with Sex as the main
+predictor and participants and items entered as random intercepts). The
+models were run using \emph{brms}
+(\citeproc{ref-burkner2017brms}{Bürkner, 2017}) R package, and analyzed
+using the \emph{easystats} collection of packages {[}\textbf{REFS}{]}.
+To maximize the comparability across models We used the default priors
+(uniform) for all models, and we ran 16 chains of 1400 iterations each
+on the University of Sussex High-Performance Computing (HPC) cluster.
+
+Model comparisons were performed using the \emph{loo} R package
+(\citeproc{ref-vehtari2017practical}{Vehtari et al., 2017}), which
+computes the Widely Applicable Information Criterion (WAIC) and
+estimates the Expected Log Predictive Density (ELPD) and penalizes the
+number of parameters. We assessed model performance by examining ELPD
+differences and their standard errors (SE), reporting corresponding
+\emph{p}-values to determine significant differences in predictive
+accuracy.
+
+For the population-level effects, we will consider significant and
+report (using the median of the posterior distribution) effects for
+which the 95\% Credible Interval (CI) does not include zero {[}and when
+the probability of direction \emph{pd} is \textgreater{}
+\textasciitilde97\%; Makowski et al.
+(\citeproc{ref-makowski2019indices}{2019}){]}. For the individual-level
+parameters (i.e., the random intercepts of each parameter for each
+participant and each item), we will first analyze their reliability
+using the Variance-Over-Uncertainty Ratio index (\emph{D-vour}). This
+index, implemented in the \emph{performance} package
+(\citeproc{ref-ludecke2021performance}{Lüdecke et al., 2021}), is
+inspired by recent work on mixed models reliability
+(\citeproc{ref-rouder2024hierarchical}{Rouder \& Mehrvarz, 2024};
+\citeproc{ref-williams2021beneath}{Williams et al., 2021}), and
+corresponds to the normalized ratio of observed variability to
+uncertainty in random effect estimates, defined as:
+
+\[
+D_{\text{vour}} = \frac{\sigma_B^2}{\sigma_B^2 + \mu_{\text{SE}}^2}
+\]
+
+Where \(\sigma_B^2\) is the between-group variability (computed as the
+SD of the random effect point-estimates) and \(\mu_{\text{SE}}^2\) is
+the mean squared uncertainty in random effect estimates (i.e., the
+average uncertainty). We use as \emph{D-vour} = 0.666 as the threshold
+for moderately reliable random effect estimates, which corresponds to a
+2:1 ratio of between-group variance to uncertainty.
+
+Finally, we will run a correlation analysis of the models'
+individual-level estimates against ``empirical'' (indices computed
+directly on the observed data), including the empirical \emph{p}
+(\(P(y > 0.5)\)), the overall \emph{conf} (\(mean(|y - 0.5|)\)),
+\emph{pex} (\(P(y \in [0, 1])\)) and \emph{bex}
+(\(P(y == 1) / P(y \in [0, 1])\)), assessing whether the model's
+estimate are in-line with easily interpretable indices.
+
+\subsection{Results}\label{results}
+
+The reproducible code and full result report are available at
+https://github.com/RealityBending/FictionChoco.
+
+\subsubsection{Model Comparison}\label{model-comparison}
+
+\begin{figure*}[!htbp]
+
+{\caption{{TODO.}{\label{fig-three}}}}
+
+\includegraphics[width=1\textwidth,height=\textheight]{./figures/fig3.png}
+
+\end{figure*}
+
+The models did converge without divergent transitions, and the effective
+sample size was sufficient for all parameters (all
+\(n_{\text{eff}} > 1000\)). The difference in predictive accuracy, as
+indexed by Expected Log Predictive Density (ELPD-WAIC), suggests that
+the \emph{CHOCO} is the best model (\(ELPD = -138.45\)), followed by
+\emph{Beta-Gate} (\(\Delta_{ELPD} = -1875.31 \pm 61.18, p < .001)\) and
+\emph{ZOIB} (\(\Delta_{ELPD} = -1916.11 \pm 61.75, p < .001\)). See
+Figure~\ref{fig-three} for the posterior predictive checks, showing that
+only the CHOCO model managed to capture the bimodal distribution of
+data.
+
+\subsubsection{Effect of Sex}\label{effect-of-sex}
+
+The ZOIB model suggested that women had higher mean (\emph{mu}
+parameter) scores of reality beliefs
+(\(\Delta_{\text{Female}} = 0.16,~95\%~ CI~[0.01, 0.32], pd = 98.10\%\)),
+less extreme values (\emph{zoi} parameter; STATS) but more ones relative
+to zeros (\emph{coi} parameter; STATS).
+
+The Beta-Gate model similarly suggested that women had higher mean
+(\emph{mu} parameter) scores of reality beliefs (STATS), less extreme
+values (\emph{pex} parameter; STATS), and a greater tendency to answer
+one relative to zero (\emph{bex} parameter; STATS).
+
+The CHOCO model shows that women had a higher probability \emph{p} of
+judging faces as real (STATS), but are not more confident when doing so
+(\emph{confright} parameter; STATS). However, they were less confident
+when answering that an image was AI-generated (\emph{confleft}
+parameter; STATS). There were also less likely to produce extreme
+answers (\emph{pex} parameter; STATS), but no strong evidence supporting
+a directional bias was observed (\emph{bex} parameter; STATS).
+
+Across all these models, no effect of Sex on the prediction parameter
+was observed.
+
+\subsubsection{Individual-Level
+Parameters}\label{individual-level-parameters}
+
+\begin{figure*}[!htbp]
+
+{\caption{{TODO.}{\label{fig-four}}}}
+
+\includegraphics[width=1\textwidth,height=\textheight]{./figures/fig4.png}
+
+\end{figure*}
+
+The ZOIB model estimated reliable variability in the participant's
+\emph{phi} parameter (D-vour = 0.88) and \emph{zoi} parameter (D-vour =
+0.84), as well as in the \emph{mu} parameter related to individual items
+(D-vour = 0.82). Moderate reliability was also observed for items in the
+\emph{coi} parameter (D-vour = 0.71) and for participants in the
+\emph{mu} parameter (D-vour = 0.69). The Beta-Gate model yielded similar
+results: a high reliability of participant's \emph{phi} parameter
+(D-vour = 0.88), \emph{pex} parameter (D-vour = 0.84). The \emph{mu}
+parameter's variability was reliably captured for items (D-vour = 0.85)
+and moderately for participants (D-vour = 0.72). Of note that the
+parameters of Beta-Gate and ZOIB correlate almost perfectly, underlining
+their empirical similarity despite a different parametrization.
+
+The CHOCO model yielded reliable estimates for all parameters except
+\emph{bex} for participants (\emph{confright} D-vour = 0.94,
+\emph{confleft} D-vour = 0.91, \emph{pex} D-vour = 0.80, \emph{p} D-vour
+= 0.73, \emph{precright} D-vour = 0.79, \emph{precleft} D-vour = 0.73).
+Item's variability was primarily reflected through the \emph{p}
+parameter (D-vour = 0.86).
+
+Finally, the empirical average correlated the most strongly with CHOCO's
+\emph{p} (r = .94), rather than ZOIB's \emph{mu} (r = .74) or
+Beta-Gate's \emph{mu} (r = .82). The empirical overall confidence was
+the strongest correlated with CHOCO's \emph{confright} (r = .91),
+followed by ZOIB's \emph{phi} (r = -.86), Beta-Gate's phi (r = -.83),
+and other CHOCO's parameters. The empirical proportion of ``right''
+answer \emph{p} correlated the strongest with CHOCO's \emph{p} (r =
+0.94), followed by Beta-Gate's \emph{mu} (r = .82) and ZOIB's \emph{mu}
+(r = .77). The empirical \emph{pex} correlated the strongest with ZOIB's
+\emph{zoi} (r = .90), and Beta-Gate's \emph{pex} (r = .90), and CHOCO's
+\emph{pex} (r = .88).
+
+\subsection{Discussion}\label{discussion}
+
+Study 1 revealed that the Choice-Confidence (CHOCO) model was a much
+better fit for bimodal bounded data, compared to other alternatives like
+the Zero-and-One Inflated Beta (ZOIB) and Beta-Gate (Ordered Beta)
+models. It also allowed for a deeper understanding through its
+interpretable parameters, offering insights into possibly distinct
+cognitive mechanisms, such as the probability of answering real
+vs.~fake, and the associated confidence in these two choices. This was
+illustrated by modelling the effect of sex on all the CHOCO parameters.
+
+Note that the observed gender differences are primarily presented as a
+proof-of-principle, to showcase the model's ability to capture
+group-level effects and to provide deeper insights compared to other
+models. However, given that they were based on different items (female
+and male faces), these differences might just be a reflection of stimuli
+characteristics rather than true sex dymorphism in the formation of
+reality beliefs.
+
+Finally, we also show that the CHOCO model was able to capture reliable
+and interpretable individual-level parameters, supporting its value to
+measure inter-individual differences. An interesting dissociation
+emerged between participant- and item-level variability: the latter
+seemed mostly to be represented in the \emph{p} parameter, while
+participants reliably varied in most of the components (aside from
+\emph{bex}). This could be interpreted as that external item
+characteristics primarily influence the probability of being judged as
+real vs.~fake, while the expressed confidence is first and foremost an
+individual characteristic.
+
+\section{Study 2}\label{study-2}
+
+The explosion of accessibility of state-of-the-art AI tools has made it
+effortless to generate realistic images, including human faces that are
+often indistinguishable from real ones \textbf{{[}REF{]}}. These
+synthetic visuals are flooding the cyberspace across various domains,
+such as art, advertising and entertainment, to education and
+information. This technological advancement carries an important
+potential for misuse, such as in disinformation campaigns, scams (e.g.,
+AI-bots, identity theft), and abuse. The democratization of such
+technology raises pressing concerns about the value of authenticity and
+the potential erosion of media trust in our increasingly
+\emph{post-truth} society.
+
+In this evolving landscape, understanding the cognitive mechanisms that
+underpin our judgments of reality becomes paramount. Despite the
+increasing prevalence of digitally altered or AI-generated content,
+humans still rely on certain heuristics to assess authenticity. One such
+heuristic might be facial attractiveness. Attractiveness appraisals are
+known to be automatic and unconscious (\citeproc{ref-hou2023neural}{Hou
+et al., 2023}; \citeproc{ref-hung2016unconscious}{Hung et al., 2016};
+\citeproc{ref-luo2019robust}{Luo et al., 2019}), and carry strong
+real-life consequences, as demonstrated by the large body of literature
+on the ``beauty premium'' (\citeproc{ref-gulati2024beautiful}{Gulati et
+al., 2024}, \textbf{MORE}; \citeproc{ref-little2021facial}{Little,
+2021})\footnote{As an eloquent example, Monk Jr et al.
+  (\citeproc{ref-monk2021beholding}{2021}) reported that the the
+  magnitude of the earnings disparities among white women along the
+  perceived attractiveness continuum exceeds in magnitude the canonical
+  black-white race gap in a large representative US sample.}
+
+\textbf{TODO:} However, it is important to allow for the possibility of
+a U-shaped relationship. For instance, Peng et al.~(2020) reported that
+both attractive and unattractive people sold more (underlining a
+``plainness penalty'').
+
+Although its role as a potential modulator of reality beliefs remains
+underexplored, Makowski et al\ldots{} \textbf{TODO: detail findings of
+that study + other studies}.
+
+In this study, we will apply the CHOCO model to the data of MAKOWSKI,
+and see whether different analysis approaches lead to different
+conclusions. We will then try to replicate these findings in a new
+sample of participants.
+
+\subsection{Methods}\label{methods-1}
+
+\subsubsection{Participants}\label{participants-1}
+
+The first sample includes the same participants as study 1 (see above).
+\textbf{TODO} for sample 2.
+
+\subsubsection{Procedure}\label{procedure-1}
+
+For the second sample, the procedure was relatively similar with a few
+key differences. \textbf{TODO} Describe fake Face 2. The main difference
+is that the subjective ratings were done on a X-point Likert scale,
+rather than analog, with a mid-point value.
+
+\subsubsection{Data Analysis}\label{data-analysis-1}
+
+To compare the benefits of CHOCO models to a ``traditional'' analytic
+approach, we started by fitting a frequentist linear mixed model to
+predict reality beliefs with the formula
+\(Real\sim Sex / poly(Attractive, 2) + (poly(Attractive, 2)|Participant) + (1|Item)\).
+The 2nd degree raw polynomial term was included to allow for potentially
+non-linear relationships (note that the first and second degree effects
+of \emph{raw} polynomials can be interpreted independently as the linear
+part and the ``curvy'' part of the relationship). For the CHOCO model,
+mildly informative and effect-agnostic (i.e., centered at zero) priors
+were used. The same formula was used for all parameters, except that
+(based on the reliability analysis of Study 1), items were only included
+as random effects for \emph{p}, and participants were not included for
+\emph{bex}.
+
+\textbf{TODO}. For sample 2, the analysis was based on that of Sample 1.
+The main differences are 1) the inclusion of the ``Condition'' (whether
+the picture was presented as ``Real'' of ``Fake'' in the first phase of
+the experiment) as an additional predictor (it was entered as the only
+random slope for all participant random effects); 2) the inclusion of an
+additional parameters, \emph{pmid}, modelling the probability of
+answering the middle-point of the Likert scale (representing an
+``undecided'' option).
+
+The same analysis was applied for Beauty.
+
+\subsection{Results}\label{results-1}
+
+As the complete model parameters tables are available at
+https://github.com/RealityBending/FictionChoco, we will focus on
+reporting noteworthy findings below.
+
+In sample 1, the traditional approach suggested a significant linear
+relationship between the mean level of ``Reality'' and attractiveness
+(\(\beta_{poly1}=3.63, ~95\%~CI [2.71, 4.56], pd = ...\%\)) for males
+only. The CHOCO model revealed that attractiveness had a significantly
+positive linear relationship with the probability \emph{p} of judging
+faces as real (STATS), but a quadratic relationship with the confidence
+in real judgments (\emph{confright}; STATS). Attractiveness was also
+associated with less confidence in fake judgments (\emph{confleft};
+STATS), and related linearly with a stronger bias towards extreme Real
+responses (\emph{bex}; STATS). These effects were present for males
+only, and no relationship was found for females. The reliability of the
+effect of attractiveness (the random slopes) was very low for all
+parameters (D-vour \textless{} 0.1).
+
+The effect of Beauty was the same as above, with some additional
+evidence in favour of an effect in women, in particular for a linear
+relationship with \emph{p} for females as well
+(\(\beta_{poly1}=7.02, ~95\%~CI [-0.90, 14.97], pd = 95.91\%\)), as well
+as a quadradic relationship with the confidence in fake judgments
+(\emph{confleft}; STATS).
+
+In Sample 2, the traditional approach suggested a significant linear
+relationship between the mean level of ``Reality'' and attractiveness
+for males (STATS) and women (STATS), with no effect of the Condition.
+The CHOCO model revealed that attractiveness had a significantly
+positive linear relationship with the probability \emph{p} of judging
+faces as real for males (STATS) and females (STATS). It also had a
+linear relationship with the confidence in real judgments
+(\emph{confright}) for males (STATS) and females (STATS), as well as a
+significant quadratic curvature for males only (STATS). Attractiveness
+also linearly decreased the confidence in fake judgments only for males
+(\emph{confleft}; STATS), but increased the probability of an undecided
+response (\emph{pmid}) in women (STATS), and displayed in females only a
+quadratic relationship with the amount of extreme answers (\emph{pex};
+STATS) and its bias in favour of right-side extreme response
+(\emph{bex}; STATS). No consistent and reliable effect of condition was
+found.
+
+The effect of Beauty was\ldots{}
+
+\subsection{Discussion}\label{discussion-1}
+
+The fact that the effect was less obvious in women in the sample 1 might
+be explained with power (less relevant items were included for women).
+
+\section{General Discussion}\label{general-discussion}
+
+Little difference between Beauty and Attractiveness, aside that Beauty
+revealed more effects in women. Why?
+
+Likert-scales (with a limited number of discrete options) are commonly
+used in psychology, and often modeled as continuous. While this fact has
+spurred its own polarized debate (REFS), our position is that the model
+used should ideally reflect the data \emph{generating} mechanism rather
+than necessarily focus on the \emph{observed} data\footnote{Ideally, the
+  data recording method should be aligned with the assumed generating
+  mechanism, which is an experiment design issue rather than a
+  statistical one.} - although the former cannot always be easily
+inferred or known. For the data of Sample 2, we held the assumption that
+the underlying latent distribution was CHOCO distributed (as there is no
+reason to assume it would be different from Sample 1), treated as
+continuous CHOCO-distributed data, despite the fact that it was
+collected on a 7-point Likert scale. The motivation was to see if the
+model could extrapolate and reliably estimate all the parameters based
+on a limited number of data points but means in our case that,
+effectively, each Beta distribution was extrapolated from the frequency
+of only two unique values (or 3 for the no-extreme version). While this
+is far from ideal, the CHOCO model still provided a better fit to the
+data than alternative approaches. \textbf{TODO} However, it might have
+lead to a lesser ability to detect finer grain changes, including
+U-shaped relationships. Having 7-points (or 6 with no mid-value) is the
+strict minimum to use the CHOCO model.
+
+Future studies should assess the ability of CHOCO models to also fit
+unimodal distributions (so it can be used more generally), as well as
+the benefits of more parsimonious parametrization (for instance, a
+unique precision parameter controlling both the left and right sides, or
+a linked confidence parameter e.g.~where \emph{confleft} is expressed as
+a function of \emph{confright}).
+
+\section{Data Availability}\label{data-availability}
+
+Data, code and everything is available at
+https://github.com/RealityBending/FictionChoco. The CHOCO model is
+implemented in the \emph{cogmod} R package
+(https://github.com/DominiqueMakowski/cogmod).
+
+\section{Acknowledgements}\label{acknowledgements}
+
+We would like to thank the dissertation students from the University of
+Sussex for their help in data collection.
+
+\section{References}\label{references}
+
+\phantomsection\label{refs}
+\begin{CSLReferences}{1}{0}
+\bibitem[\citeproctext]{ref-burkner2017brms}
+Bürkner, P.-C. (2017). Brms: An r package for bayesian multilevel models
+using stan. \emph{Journal of Statistical Software}, \emph{80}, 1--28.
+
+\bibitem[\citeproctext]{ref-chen2021broadening}
+Chen, J. M., Norman, J. B., \& Nam, Y. (2021). Broadening the stimulus
+set: Introducing the american multiracial faces database. \emph{Behavior
+Research Methods}, \emph{53}, 371--389.
+
+\bibitem[\citeproctext]{ref-open2015estimating}
+Collaboration, O. S. (2015). Estimating the reproducibility of
+psychological science. \emph{Science}, \emph{349}(6251), aac4716.
+
+\bibitem[\citeproctext]{ref-gulati2024beautiful}
+Gulati, A., Martı́nez-Garcia, M., Fernández, D., Lozano, M. A., Lepri,
+B., \& Oliver, N. (2024). What is beautiful is still good: The
+attractiveness halo effect in the era of beauty filters. \emph{Royal
+Society Open Science}, \emph{11}(11), 240882.
+
+\bibitem[\citeproctext]{ref-hou2023neural}
+Hou, X., Shang, J., \& Tong, S. (2023). Neural mechanisms of the
+conscious and subliminal processing of facial attractiveness.
+\emph{Brain Sciences}, \emph{13}(6), 855.
+
+\bibitem[\citeproctext]{ref-hung2016unconscious}
+Hung, S.-M., Nieh, C.-H., \& Hsieh, P.-J. (2016). Unconscious processing
+of facial attractiveness: Invisible attractive faces orient visual
+attention. \emph{Scientific Reports}, \emph{6}(1), 37117.
+
+\bibitem[\citeproctext]{ref-kubinec2023ordered}
+Kubinec, R. (2023). Ordered beta regression: A parsimonious,
+well-fitting model for continuous data with lower and upper bounds.
+\emph{Political Analysis}, \emph{31}(4), 519--536.
+
+\bibitem[\citeproctext]{ref-little2021facial}
+Little, A. C. (2021). Facial attractiveness. \emph{Encyclopedia of
+Evolutionary Psychological Science}, 2887--2891.
+
+\bibitem[\citeproctext]{ref-ludecke2021performance}
+Lüdecke, D., Ben-Shachar, M. S., Patil, I., Waggoner, P., \& Makowski,
+D. (2021). Performance: An r package for assessment, comparison and
+testing of statistical models. \emph{Journal of Open Source Software},
+\emph{6}(60).
+
+\bibitem[\citeproctext]{ref-luo2019robust}
+Luo, Q., Rossion, B., \& Dzhelyova, M. (2019). A robust implicit measure
+of facial attractiveness discrimination. \emph{Social Cognitive and
+Affective Neuroscience}, \emph{14}(7), 737--746.
+
+\bibitem[\citeproctext]{ref-makowski2019indices}
+Makowski, D., Ben-Shachar, M. S., Chen, S. A., \& Lüdecke, D. (2019).
+Indices of effect existence and significance in the bayesian framework.
+\emph{Frontiers in Psychology}, \emph{10}, 2767.
+
+\bibitem[\citeproctext]{ref-makowski2025too}
+Makowski, D., Te, A. S., Neves, A., Kirk, S., Liang, N. Z., Mavros, P.,
+\& Chen, S. A. (2025). Too beautiful to be fake: Attractive faces are
+less likely to be judged as artificially generated. \emph{Acta
+Psychologica}, \emph{252}, 104670.
+
+\bibitem[\citeproctext]{ref-makowski2023we}
+Makowski, D., \& Waggoner, P. D. (2023). Where are we going with
+statistical computing? From mathematical statistics to collaborative
+data science. In \emph{Mathematics} (8; Vol. 11, p. 1821). MDPI.
+
+\bibitem[\citeproctext]{ref-monk2021beholding}
+Monk Jr, E. P., Esposito, M. H., \& Lee, H. (2021). Beholding
+inequality: Race, gender, and returns to physical attractiveness in the
+united states. \emph{American Journal of Sociology}, \emph{127}(1),
+194--241.
+
+\bibitem[\citeproctext]{ref-ospina2012general}
+Ospina, R., \& Ferrari, S. L. (2012). A general class of zero-or-one
+inflated beta regression models. \emph{Computational Statistics \& Data
+Analysis}, \emph{56}(6), 1609--1623.
+
+\bibitem[\citeproctext]{ref-rouder2024hierarchical}
+Rouder, J. N., \& Mehrvarz, M. (2024). Hierarchical-model insights for
+planning and interpreting individual-difference studies of cognitive
+abilities. \emph{Current Directions in Psychological Science},
+\emph{33}(2), 128--135.
+
+\bibitem[\citeproctext]{ref-vehtari2017practical}
+Vehtari, A., Gelman, A., \& Gabry, J. (2017). Practical bayesian model
+evaluation using leave-one-out cross-validation and WAIC.
+\emph{Statistics and Computing}, \emph{27}, 1413--1432.
+
+\bibitem[\citeproctext]{ref-williams2021beneath}
+Williams, D. R., Mulder, J., Rouder, J. N., \& Rast, P. (2021). Beneath
+the surface: Unearthing within-person variability and mean relations
+with bayesian mixed models. \emph{Psychological Methods}, \emph{26}(1),
+74.
+
+\end{CSLReferences}
+
+
+
+
+
+
+\end{document}

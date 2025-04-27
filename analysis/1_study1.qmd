@@ -1,0 +1,427 @@
+---
+title: "Analysis - Study 1"
+editor: source
+editor_options: 
+  chunk_output_type: console
+format:
+  html:
+    toc: true
+    code-fold: true
+    self-contained: false
+execute: 
+  cache: true
+---
+
+
+```{r}
+#| message: false
+#| warning: false
+
+options(mc.cores = parallel::detectCores() - 2)
+
+library(tidyverse)
+library(easystats)
+library(patchwork)
+library(ggside)
+library(ggdist)
+library(brms)
+library(cmdstanr)
+library(rstan)
+
+set.seed(123)
+```
+
+
+## Data Preprocessing
+
+```{r}
+#| eval: false
+
+dfraw <- read.csv("https://raw.githubusercontent.com/RealityBending/FakeFace/refs/heads/main/data/data.csv") |> 
+  mutate(Real = (Belief_Answer + 1) / 2,  # Rescale
+         Orientation = ifelse(Sexual_Orientation == "Straight ", "Heterosexual", Sexual_Orientation),
+         Item = gsub(".jpg", "", Stimulus)) |> 
+  filter(Sex %in% c("Male", "Female"), Orientation %in% c("Heterosexual", "Bisexual", "Homosexual")) |> 
+  mutate(Relevance = case_when(
+    Sex == "Male" & Orientation == "Heterosexual" & grepl("NF", Stimulus) ~ "Relevant",
+    Sex == "Female" & Orientation == "Heterosexual" & grepl("NM", Stimulus) ~ "Relevant",
+    Sex == "Male" & Orientation == "Bisexual" & grepl("NF", Stimulus) ~ "Relevant",
+    Sex == "Female" & Orientation == "Bisexual" & grepl("NM", Stimulus) ~ "Relevant",
+    Sex == "Male" & Orientation == "Homosexual" & grepl("NM", Stimulus) ~ "Relevant",
+    Sex == "Female" & Orientation == "Homosexual" & grepl("NF", Stimulus) ~ "Relevant",
+    .default = "Irrelevant"
+  )) |> 
+  mutate(SexOrientation = paste(Sex, "-", Orientation)) |>
+  filter(Relevance == "Relevant", Orientation == "Heterosexual") 
+
+# Nudge mid-values to avoid model fitting issues
+dfraw$Real[dfraw$Real == 0.5] <- sample(c(0.49, 0.51), sum(dfraw$Real == 0.5), replace = TRUE)  # Avoid 0.5
+
+dfraw |> 
+  select(Participant, Sex, Item, Real, Attractive, Beauty) |> 
+  write.csv("../data/sample1.csv", row.names = FALSE)
+```
+
+```{r}
+#| eval: false
+
+# For demographic section
+dfraw |> 
+  mutate(n_stims = n(), .by = "Participant") |> 
+  select(Participant, Age, Sex, n_stims) |> 
+  slice(1, .by = "Participant") |> 
+  report::report_participants()
+
+report::report(dfraw$Sex)
+```
+
+```{r}
+#| code-fold: false
+
+df <- read.csv("https://raw.githubusercontent.com/RealityBending/FictionChoco/refs/heads/main/data/sample1.csv")
+df$Sex <- factor(df$Sex, levels = c("Male", "Female"))
+```
+
+
+## Models 
+
+::: {.panel-tabset}
+
+
+
+### ZOIB
+
+
+```{r}
+m1_zoib <- readRDS("models/sample1_zoib.rds")
+params_table <- function(m) {
+  d <- as.data.frame(m, variable = insight::find_parameters(m, effects = "fixed", flatten  = TRUE))
+  t <- bayestestR::describe_posterior(d, effects = "fixed", component = "all", ci_method = "hdi", test = "p_direction")
+  out <- insight::format_table(t)
+  out |> 
+    mutate(col = t$pd) |> 
+    gt::gt() |> 
+    gt::data_color(columns = "col", method = "numeric", target_columns = "pd", 
+                   row = col > 0.95, palette = "yellow") |> 
+    gt::data_color(columns = "col", method = "numeric", target_columns = "pd", 
+                   row = col > 0.97, palette = "green") |> 
+    gt::cols_hide("col")
+ }
+params_table(m1_zoib)
+summary(m1_zoib, robust = TRUE)
+
+
+
+
+make_ppcheck  <- function(m, fill = "#FF9800") {
+  pred <- m |> 
+    modelbased::estimate_prediction(df, keep_iterations = 100, iterations = 100) |>
+    select(Sex, starts_with("iter_")) |> 
+    bayestestR::reshape_iterations() 
+  
+  pred |>
+    ggplot(aes(x = iter_value)) +
+    stat_bin(aes(group = iter_group, y = after_stat(count / max(count))), position = "identity",
+             geom="bar", breaks = seq(0, 1.0, by = 0.02), pad = TRUE,
+             alpha = 0.01, fill = fill) +
+    stat_bin(data = df, aes(x = Real, y = after_stat(count / max(count))), 
+             geom="step", breaks = seq(0, 1.0, by = 0.02), 
+             linewidth = 0.5, color = "#9C27B0", position = position_nudge(x=-0.01), pad = TRUE) + 
+    scale_y_sqrt(expand = c(0, 0.01)) +
+    scale_x_continuous(expand = c(0, 0), breaks = c(0, 0.5, 1), labels = c("      0%", "50%", "100%      ")) +
+    theme_minimal() +
+    theme(axis.title.x = element_text(face = "bold"), 
+          axis.title.y = element_blank(), 
+          axis.text.y = element_blank(), 
+          strip.background = element_rect(fill = "lightgrey", color = NA)) +
+    facet_wrap(~Sex, scales = "free_y") +
+    coord_cartesian(xlim = c(-0.003, 1.005), ylim=c(0, 1), expand = TRUE)
+}
+
+p1_zoib <- make_ppcheck(m1_zoib, fill = "#FF9800") +
+  labs(x = "Zero-Inflated Beta (ZOIB)")
+p1_zoib
+```
+
+- Women: higher real mean
+- Women: no difference in precision
+- Women: less extreme values BUT more ones
+
+
+
+
+
+### Beta-Gate
+
+
+```{r}
+m1_betagate <- readRDS("models/sample1_betagate.rds")
+params_table(m1_betagate)
+summary(m1_betagate, robust = TRUE)
+
+
+p1_betagate <- make_ppcheck(m1_betagate, fill = "#FF5722") +
+  labs(x = "Beta-Gate")
+p1_betagate
+
+
+# d <- brms::as_draws(m1_betagate, draw=1:10, variable = "^b_", regex = TRUE) |> 
+#   bayestestR::describe_posterior(centrality = "median", test = "p_direction")
+```
+
+- Women: higher real mean
+- Women: no difference in precision
+- Women: less extreme values BUT more ones
+
+
+
+### CHOCO
+
+
+```{r}
+m1_choco <- readRDS("models/sample1_choco.rds")
+params_table(m1_choco)
+summary(m1_choco, robust = TRUE)
+
+p1_choco <- make_ppcheck(m1_choco, fill = "#7B3F00") +
+  labs(x = "CHOCO")
+p1_choco
+```
+
+- Women: higher probability of "Real"
+- Women: Less confidence when "Fake"
+- Women: no difference in precision
+- Women: less extreme values (BUT possibly more ones)
+
+
+```{r}
+visualize_dchoco <- function(m, newdata) {
+
+  p <- modelbased::estimate_prediction(m, data = newdata, predict = "mu", iterations = 200)
+  confright <- modelbased::estimate_prediction(m, data = newdata, predict = "confright", iterations = 200)
+  confleft <- modelbased::estimate_prediction(m, data = newdata, predict = "confleft", iterations = 200)
+  precright <- modelbased::estimate_prediction(m, data = newdata, predict = "precright", iterations = 200)
+  precleft <- modelbased::estimate_prediction(m, data = newdata, predict = "precleft", iterations = 200)
+  pex <- modelbased::estimate_prediction(m, data = newdata, predict = "pex", iterations = 200)
+  bex <- modelbased::estimate_prediction(m, data = newdata, predict = "bex", iterations = 200)
+  
+  data <- data.frame()
+  x <- seq(0, 1, length.out = 1001)
+  for(i in 1:nrow(newdata)) {
+     data <- data.frame(
+       x = c(-0.005, x, 1.005),
+       y = c(0, cogmod::dchoco(x, p=p$Predicted[i], confright=confright$Predicted[i], confleft = confleft$Predicted[i],
+                          precright = precright$Predicted[i], precleft = precleft$Predicted[i],
+                          pex = pex$Predicted[i], bex = bex$Predicted[i], pmid = 0), 0)
+     ) |> 
+       merge(newdata[i, ]) |> 
+       rbind(data)
+  }
+  data
+}
+
+pred <- visualize_dchoco(m1_choco, newdata=insight::get_datagrid(m1_choco))
+p1_density <- pred |> 
+  mutate(y = ifelse(x %in% c(0, 1), y * 3, y)) |>  # Inflate extremes for visibility
+  ggplot(aes(x=x, y=y, color=Sex)) +
+  geom_line(linewidth = 1.5) +
+  scale_color_manual(values = c("Male"="#2196F3", "Female"="#E91E63")) +
+  scale_x_continuous(breaks = c(0, 0.25, 0.5, 0.75, 1), 
+                     labels = c("0%\nAI-Generated", "25%", "50%", "75%", "100%\nPhotograph")) +
+  theme_minimal() +
+  labs(y = "Distribution", x = "Do you think this image is real?") +
+  theme(axis.text.y = element_blank(),
+        axis.title.x = element_text(face = "bold"))
+p1_density
+```
+
+
+:::
+
+
+## Model Comparison
+
+### Fitting Duration
+
+```{r}
+rbind(
+  mutate(attributes(m1_zoib$fit)$metadata$time$chain, Model="ZOIB"),
+  mutate(attributes(m1_betagate$fit)$metadata$time$chain, Model="BEXT"),
+  mutate(attributes(m1_choco$fit)$metadata$time$chain, Model="CHOCO")
+) |> 
+  mutate(Model = fct_relevel(Model, "ZOIB", "BEXT", "CHOCO"),
+         total = total / 60) |>
+  ggplot(aes(x = Model, y = total, fill = Model)) +
+  geom_boxplot() +
+  labs(y = "Sampling Duration (min)") +
+  scale_y_log10() +
+  scale_fill_manual(values = c("#FF9800", "#FF5722", "#795548")) +
+  theme_minimal() 
+```
+
+
+### Fit Quality
+
+
+```{r}
+loocomp <- loo::loo_compare(m1_zoib, m1_betagate, m1_choco, criterion = "waic") 
+
+parameters(loocomp, include_ENP = TRUE)
+
+report::report(loocomp)
+
+p1_zoib | p1_betagate | p1_choco
+```
+
+## Individual-Level Parameters
+
+### Reliability
+
+::: {.panel-tabset}
+
+#### ZOIB
+
+```{r}
+table_dvour <- function(g) {
+  performance::performance_dvour(g) |> 
+    arrange(desc(D_vour)) |> 
+    gt::gt() |> 
+    gt::data_color("D_vour", palette = c("red", "red", "orange", "yellow", "green"), domain = c(0, 1)) |> 
+    gt::fmt_auto()
+}
+
+
+g1_zoib <- modelbased::estimate_grouplevel(m1_zoib)
+table_dvour(g1_zoib)
+```
+
+#### Beta-Gate
+
+```{r}
+g1_betagate <- modelbased::estimate_grouplevel(m1_betagate)
+table_dvour(g1_betagate)
+```
+
+#### CHOCO
+
+```{r}
+g1_choco <- modelbased::estimate_grouplevel(m1_choco)
+table_dvour(g1_choco)
+```
+
+
+```{r}
+colors <- c("p" = "#9C27B0", "confright" = "#795548", "confleft" = "#795548",
+            "precright" = "#607D8B","precleft" = "#607D8B", "pex" = "#FF9800", "bex" = "#F44336")
+
+p2_dvour <- g1_choco |> 
+  mutate(Component = ifelse(Component == "conditional", "p",  Component),
+         Component = fct_relevel(Component, "p", "confright", "confleft", "precright", "precleft", "pex", "bex"),
+         Group = fct_relevel(Group, "Participant", "Item"),
+         .group = paste0(Group, " (", Component, ")")) |>
+  ggplot(aes(x = Median, y = Level)) +
+  geom_pointrange(aes(xmin = CI_low, xmax = CI_high, color= Component), linewidth = 0.3, size = 0.05) +
+  facet_grid(Group~Component, scales = "free", switch="both") +
+  ggside::geom_xsidedensity(aes(group = .group, fill = Component), color = NA) +
+  ggside::ggside(scales  = "free") +
+  scale_color_manual(values = colors) +
+  scale_fill_manual(values = colors) +
+  theme_minimal() +
+  theme(axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        strip.placement.x = "outside",
+        strip.background = element_rect(fill = NA, color = NA),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.grid.major.y = element_blank(),
+        legend.position = "none")
+p2_dvour
+```
+
+:::
+
+### Correlation
+
+```{r}
+features1 <- df |> 
+  summarize(Sample = "Sample1", 
+            Empirical_p = sum(Real > 0.5) / n(), 
+            Empirical_conf = mean(abs(Real - 0.5) * 2),
+            Empirical_pex = sum(Real %in% c(0, 1)) / n(),
+            Empirical_bex = sum(Real == 1) / sum(Real %in% c(0, 1)),
+            Empirical_mu = mean(Real),
+            .by = "Participant") 
+
+features1 <- reshape_grouplevel(g1_zoib, indices = "Median", group = "Participant") |> 
+  datawizard::data_rename("Intercept", "mu") |> 
+  select(-coi_Intercept) |> 
+  datawizard::data_addprefix("ZOIB_", exclude = "Participant") |> 
+  full_join(features1, by = "Participant")
+
+features1 <- reshape_grouplevel(g1_betagate, indices = "Median", group = "Participant") |> 
+  datawizard::data_rename("Intercept", "mu") |> 
+  select(-bex_Intercept) |> 
+  datawizard::data_addprefix("BGATE_", exclude = "Participant") |> 
+  full_join(features1, by = "Participant")
+
+features1 <- reshape_grouplevel(g1_choco, indices = "Median", group = "Participant") |> 
+  datawizard::data_rename("Intercept", "p") |> 
+  select(-bex_Intercept) |> 
+  datawizard::data_addprefix("CHOCO_", exclude = "Participant") |> 
+  full_join(features1, by = "Participant")
+```
+
+```{r}
+cordata <- correlation::correlation(select(features1, -Participant, -Sample), p_adjust = "none", redundant = TRUE) |> 
+  correlation::cor_sort() |> 
+  correlation::cor_lower() |>
+  as.data.frame() |> 
+  mutate(Parameter2 = fct_rev(Parameter2),
+         Parameter1 = fct_relabel(Parameter1, \(x) gsub("_Intercept", "", x)),
+         Parameter2 = fct_relabel(Parameter2, \(x) gsub("_Intercept", "", x)),
+         Parameter1 = fct_relabel(Parameter1, \(x) gsub("_", " - ", x)),
+         Parameter2 = fct_relabel(Parameter2, \(x) gsub("_", " - ", x)))
+
+p2_cor <- cordata |> 
+  ggplot(aes(x=Parameter2, y = Parameter1)) +
+  geom_tile(aes(fill = r)) +
+  geom_text(aes(label = insight::format_value(r, 2, zap_small = TRUE, lead_zero = FALSE)), color = ifelse(cordata$p < 0.01, "black", "grey")) +
+  scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    legend.position = "none"
+  )
+p2_cor
+```
+
+Choco parameters are the most interpretable (relate to empirical indices).
+
+## Figures
+
+
+```{r}
+#| eval: true
+
+p1_a <- wrap_elements((p1_zoib | p1_betagate | p1_choco) + 
+         patchwork::plot_annotation(title = "Posterior Predictive Checks", theme = theme(plot.title = element_text(face = "bold")))) 
+
+p1_b <- wrap_elements(p1_density + 
+         patchwork::plot_annotation(title = "Effect of Sex", theme = theme(plot.title = element_text(face = "bold"))))
+
+p1 <- p1_a / p1_b
+
+p2_a <- wrap_elements(p2_dvour + 
+         patchwork::plot_annotation(title = "Reliability of CHOCO Participant-Level Estimates", theme = theme(plot.title = element_text(face = "bold"))))
+
+p2_b <- wrap_elements(p2_cor + 
+         patchwork::plot_annotation(title = "Correlation of Participant-Level Estimates", theme = theme(plot.title = element_text(face = "bold"))))
+p2 <- p2_a / p2_b + plot_layout(heights = c(1.5, 1))
+
+
+ggsave("../paper/figures/fig3.png", p1, width = 8, height = 8, dpi = 300)
+ggsave("../paper/figures/fig4.png", p2, width = 8, height = 12, dpi = 300)
+```
