@@ -133,8 +133,16 @@ visualize_dchoco <- function(m, newdata, x = c(-0.005, seq(0, 1, length.out = 10
   confleft <- modelbased::estimate_prediction(m, data = newdata, predict = "confleft", iterations = 50)
   precright <- modelbased::estimate_prediction(m, data = newdata, predict = "precright", iterations = 50)
   precleft <- modelbased::estimate_prediction(m, data = newdata, predict = "precleft", iterations = 50)
-  pex <- modelbased::estimate_prediction(m, data = newdata, predict = "pex", iterations = 50)
-  bex <- modelbased::estimate_prediction(m, data = newdata, predict = "bex", iterations = 50)
+  if ("pex" %in% names(insight::find_parameters(m))) {
+    pex <- modelbased::estimate_prediction(m, data = newdata, predict = "pex", iterations = 50)
+  } else {
+    pex <- list(Predicted = rep(0, nrow(newdata)))
+  }
+  if ("bex" %in% names(insight::find_parameters(m))) {
+    bex <- modelbased::estimate_prediction(m, data = newdata, predict = "bex", iterations = 50)
+  } else {
+    bex <- list(Predicted = rep(0.5, nrow(newdata)))
+  }
   if ("pmid" %in% names(insight::find_parameters(m))) {
     pmid <- modelbased::estimate_prediction(m, data = newdata, predict = "pmid", iterations = 50)
   } else {
@@ -331,15 +339,41 @@ plot_params1(m1_chocobeauty, xlabel = "Beauty")
 ```{r}
 #| eval: false
 
-df <- read.csv("https://raw.githubusercontent.com/RealityBending/FakeFace2/refs/heads/main/data/data_task.csv") |> 
+set.seed(123)
+
+dfraw <- read.csv("https://raw.githubusercontent.com/RealityBending/FakeFace2/refs/heads/main/data/data_task.csv") |> 
+  full_join(read.csv("https://raw.githubusercontent.com/RealityBending/FakeFace2/refs/heads/main/data/data_participants.csv") |> 
+              select(Participant, Age), by = "Participant") |> 
+  rename(Sex = Gender, Orientation = SexualOrientation, Item=Stimulus) |> 
+  filter(Sex %in% c("Male", "Female"), Orientation %in% c("Heterosexual", "Bisexual")) |> 
+  mutate(Relevance = case_when(
+    Sex == "Male" & grepl("NF", Item) ~ "Relevant",
+    Sex == "Female" & grepl("NM", Item) ~ "Relevant",
+    .default = "Irrelevant"
+  ))  |> 
   filter(Relevance == "Relevant") |> 
   mutate(Real = (Realness + 3) / 6,
          Attractive = Attractiveness / 6,
          Beauty = Beauty / 6,
-         RealNoex = datawizard::change_scale(Real, to = c(0.125, 0.875))) |> 
-  select(Participant, Sex=Gender, Condition, Item=Stimulus, Real, RealNoex, Attractive, Beauty)
+         RealNoex = datawizard::change_scale(Real, to = c(0.125, 0.875)),
+         SexOrientation = paste(Sex, "-", Orientation))
 
-write.csv(df, "../data/sample2.csv", row.names = FALSE)
+dfraw |> 
+  select(Participant, Sex, Condition, Item, Real, RealNoex, Attractive, Beauty) |> 
+  write.csv("../data/sample2.csv", row.names = FALSE)
+```
+
+```{r}
+#| eval: false
+
+# For demographic section
+dfraw |> 
+  mutate(n_stims = n(), .by = "Participant") |> 
+  select(Participant, Age, Sex, n_stims) |> 
+  slice(1, .by = "Participant") |> 
+  report::report_participants()
+
+report::report(dfraw$Sex)
 ```
 
 ```{r}
@@ -355,27 +389,47 @@ df$Condition <- factor(df$Condition, levels = c("Photograph", "AI-Generated"))
 ### Attractiveness
 
 ```{r}
-m <- lme4::lmer(Real ~ Sex / poly(Attractive, 2) * Condition + (1|Participant) + (1|Item), data = df)
+ggplot(df, aes(x=Real)) +
+  geom_bar() +
+  facet_wrap(~Sex)
+```
+
+```{r}
+m <- lme4::lmer(RealNoex ~ Sex / poly(Attractive, 2) * Condition + (1|Participant) + (1|Item), data = df)
 display(parameters::parameters(m, effects = "fixed"))
 
 estimate_relation(m, length = 30) |> 
   ggplot(aes(x=Attractive, y = Predicted)) + 
   geom_ribbon(aes(ymin = CI_low, ymax = CI_high,, fill = Condition), alpha = 0.2) +
   geom_line(aes(color = Condition), linewidth = 1) +
-  geom_smooth(data=df, aes(color = Condition, y = Real), method = "loess", se = FALSE, linetype = "dotted", formula = 'y ~ x') +
+  geom_smooth(data=dfraw, aes(color = Condition, y = Real), method = "loess", se = FALSE, linetype = "dotted", formula = 'y ~ x') +
   scale_color_manual(values = c("AI-Generated"="#3F51B5", "Photograph"="#FF5722")) +
   scale_fill_manual(values = c("AI-Generated"="#3F51B5", "Photograph"="#FF5722")) +
   facet_wrap(~Sex) +
   theme_minimal()
 ```
 
-#### Posterior Predictive Check
+#### Model Comparison 
 
 ```{r}
+# m2_betagate <- readRDS("models/sample2_betagate.rds")
+m2_betagate <- readRDS("models/sample2noex_betagate.rds")
 m2_chocoat <- readRDS("models/sample2_chocoattractiveness.rds")
+m2_chocoat <- readRDS("models/sample2noex_chocoattractiveness.rds")
+```
 
-m <- m2_chocoat
+```{r}
+loocomp <- loo::loo_compare(m2_betagate, m2_chocoat, criterion = "waic") 
 
+parameters(loocomp, include_ENP = TRUE)
+
+report::report(loocomp)
+```
+
+
+##### Posterior Predictive Check
+
+```{r}
 make_ppcheck  <- function(m, fill = "#FF9800") {
   pred <- m |> 
     modelbased::estimate_prediction(df, keep_iterations = 100, iterations = 100) |>
@@ -384,7 +438,7 @@ make_ppcheck  <- function(m, fill = "#FF9800") {
   
   pred |>
     ggplot(aes(x = iter_value)) +
-    stat_bin(data = df, aes(x = Real, y = after_stat(density)),
+    stat_bin(data = df, aes(x = RealNoex, y = after_stat(density)),
              geom="bar", breaks = seq(0, 1.0, by = 0.04), fill = "#424242") +
     stat_bin(aes(group = iter_group, y = after_stat(density)), position = "identity",
              geom="bar", breaks = seq(0, 1.0, by = 0.04), pad = TRUE,
@@ -401,8 +455,12 @@ make_ppcheck  <- function(m, fill = "#FF9800") {
     coord_cartesian(xlim = c(-0.003, 1.005), expand = TRUE)
 }
 
-make_ppcheck(m2_chocoat) +
+p_ppc1 <- make_ppcheck(m2_chocoat, fill = "brown") +
+  labs("Real") 
+p_ppc2 <- make_ppcheck(m2_betagate, fill = "#FF9800") +
   labs("Real")
+
+p_ppc1 / p_ppc2 
 ```
 
 #### Model Description
@@ -418,9 +476,13 @@ params_table(m2_chocoat, keep = "polyAttractive|Condition")
 ##### Effect of Condition
 
 ```{r}
-# c <- estimate_contrasts(m2_chocoat, contrast = "Condition", by = "Sex", predict = "mu")
-# c <- estimate_contrasts(m2_chocoat, contrast = "Condition", by = "Sex", predict = "mu", backend = "emmeans")
-# c2 <- estimate_contrasts(m2_chocoat, contrast = "Condition", by = "Sex", predict = "confright", backend = "emmeans")
+c <- data.frame()
+for(param in c("mu", "confright", "confleft", "precright", "precleft", "pmid")) {
+  c <- estimate_contrasts(m2_chocoat, contrast = "Condition", by = "Sex", predict = param, backend = "emmeans") |>
+    mutate(Parameter = ifelse(param == "mu", "p", param)) |> 
+    rbind(c)
+}
+c
 ```
 
 ##### Full
@@ -439,18 +501,17 @@ summary(m2_chocoat, robust = TRUE)
 ```{r}
 pred <- visualize_dchoco(m2_chocoat,
                          newdata=insight::get_datagrid(m2_chocoat, length = 5, preserve_range = FALSE),
-                         x = seq(0, 1, length.out=7))
-
+                         x = seq(0, 1, length.out=9))
 
 p4_density <- pred$densities |> 
   mutate(Attractive = as.factor(Attractive),
          y = ifelse(x %in% c(0, 1), y * 3, y),  # Inflate extremes for visibility
-         x = ifelse(Condition == "AI-Generated", x + 0.1, x)) |>  
-  filter(Condition == "Photograph") |> 
+         x = ifelse(Condition == "AI-Generated", x + 0.01, x)) |>  
+  filter(Condition == "Photograph") |>
   ggplot(aes(x=x, y=y)) +
-  geom_line(aes(color=Attractive), linewidth = 1.25) +
-  geom_path(data = filter(pred$mu, Condition == "Photograph"), aes(group = side), linewidth=0, lineend = 'round', 
-            arrow = arrow(length = unit(0.025, "npc"), type = "closed")) +
+  geom_line(aes(color=Attractive, linetype = Condition), linewidth = 1.25) +
+  # geom_path(data = filter(pred$mu, Condition == "Photograph"), aes(group = side), linewidth=0, lineend = 'round', 
+  #           arrow = arrow(length = unit(0.025, "npc"), type = "closed")) +
   facet_wrap(~Sex) +
   labs(y = "Distribution", x = "Do you think this image is real?", color = "Attractiveness") +
   scale_colour_manual(values=scales::seq_gradient_pal("#FFCDD2", "#B71C1C", "Lab")(seq(0,1,length.out=5))) +
@@ -490,6 +551,18 @@ estimate_relation(m, length = 30) |>
   theme_minimal()
 ```
 
+#### Model Description
+
+::: {.panel-tabset}
+
+##### Effect of Attractiveness
+
+```{r}
+m2_chocobeauty <- readRDS("models/sample2noex_chocobeauty.rds")
+params_table(m2_chocobeauty, keep = "polyBeauty|Condition")
+```
+
+:::
 ## Figures
 
 ```{r}

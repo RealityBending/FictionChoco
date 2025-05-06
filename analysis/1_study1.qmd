@@ -27,8 +27,6 @@ library(ggdist)
 library(brms)
 library(cmdstanr)
 library(rstan)
-
-set.seed(123)
 ```
 
 
@@ -37,22 +35,21 @@ set.seed(123)
 ```{r}
 #| eval: false
 
+set.seed(123)
+
 dfraw <- read.csv("https://raw.githubusercontent.com/RealityBending/FakeFace/refs/heads/main/data/data.csv") |> 
   mutate(Real = (Belief_Answer + 1) / 2,  # Rescale
          Orientation = ifelse(Sexual_Orientation == "Straight ", "Heterosexual", Sexual_Orientation),
          Item = gsub(".jpg", "", Stimulus)) |> 
-  filter(Sex %in% c("Male", "Female"), Orientation %in% c("Heterosexual", "Bisexual", "Homosexual")) |> 
+  filter(Sex %in% c("Male", "Female"), Orientation %in% c("Heterosexual", "Bisexual")) |> 
   mutate(Relevance = case_when(
-    Sex == "Male" & Orientation == "Heterosexual" & grepl("NF", Stimulus) ~ "Relevant",
-    Sex == "Female" & Orientation == "Heterosexual" & grepl("NM", Stimulus) ~ "Relevant",
-    Sex == "Male" & Orientation == "Bisexual" & grepl("NF", Stimulus) ~ "Relevant",
-    Sex == "Female" & Orientation == "Bisexual" & grepl("NM", Stimulus) ~ "Relevant",
-    Sex == "Male" & Orientation == "Homosexual" & grepl("NM", Stimulus) ~ "Relevant",
-    Sex == "Female" & Orientation == "Homosexual" & grepl("NF", Stimulus) ~ "Relevant",
+    Sex == "Male" & grepl("NF", Stimulus) ~ "Relevant",
+    Sex == "Female" & grepl("NM", Stimulus) ~ "Relevant",
     .default = "Irrelevant"
   )) |> 
-  mutate(SexOrientation = paste(Sex, "-", Orientation)) |>
-  filter(Relevance == "Relevant", Orientation == "Heterosexual") 
+  mutate(SexOrientation = paste(Sex, "-", Orientation)) |> 
+  filter(Relevance == "Relevant")
+  
 
 # Nudge mid-values to avoid model fitting issues
 dfraw$Real[dfraw$Real == 0.5] <- sample(c(0.49, 0.51), sum(dfraw$Real == 0.5), replace = TRUE)  # Avoid 0.5

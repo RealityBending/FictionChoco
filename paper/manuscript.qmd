@@ -183,7 +183,7 @@ Another unknown is whether these beliefs are fully stimuli-driven or whether the
 
 ### Participants
 
-The sample is the same as in [@makowski2025too]. We included all heterosexual male and female participants, for a final sample of 125 participants (Mean age = 28.6, SD = 9.2, range: [19, 66]; Sex: 44.8% females). We included only sexually relevant stimuli for men and women (i.e., all 89 female faces for men and 20 male faces for women).
+The sample is the same as in [@makowski2025too]. We included all heterosexual and bisexual (these two groups did not seem to differ based on preliminary analyses and were thus grouped to maximize power) male and female participants, for a final sample of 141 participants (Mean age = 28.4, SD = 9.0, range: [19, 66]; Sex: 47.5% females). For each participant, we included only stimuli of the opposite gender (i.e., all 89 female faces for men and 20 male faces for women).
 
 ### Procedure
 
@@ -224,11 +224,11 @@ knitr::include_graphics("./figures/fig3.png")
 
 The models did converge without divergent transitions, and the effective sample size was sufficient for all parameters (all $n_{\text{eff}} > 1000$).
 The difference in predictive accuracy, as indexed by Expected Log Predictive Density (ELPD-WAIC), suggests that the *CHOCO* is the best
-model ($ELPD = -138.45$), followed by *Beta-Gate* ($\Delta_{ELPD} = -1875.31 \pm 61.18, p < .001)$ and *ZOIB* ($\Delta_{ELPD} = -1916.11 \pm 61.75, p < .001$). See @fig-three for the posterior predictive checks, showing that only the CHOCO model managed to capture the bimodal distribution of data.
+model ($ELPD = -203.54$), followed by *Beta-Gate* ($\Delta_{ELPD} = -1794.57 \pm 63.12, p < .001)$ and *ZOIB* ($\Delta_{ELPD} = -1833.59 \pm 63.52, p < .001$). See @fig-three for the posterior predictive checks, showing that only the CHOCO model managed to capture the bimodal distribution of data.
 
 ### Effect of Sex
 
-The ZOIB model suggested that women had higher mean (*mu* parameter) scores of reality beliefs ($\Delta_{\text{Female}} = 0.16,~95\%~ CI~[0.01, 0.32], pd = 98.10\%$), less extreme values (*zoi* parameter; STATS) but more ones relative to zeros (*coi* parameter; STATS).
+The ZOIB model suggested that women had higher mean (*mu* parameter) scores of reality beliefs ($\Delta_{\text{Female}} = 0.20,~95\%~ CI~[0.03, 0.37], pd = 98.77\%$), less extreme values (*zoi* parameter; STATS) but more ones relative to zeros (*coi* parameter; STATS).
 
 The Beta-Gate model similarly suggested that women had higher mean (*mu* parameter) scores of reality beliefs (STATS), less extreme values (*pex* parameter; STATS), and a greater tendency to answer one relative to zero (*bex* parameter; STATS).
 
@@ -249,13 +249,13 @@ knitr::include_graphics("./figures/fig4.png")
 ```
 
 
-The ZOIB model estimated reliable variability in the participant's *phi* parameter (D-vour = 0.88) and *zoi* parameter (D-vour = 0.84), as well as in the *mu* parameter related to individual items (D-vour = 0.82). Moderate reliability was also observed for items in the *coi* parameter (D-vour = 0.71) and for participants in the *mu* parameter (D-vour = 0.69). The Beta-Gate model yielded similar results: a high reliability of participant's *phi* parameter (D-vour = 0.88), *pex* parameter (D-vour = 0.84). The *mu* parameter's variability was reliably captured for items (D-vour = 0.85) and moderately for participants (D-vour = 0.72). 
-Of note that the parameters of Beta-Gate and ZOIB correlate almost perfectly, underlining their empirical similarity despite a different parametrization. 
+The ZOIB model estimated reliable variability in the participant's *phi* parameter (D-vour = 0.88) and *zoi* parameter (D-vour = 0.85), as well as in the *mu* parameter related to individual items (D-vour = 0.82). Moderate reliability was also observed for items in the *coi* parameter (D-vour = 0.71) and for participants in the *mu* parameter (D-vour = 0.69). The Beta-Gate model yielded similar results: a high reliability of participant's *phi* parameter (D-vour = 0.88), *pex* parameter (D-vour = 0.85). The *mu* parameter's variability was reliably captured for items (D-vour = 0.85) and moderately for participants (D-vour = 0.72). 
 
-The CHOCO model yielded reliable estimates for all parameters except *bex* for participants (*confright* D-vour = 0.94, *confleft* D-vour = 0.91, *pex* D-vour = 0.80, *p* D-vour = 0.73, *precright* D-vour = 0.79, *precleft* D-vour = 0.73). Item's variability was primarily reflected through the *p* parameter (D-vour = 0.86).
+The CHOCO model yielded reliable estimates for all parameters except *bex* for participants (*confright* D-vour = 0.94, *confleft* D-vour = 0.91, *pex* D-vour = 0.79, *p* D-vour = 0.73, *precright* D-vour = 0.77, *precleft* D-vour = 0.67). Item's variability was primarily reflected through the *p* parameter (D-vour = 0.86).
 
-Finally, the empirical average correlated the most strongly with CHOCO's *p* (r = .94), rather than ZOIB's *mu* (r = .74) or
+Finally, the empirical average correlated the most strongly with CHOCO's *p* (r = .86), rather than ZOIB's *mu* (r = .77) or
 Beta-Gate's *mu* (r = .82). The empirical overall confidence was the strongest correlated with CHOCO's *confright* (r = .91), followed by ZOIB's *phi* (r = -.86), Beta-Gate's phi (r = -.83), and other CHOCO's parameters. The empirical proportion of "right" answer *p* correlated the strongest with CHOCO's *p* (r = 0.94), followed by Beta-Gate's *mu* (r = .82) and ZOIB's *mu* (r = .77). The empirical *pex* correlated the strongest with ZOIB's *zoi* (r = .90), and Beta-Gate's *pex* (r = .90), and CHOCO's *pex* (r = .88).
+Of note that the parameters of Beta-Gate and ZOIB correlate almost perfectly, underlining their empirical similarity despite a different parametrization. 
 
 ## Discussion
 
@@ -289,7 +289,11 @@ In this study, we will apply the CHOCO model to the data of MAKOWSKI, and see wh
 ### Participants
 
 The first sample includes the same participants as study 1 (see above). 
+
+
 **TODO** for sample 2. 
+
+The final sample included 189 participants (Mean age = 28.4, SD = 14.0, range: [18, 69]; Sex: 76.2% females).
 
 ### Procedure
 
@@ -309,10 +313,14 @@ The same analysis was applied for Beauty.
 
 As the complete model parameters tables are available at https://github.com/RealityBending/FictionChoco, we will focus on reporting noteworthy findings below.
 
+### Sample 1
 
-In sample 1, the traditional approach suggested a significant linear relationship between the mean level of "Reality" and attractiveness ($\beta_{poly1}=3.63, ~95\%~CI [2.71, 4.56], pd = ...\%$) for males only. The CHOCO model revealed that attractiveness had a significantly positive linear relationship with the probability *p* of judging faces as real (STATS), but a quadratic relationship with the confidence in real judgments (*confright*; STATS). Attractiveness was also associated with less confidence in fake judgments (*confleft*; STATS), and related linearly with a stronger bias towards extreme Real responses (*bex*; STATS). These effects were present for males only, and no relationship was found for females. The reliability of the effect of attractiveness (the random slopes) was very low for all parameters (D-vour < 0.1). 
+In sample 1, the traditional approach suggested a significant linear relationship between the mean level of "Reality" and attractiveness ($\beta_{poly1}=3.42, ~95\%~CI [2.50, 4.34], p < .001\%$) for males only. The CHOCO model revealed that attractiveness had a significantly positive linear relationship with the probability *p* of judging faces as real (STATS), but a quadratic relationship with the confidence in real judgments (*confright*; STATS). Attractiveness was also associated with less confidence in fake judgments (*confleft*; STATS), a quadratic relationship with left precision (*precleft*; STATS), and related linearly with a stronger bias towards extreme Real responses (*bex*; STATS). These effects were present for males only, and no relationship was found for females. The reliability of the effect of attractiveness (the random slopes) was very low for all parameters (D-vour < 0.01). 
+The effect of Beauty was the same as of attractiveness.
 
-The effect of Beauty was the same as above, with some additional evidence in favour of an effect in women, in particular for a linear relationship with *p* for females as well ($\beta_{poly1}=7.02, ~95\%~CI [-0.90, 14.97], pd = 95.91\%$), as well as a quadradic relationship with the confidence in fake judgments (*confleft*; STATS).
+<!-- , with some additional evidence in favour of an effect in women, in particular for a linear relationship with *p* for females as well ($\beta_{poly1}=7.02, ~95\%~CI [-0.90, 14.97], pd = 95.91\%$), as well as a quadratic relationship with the confidence in fake judgments (*confleft*; STATS). -->
+
+### Sample 2
 
 In Sample 2, the traditional approach suggested a significant linear relationship between the mean level of "Reality" and attractiveness for males (STATS) and women (STATS), with no effect of the Condition. The CHOCO model revealed that attractiveness had a significantly positive linear relationship with the probability *p* of judging faces as real for males (STATS) and females (STATS). It also had a linear relationship with the confidence in real judgments (*confright*) for males (STATS) and females (STATS), as well as a significant quadratic curvature for males only (STATS). Attractiveness also linearly decreased the confidence in fake judgments only for males (*confleft*; STATS), but increased the probability of an undecided response (*pmid*) in women (STATS), and displayed in females only a quadratic relationship with the amount of extreme answers (*pex*; STATS) and its bias in favour of right-side extreme response (*bex*; STATS). No consistent and reliable effect of condition was found.
 
@@ -333,9 +341,14 @@ The fact that the effect was less obvious in women in the sample 1 might be expl
 
 # General Discussion
 
+This study introduces a new statistical model to analyze bimodal data, which can be observed for instance when using subjective rating scales in which the two sides correspond to a different "choice" (e.g., "false" vs. "true", "real" vs "fake").  The Choice-Confidence (CHOCO) model conceptualizes the data as a mixture of two distributions, one for each choice, and models the probability of choosing one or the other as well as the degree of confidence in each choice. We validated this model on real-life data by appling it to the reality beliefs of @makowski2025too, and showed that it was able to capture the bimodal nature of the data and provides a more accurate representation of the underlying processes than other alternative approaches, including Zero-or-One inflated Beta (ZOIB) models.
+
+
+
 
 Little difference between Beauty and Attractiveness, aside that Beauty revealed more effects in women. Why?
 
+We demonstrated the flexibility of the CHOCO model, being usable in analog scales as well as discrete ratings with a mid-point. 
 
 Likert-scales (with a limited number of discrete options) are commonly used in psychology, and often modeled as continuous.
 While this fact has spurred its own polarized debate (REFS), our position is that the model used should ideally reflect the data *generating* mechanism rather than necessarily focus on the *observed* data^[Ideally, the data recording method should be aligned with the assumed generating mechanism, which is an experiment design issue rather than a statistical one.] - although the former cannot always be easily inferred or known. 
@@ -344,6 +357,8 @@ The motivation was to see if the model could extrapolate and reliably estimate a
 While this is far from ideal, the CHOCO model still provided a better fit to the data than alternative approaches. 
 **TODO** However, it might have lead to a lesser ability to detect finer grain changes, including U-shaped relationships. Having 7-points (or 6 with no mid-value) is the strict minimum to use the CHOCO model.
 
+
+Future studies should assess psychometric property liek the minimum amount of data required to estimate all parameters reliably.
 
 Future studies should assess the ability of CHOCO models to also fit unimodal distributions (so it can be used more generally), as well as the benefits of more parsimonious parametrization (for instance, a unique precision parameter controlling both the left and right sides, or a linked confidence parameter e.g. where *confleft* is expressed as a function of *confright*).
 

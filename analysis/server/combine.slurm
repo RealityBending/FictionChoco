@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=fictionchoco_combine
-#SBATCH --array=1-1
+#SBATCH --array=1-7
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=32
@@ -10,7 +10,7 @@
 #SBATCH --partition=long
 
 # Set working directory
-cd /mnt/lustre/users/psych/dmm56/FictionChoco || exit 1
+# cd /mnt/lustre/users/psych/dmm56/FictionChoco || exit 1
 
 echo "Running on $(hostname)"
 echo "Current directory: $(/bin/pwd)"

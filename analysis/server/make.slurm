@@ -10,7 +10,7 @@
 #SBATCH --partition=long
 
 # Set working directory
-cd /mnt/lustre/users/psych/dmm56/FictionChoco || exit 1
+# cd /mnt/lustre/users/psych/dmm56/FictionChoco || exit 1
 
 echo "Running on $(hostname)"
 echo "Current directory: $(/bin/pwd)"
