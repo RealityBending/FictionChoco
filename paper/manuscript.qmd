@@ -303,10 +303,9 @@ Additionally, the familiarity rating was removed from the set of facial evaluati
 In the second phase, realness judgments were also recorded on a 7-point Likert scale, this time ranging from -3 to +3, again with a defined midpoint, replacing the visual analog format used in the first study.
 For this scale, the endpoints were labeled 'AI-generated' and 'Photograph', replacing the 'Fake' and 'Real' anchors used in Study 1.
 
-There were also modifications to the instructions provided to participants. 
+There were also modifications to the instructions provided to participants and in the paradigm. 
 In Phase 1, an additional prompt was introduced, stating that the study was conducted in partnership with a young AI startup. 
-This was intended to strengthen participants’ belief that the faces they were shown could plausibly be either real or AI-generated. 
-Additionally, participants were explicitly asked to respond based on their immediate, first impressions—an instruction not included in the first study.
+This was intended to strengthen participants’ belief that the faces they were shown could plausibly be either real or AI-generated. In this phase, a prompt appeared for 1–2 seconds before each face, informing participants whether the upcoming image was "AI-generated" or "Photograph", notably, all faces were in fact real photograph. 
 
 In Phase 2, participants were not informed about the proportion of AI-generated versus real faces encountered during Phase 1. 
 This omission was deliberate, aimed at reducing demand characteristics and preventing participants from mechanically selecting half the faces as real and half as AI-generated. 
