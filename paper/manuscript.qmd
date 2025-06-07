@@ -174,14 +174,11 @@ To this end, we analyze data from two separate studies in which participants jud
  
 # Study 1
 
-**TODO**: Write some introduction about reality beliefs in the context of ambiguity. Underline that what drives judgments and beliefs of reality remains unclear. And this is important in today's post-truth era.
+In today's post-truth era, the proliferation of advanced AI technologies has made it increasingly challenging to distinguish between authentic and synthetic media, bearing significant implications for information integrity and public trust [@lewandowsky2017beyond]. As traditional cues become less reliable (e.g., visual glitches and artefacts in generated images, formulaic generated text), people increasingly depend on contextual information and cognitive heuristics to assess authenticity, a process dubbed simulation monitoring [@makowski2019phenomenal].
 
-In a post-truth era [@lewandowsky2017beyond], where near-perfect simulations are increasingly feasible due to rapid technological advancements, distinguishing between what is real and what is fake poses a growing challenge [**REF**]. As these technologies advance and physical cues become indistinguishable, individuals are likely to rely more heavily on alternative sources of information -such as contextual cues and cognitive heuristic -when making reality judgments [i.e., simulation monitoring; @makowski2018cognitive, @makowski2019phenomenal]. This reliance is particularly pronounced under conditions of high ambiguity, where processing demands are higher and the atomization and decontextualization of information (especially prevalent in online environments) further complicate the discernment of authenticity. 
+This reliance is particularly pronounced under conditions of high ambiguity, where the decontextualization of information, especially prevalent in online environments, complicates authenticity assessments. An open question in this domain is the extent to which reality judgments are influenced by the stimuli themselves versus stable individual characteristics like personality, expectations or expertise - or transient psychophysiological states [@makowski2025too].
 
-Another unknown is whether these beliefs are fully stimuli-driven or whether there are some stable individual tendencies that are at stake. 
-For instance, in the absence of clear contextual information, individual-level characteristics may increasingly guide beliefs about reality. Traits such as narcissism have been shown to influence such judgments [@makowski2025too]. Moreover, it has been proposed that the interaction between stimulus characteritics and individual differences plays a crucial role in shaping reality beliefs. For example, self-reported arousal has been found to predict the likelihood of perceiving an image as real [@azevedo2020body], while judging a stimulus as fake has been associated with emotional downregulation [@makowski2019phenomenal]. [**should probably add other examples**]
-
-These findings underscore that what drives beliefs and judgments of reality remains unclear. Yet, understanding these mechanisms is increasingly vital given the proliferation of AI-generated content and the growing risk of misjudging the authenticity of stimuli, particularly in contexts with significant societal consequences (e.g., the influence of misinformation on democratic processes).
+Faces - socially and perceptually rich stimuli for which AI-generation has been particularly successful - have frequently been used to investigate reality judgments [@azevedo2020body; @makowski2025too; @tucciarelli2022realness; @nightingale2022ai]. Studies asking participants to judge whether face images are real or artificially generated reveal that such judgments can be shaped by low-level features (e.g., clarity, symmetry), higher-level attributes (e.g., attractiveness, trustworthiness), and interindividual variability. In the present study, we apply the CHOCO model to data from such a paradigms to evaluate its capacity to recover interpretable parameters related to individual-level determinants of reality beliefs.
 
 ## Methods
 
@@ -191,11 +188,11 @@ The sample is the same as in [@makowski2025too]. We included all heterosexual an
 
 ### Procedure
 
-In the first phase, participants viewed 109 neutral-expression photographs of faces (random order, display time of 500 ms) from the American Multiracial Face Database [@chen2021broadening]. After each image, participants rated the face on trustworthiness, familiarity, attractiveness, and beauty using visual analog scales. In the second phase, participants were informed that "about half of the previously seen images were AI-generated". The same faces were presented again in a new random order (same display time), followed by ratings of "reality" (whether they believed the image was fake - left anchor - or a real - right anchor). @makowski2025too showed that most stimuli yielded highly variable reality ratings, suggesting that idiosyncratic cognitive processes were at play.
+In the first phase, participants viewed 109 neutral-expression photographs of faces (random order, display time of 500 ms) from the American Multiracial Face Database [AMFD; @chen2021broadening]. After each image, participants rated the face on trustworthiness, familiarity, attractiveness, and beauty using visual analog scales. In the second phase, participants were informed that "about half of the previously seen images were AI-generated". The same faces were presented again in a new random order (same display time), followed by ratings of "reality" (whether they believed the image was fake - left anchor - or real - right anchor). @makowski2025too showed that most stimuli yielded highly variable reality ratings, suggesting that idiosyncratic cognitive processes were at play.
 
 ### Data Analysis
 
-We fitted 3 models to predict the reality ratings: a ZOIB model, a Beta-Gate model, and the CHOCO model. For all models and each parameter, the full formula was entered: $Real\sim Sex + (1 | Participant) + (1 | Item)$ (with Sex as the main predictor and participants and items entered as random intercepts). The models were run using *brms* [@burkner2017brms] R package, and analyzed using the *easystats* collection of packages [@easystats2022]. To maximize the comparability across models We used the default priors (uniform) for all models, and we ran 16 chains of 1400 iterations each on the University of Sussex High-Performance Computing (HPC) cluster. 
+We fitted 3 models to predict the reality ratings: a ZOIB model, a Beta-Gate model, and the CHOCO model. For all models and each parameter, the full formula was entered: $Real\sim Sex + (1 | Participant) + (1 | Item)$ (with Sex as the main predictor and participants and items entered as random intercepts). The models were run using *brms* [@burkner2017brms] R package, and analyzed using the *easystats* collection of packages [@makowski2025modelbased; @ludecke2020extracting; @patil2022datawizard]. To maximize the comparability across models We used the default priors (uniform) for all models, and we ran 16 chains of 1400 iterations each on the University of Sussex High-Performance Computing (HPC) cluster. 
 
 Model comparisons were performed using the *loo* R package [@vehtari2017practical], which computes the Widely Applicable Information Criterion (WAIC) and estimates the Expected Log Predictive Density (ELPD) and penalizes the number of parameters. We assessed model performance by examining ELPD differences and their standard errors (SE), reporting corresponding *p*-values to determine significant differences in predictive accuracy.
 
@@ -276,12 +273,9 @@ The explosion of accessibility of state-of-the-art AI tools has made it effortle
 
 In this evolving landscape, understanding the cognitive mechanisms that underpin our judgments of reality becomes paramount. Despite the increasing prevalence of digitally altered or AI-generated content, humans still rely on certain heuristics to assess authenticity. One such heuristic might be facial attractiveness. Attractiveness appraisals are known to be automatic and unconscious [@luo2019robust; @hung2016unconscious; @hou2023neural], and carry strong real-life consequences, as demonstrated by the large body of literature on the "beauty premium" [@little2021facial; @gulati2024beautiful;@pandey2021face; @kukkonen2024beauty]^[As an eloquent example, @monk2021beholding reported in a large representative US sample that the magnitude of earnings disparities among white women along the perceived attractiveness continuum exceeds in magnitude the canonical black-white race gap.]
 
-**TODO:** However, it is important to allow for the possibility of a U-shaped relationship. For instance, @peng2020faces reported that both attractive and unattractive people sold more products (underlining a "plainness penalty").
+Although its role as a potential modulator of reality beliefs remains under-explored, @makowski2025too found significant associations between participants' realness ratings and facial attractiveness, with a potential sexual dymorphism: male participants judged attractive faces as being likely more real, whereas evidence suggested a midler and quadratic (U-shaped) relationship between attractiveness and reality beliefs. These findings offer a complementary perspective to those of @miller2023ai, who reported that participants used attractiveness as a distinguishing cue between real and AI-generated faces. These results highlight a possible bidirectional and context-dependent influence of attractiveness on reality judgments, of which the exact shape needs further investigation.
 
-Although its role as a potential modulator of reality beliefs remains underexplored, @makowski2025too found significant associations between participants’ realness ratings and facial salience. Female participants judged both highly attractive and highly unattractive faces as more likely to be real, whereas for male participants, this effect was limited to highly attractive faces. These findings offer a complementary perspective to those of @miller2023ai, who reported that AI-generated faces tend to be rated as more attractive, and that participants used attractiveness as a distinguishing cue between real and AI-generated faces. Together, these results highlight a possible bidirectional and context-dependent role of attractiveness in shaping reality judgments.
-
-
-In this study, we will apply the CHOCO model to the data of MAKOWSKI, and see whether different analysis approaches lead to different conclusions. We will then try to replicate these findings in a new sample of participants. 
+<!-- However, it is important to allow for the possibility of a U-shaped relationship. For instance, @peng2020faces reported that both attractive and unattractive people sold more products (underlining a "plainness penalty"). -->
 
 
 ## Methods
@@ -297,19 +291,28 @@ The final sample included 189 participants (Mean age = 28.4, SD = 14.0, range: [
 
 ### Procedure
 
-For the second sample, the procedure was relatively similar with a few key differences.
-Most importantly, subjective ratings were collected using a 7-point Likert scale ranging from 0 to 6, rather than a visual analog scale, which included a clear midpoint. 
-Additionally, the familiarity rating was removed from the set of facial evaluations. 
-In the second phase, realness judgments were also recorded on a 7-point Likert scale, this time ranging from -3 to +3, again with a defined midpoint, replacing the visual analog format used in the first study.
-For this scale, the endpoints were labeled 'AI-generated' and 'Photograph', replacing the 'Fake' and 'Real' anchors used in Study 1.
+For the second sample, the procedure was relatively similar to that of the first sample (described in Study 1) with a few key differences.
 
-There were also modifications to the instructions provided to participants and in the paradigm. 
-In Phase 1, an additional prompt was introduced, stating that the study was conducted in partnership with a young AI startup. 
-This was intended to strengthen participants’ belief that the faces they were shown could plausibly be either real or AI-generated. In this phase, a prompt appeared for 1–2 seconds before each face, informing participants whether the upcoming image was "AI-generated" or "Photograph", notably, all faces were in fact real photograph. 
+The main difference was the introduction of an experimental manipulation: while in the first study, participants were simply informed of the presence of AI-generated or face pictures, the second sample's paradigm included (randomized) cues before each stimuli, indicating whether the upcoming image was "AI-generated" or "Photograph" (note that again, all images were in reality photographs). Specifically, at the beginning of the experiment, a cover story was presented, presenting the study as a partnership with an AI startup aimed at testing the quality of a new face AI-generation algorithm. Following that, they would see the 109 neutral-expression photographs from the AMFD database (1 s), each preceded by a textual cue indicating whether the image was "AI-generated" or "Photograph" (2 s). Ratings of attractiveness, beauty and trustworthiness were collected after each image.
 
-In Phase 2, participants were not informed about the proportion of AI-generated versus real faces encountered during Phase 1. 
-This omission was deliberate, aimed at reducing demand characteristics and preventing participants from mechanically selecting half the faces as real and half as AI-generated. 
-Instead, they were encouraged to base their responses solely on their level of confidence regarding the origin of each image.
+**Ana can you verify the timings?**
+
+This phase of the experiment would conclude with multi-choice questions asking participants to indicate whether they believed in the cover story. The second phase would start with a new set of instructions revealing (misleadingly)...
+
+
+
+
+
+<!-- Most importantly, subjective ratings (of reality and attractiveness) were collected using a 7-point Likert scale ranging from 0 to 6 (which included a clear midpoint option), rather than a visual analog scale. -->
+<!-- For this scale, the endpoints were labeled 'AI-generated' and 'Photograph', replacing the 'Fake' and 'Real' anchors used in Study 1. -->
+
+<!-- There were also modifications to the instructions provided to participants and in the paradigm.  -->
+
+<!-- This was intended to strengthen participants’ belief that the faces they were shown could plausibly be either real or AI-generated. In this phase, a prompt appeared for 1–2 seconds before each face, informing participants whether the upcoming image was "AI-generated" or "Photograph", notably, all faces were in fact real photograph.  -->
+
+<!-- In Phase 2, participants were not informed about the proportion of AI-generated versus real faces encountered during Phase 1.  -->
+<!-- This omission was deliberate, aimed at reducing demand characteristics and preventing participants from mechanically selecting half the faces as real and half as AI-generated.  -->
+<!-- Instead, they were encouraged to base their responses solely on their level of confidence regarding the origin of each image. -->
 
 
 ### Data Analysis
