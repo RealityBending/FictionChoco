@@ -191,7 +191,7 @@ AI-generated faces, attractiveness}
 Makowski}{0000-0001-5375-9967}}\par{\addORCIDlink{Ana
 Neves}{0009-0006-0020-7599}}\par{\addORCIDlink{Andy Field}{true}} 
 \par{ }
-\par{     \begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-note-color-frame, arc=.35mm, left=2mm, colback=white, rightrule=.15mm, bottomrule=.15mm, leftrule=.75mm, breakable, toprule=.15mm, opacityback=0]
+\par{     \begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-note-color-frame, rightrule=.15mm, bottomrule=.15mm, colback=white, arc=.35mm, breakable, toprule=.15mm, leftrule=.75mm, opacityback=0, left=2mm]
 
 This preprint is a non-peer-reviewed work from the
 \href{https://realitybending.github.io/}{\textbf{Reality Bending Lab}}.
@@ -363,16 +363,19 @@ replication crisis (\citeproc{ref-open2015estimating}{Collaboration,
 inappropriate) usage of statistical tools
 (\citeproc{ref-makowski2023we}{Makowski \& Waggoner, 2023}). A prevalent
 issue is the continued reliance on linear models that assume normally
-distributed (Gaussian) data - as this assumption often does not hold
-true for many types of psychological outcomes. For instance, reaction
-times typically exhibit skewed distributions, choices can be represented
-as binary variables, and count data consists of strictly positive
-integers. Applying models that presume normality and model the ``mean''
-of the outcome variable can lead to misinterpretation and potentially
-misleading conclusions when applied indiscriminately. It is thus
-important that psychologists use models that can best describe (or
-generate) the data they collect, to fully exploit them and bring more
-nuance and accuracy to their conclusions.
+distributed (Gaussian) data\footnote{More specifically, that the outcome
+  is distributed according to a Normal distribution which parameters are
+  expressed as a linear function of the predictors.} - as this
+assumption often does not hold true for many types of psychological
+outcomes. For instance, reaction times typically exhibit skewed
+distributions, choices can be represented as binary variables, and count
+data consists of strictly positive integers. Applying models that
+presume normality and model the ``mean'' of the outcome variable can
+lead to misinterpretation and potentially misleading conclusions when
+applied indiscriminately. It is thus important that psychologists use
+models that can best describe (or generate) the data they collect, to
+fully exploit them and bring more nuance and accuracy to their
+conclusions.
 
 Among the most commonly collected data in psychology are responses on
 subjective scales, such as Likert-type items or visual analog scales,
@@ -432,7 +435,7 @@ gate is thus located at 0.6, and the right at 1-0.04 = 0.96.}
 
 \centering{
 
-\includegraphics[width=0.5\linewidth,height=\textheight,keepaspectratio]{./figures/fig1.png}
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{./figures/fig1.png}
 
 }
 
@@ -486,11 +489,11 @@ posteriori: binarizing the side to represent choice and calculating the
 absolute distance from the midpoint to represent confidence. These can
 then be modeled separately, for instance, using logistic regression for
 choice and beta regression for confidence (see
-\citeproc{ref-makowski2025too}{Makowski et al., 2025} for an example).
-While this approach can provide additional insights into underlying
-mechanisms compared to a unique model, it assumes psychological and
-statistical independence between choice and confidence, which may not
-hold true in practice.
+\citeproc{ref-makowski2025too}{Makowski, Te, et al., 2025} for an
+example). While this approach can provide additional insights into
+underlying mechanisms compared to a unique model, it assumes
+psychological and statistical independence between choice and
+confidence, which may not hold true in practice.
 
 \begin{figure}
 
@@ -505,7 +508,7 @@ are governed by the same mechanism as for Beta-Gate models.}
 
 \centering{
 
-\includegraphics[width=0.5\linewidth,height=\textheight,keepaspectratio]{./figures/fig2.png}
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{./figures/fig2.png}
 
 }
 
@@ -565,86 +568,78 @@ provides improved model fit, 2) yields deeper insights into
 population-level effects than traditional approaches (gender differences
 in reality beliefs), and 3) allows for the reliable estimation of
 interpretable individual-level parameters through random effects.
-
-To this end, we analyze data from two separate studies in which
-participants judged whether a face image was AI-generated (``fake'') or
-a real photograph. \textbf{Study 2} will apply this model to more subtle
-effects, such as the effect perceived facial attractiveness and beauty
-on reality judgments.
+\textbf{Study 2} will apply this model to more subtle effects, such as
+the effect perceived facial attractiveness on reality judgments, and
+test the ability to fit alternative data structures (scales with ordinal
+response options and mid-points). To this end, we analyze data from two
+separate studies in which participants judged whether a face image was
+AI-generated (``fake'') or a real photograph.
 
 \section{Study 1}\label{study-1}
 
-\textbf{TODO}: Write some introduction about reality beliefs in the
-context of ambiguity. Underline that what drives judgments and beliefs
-of reality remains unclear. And this is important in today's post-truth
-era.
+In today's post-truth era, the proliferation of advanced AI technologies
+has made it increasingly challenging to distinguish between authentic
+and synthetic media, bearing significant implications for information
+integrity and public trust
+(\citeproc{ref-lewandowsky2017beyond}{Lewandowsky et al., 2017}). As
+traditional cues become less reliable (e.g., visual glitches and
+artefacts in generated images; formulaic generated text, etc.), people
+increasingly depend on contextual information and cognitive heuristics
+to assess authenticity, a process referred to as ``simulation
+monitoring'' (\citeproc{ref-makowski2019phenomenal}{Makowski, Sperduti,
+et al., 2019}).
 
-In a post-truth era (\citeproc{ref-lewandowsky2017beyond}{Lewandowsky et
-al., 2017}), where near-perfect simulations are increasingly feasible
-due to rapid technological advancements, distinguishing between what is
-real and what is fake poses a growing challenge {[}\textbf{REF}{]}. As
-these technologies advance and physical cues become indistinguishable,
-individuals are likely to rely more heavily on alternative sources of
-information -such as contextual cues and cognitive heuristic -when
-making reality judgments {[}i.e., simulation monitoring; Makowski
-(\citeproc{ref-makowski2018cognitive}{2018}), Makowski, Sperduti, et al.
-(\citeproc{ref-makowski2019phenomenal}{2019}){]}. This reliance is
-particularly pronounced under conditions of high ambiguity, where
-processing demands are higher and the atomization and
-decontextualization of information (especially prevalent in online
-environments) further complicate the discernment of authenticity.
+This reliance on alternative epistemological sources is particularly
+pronounced under conditions of high ambiguity, where the
+decontextualization of information, especially prevalent in online
+environments, complicates authenticity assessments. An open question in
+this domain is the extent to which reality judgments are influenced by
+the stimuli themselves versus stable individual characteristics like
+personality, expectations or expertise - or transient
+psychophysiological states (\citeproc{ref-makowski2025too}{Makowski, Te,
+et al., 2025}).
 
-Another unknown is whether these beliefs are fully stimuli-driven or
-whether there are some stable individual tendencies that are at stake.
-For instance, in the absence of clear contextual information,
-individual-level characteristics may increasingly guide beliefs about
-reality. Traits such as narcissism have been shown to influence such
-judgments (\citeproc{ref-makowski2025too}{Makowski et al., 2025}).
-Moreover, it has been proposed that the interaction between stimulus
-characteritics and individual differences plays a crucial role in
-shaping reality beliefs. For example, self-reported arousal has been
-found to predict the likelihood of perceiving an image as real
-(\citeproc{ref-azevedo2020body}{Azevedo et al., 2020}), while judging a
-stimulus as fake has been associated with emotional downregulation
-(\citeproc{ref-makowski2019phenomenal}{Makowski, Sperduti, et al.,
-2019}). {[}\textbf{should probably add other examples}{]}
-
-These findings underscore that what drives beliefs and judgments of
-reality remains unclear. Yet, understanding these mechanisms is
-increasingly vital given the proliferation of AI-generated content and
-the growing risk of misjudging the authenticity of stimuli, particularly
-in contexts with significant societal consequences (e.g., the influence
-of misinformation on democratic processes).
+Images of faces - socially and perceptually rich stimuli for which
+AI-generation has been particularly successful - are a paradigmatic
+example that have been used to investigate reality judgments
+(\citeproc{ref-azevedo2020body}{Azevedo et al., 2020};
+\citeproc{ref-makowski2025too}{Makowski, Te, et al., 2025};
+\citeproc{ref-nightingale2022ai}{Nightingale \& Farid, 2022};
+\citeproc{ref-tucciarelli2022realness}{Tucciarelli et al., 2022}).
+Studies asking participants to judge whether face images are real or
+artificially generated reveal that such judgments can be shaped by
+low-level features (e.g., clarity, symmetry), higher-level attributes
+(e.g., attractiveness, trustworthiness), and interindividual
+variability. In the present study, we apply the CHOCO model to such data
+to evaluate its capacity to recover interpretable parameters related to
+individual-level determinants of reality beliefs.
 
 \subsection{Methods}\label{methods}
 
 \subsubsection{Participants}\label{participants}
 
-The sample is the same as in (\citeproc{ref-makowski2025too}{Makowski et
-al., 2025}). We included all heterosexual and bisexual (these two groups
-did not seem to differ based on preliminary analyses and were thus
-grouped to maximize power) male and female participants, for a final
-sample of 141 participants (Mean age = 28.4, SD = 9.0, range: {[}19,
-66{]}; Sex: 47.5\% females). For each participant, we included only
-stimuli of the opposite gender (i.e., all 89 female faces for men and 20
-male faces for women).
+Using the open-accss data from Makowski, Te, et al.
+(\citeproc{ref-makowski2025too}{2025}), we included all heterosexual and
+bisexual (as these two groups did not seem to differ based on
+preliminary analyses and were thus grouped to maximize power) male and
+female participants, for a final sample of 141 participants (Mean age =
+28.4, SD = 9.0, range: {[}19, 66{]}; Sex: 47.5\% females). For each
+participant, we included only stimuli of the opposite gender (i.e., all
+89 female faces for men and 20 male faces for women).
 
 \subsubsection{Procedure}\label{procedure}
 
 In the first phase, participants viewed 109 neutral-expression
-photographs of faces (random order, display time of 500 ms) from the
-American Multiracial Face Database
-(\citeproc{ref-chen2021broadening}{Chen et al., 2021}). After each
-image, participants rated the face on trustworthiness, familiarity,
+photographs of faces (random order, display time of 3 s) from the
+American Multiracial Face Database (AMFD,
+\citeproc{ref-chen2021broadening}{Chen et al., 2021}). After each image,
+participants rated the face on trustworthiness, familiarity,
 attractiveness, and beauty using visual analog scales. In the second
 phase, participants were informed that ``about half of the previously
 seen images were AI-generated''. The same faces were presented again in
 a new random order (same display time), followed by ratings of
 ``reality'' (whether they believed the image was fake - left anchor - or
-a real - right anchor). Makowski et al.
-(\citeproc{ref-makowski2025too}{2025}) showed that most stimuli yielded
-highly variable reality ratings, suggesting that idiosyncratic cognitive
-processes were at play.
+real - right anchor).
 
 \subsubsection{Data Analysis}\label{data-analysis}
 
@@ -656,10 +651,12 @@ predictor and participants and items entered as random intercepts). The
 models were run using \emph{brms}
 (\citeproc{ref-burkner2017brms}{Bürkner, 2017}) R package, and analyzed
 using the \emph{easystats} collection of packages
-(\citeproc{ref-easystats2022}{Lüdecke et al., 2022}). To maximize the
-comparability across models We used the default priors (uniform) for all
-models, and we ran 16 chains of 1400 iterations each on the University
-of Sussex High-Performance Computing (HPC) cluster.
+(\citeproc{ref-ludecke2020extracting}{Lüdecke et al., 2020};
+\citeproc{ref-makowski2025modelbased}{Makowski, Ben-Shachar, et al.,
+2025}; \citeproc{ref-patil2022datawizard}{Patil et al., 2022}). To
+maximize the comparability across models We used the default priors
+(uniform) for all models, and we ran 16 chains of 1400 iterations each
+on the University of Sussex High-Performance Computing (HPC) cluster.
 
 Model comparisons were performed using the \emph{loo} R package
 (\citeproc{ref-vehtari2017practical}{Vehtari et al., 2017}), which
@@ -700,11 +697,11 @@ for moderately reliable random effect estimates, which corresponds to a
 
 Finally, we will run a correlation analysis of the models'
 individual-level estimates against ``empirical'' (indices computed
-directly on the observed data), including the empirical \emph{p}
-(\(P(y > 0.5)\)), the overall \emph{conf} (\(mean(|y - 0.5|)\)),
-\emph{pex} (\(P(y \in [0, 1])\)) and \emph{bex}
-(\(P(y == 1) / P(y \in [0, 1])\)), assessing whether the model's
-estimate are in-line with easily interpretable indices.
+directly on the observed data), including the empirical \emph{p}, the
+overall \emph{conf}, \emph{pex} and \emph{bex} (respectively calculated
+as \(P(y > 0.5)\); \(mean(|y - 0.5|)\); \(P(y \in [0, 1])\); and
+\(P(y == 1) / P(y \in [0, 1])\)), assessing whether the model's estimate
+are in-line with easily interpretable indices.
 
 \subsection{Results}\label{results}
 
@@ -715,7 +712,14 @@ https://github.com/RealityBending/FictionChoco.
 
 \begin{figure*}[!htbp]
 
-{\caption{{TODO.}{\label{fig-three}}}}
+{\caption{{Top: Model comparison revealed that the CHOCO model was a
+significantly better fit for the data (raw distribution in purple)
+compared to a ZOIB or Beta-Gate models, capturing its bimodal
+distribution. Bottom: the CHOCO model can be set to estimate effect on
+any of its parameters, such as the overall probability of responding on
+one side as well as the confidence in both choices. We illustrate this
+by showing the effect of Sex on the distribution of reality beliefs
+based on a CHOCO model.}{\label{fig-three}}}}
 
 \includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{./figures/fig3.png}
 
@@ -726,32 +730,42 @@ sample size was sufficient for all parameters (all
 \(n_{\text{eff}} > 1000\)). The difference in predictive accuracy, as
 indexed by Expected Log Predictive Density (ELPD-WAIC), suggests that
 the \emph{CHOCO} is the best model (\(ELPD = -203.54\)), followed by
-\emph{Beta-Gate} (\(\Delta_{ELPD} = -1794.57 \pm 63.12, p < .001)\) and
-\emph{ZOIB} (\(\Delta_{ELPD} = -1833.59 \pm 63.52, p < .001\)). See
+\emph{Beta-Gate} (\(\Delta_{ELPD} = -1794.57 \pm 63.12, ~p < .001)\) and
+\emph{ZOIB} (\(\Delta_{ELPD} = -1833.59 \pm 63.52, ~p < .001\)). See
 Figure~\ref{fig-three} for the posterior predictive checks, showing that
 only the CHOCO model managed to capture the bimodal distribution of
 data.
 
 \subsubsection{Effect of Sex}\label{effect-of-sex}
 
-The ZOIB model suggested that women had higher mean (\emph{mu}
-parameter) scores of reality beliefs
-(\(\Delta_{\text{Female}} = 0.20,~95\%~ CI~[0.03, 0.37], pd = 98.77\%\)),
-less extreme values (\emph{zoi} parameter; STATS) but more ones relative
-to zeros (\emph{coi} parameter; STATS).
+The ZOIB model suggested that women had higher mean scores of reality
+beliefs
+(\(\mu_{~\text{Female}} = 0.20,~95\%~ CI~[0.03, 0.37], ~pd = 98.77\%\)),
+less extreme values
+(\(zoi_{~\text{Female}} = -1.24,~95\%~ CI~[-2.46, -0.07], ~pd = 98.25\%\))
+but more ones relative to zeros
+(\(coi_{~\text{Female}} = 1.63,~95\%~ CI~[0.70, 2.56], ~pd = 99.97\%\)).
 
 The Beta-Gate model similarly suggested that women had higher mean
-(\emph{mu} parameter) scores of reality beliefs (STATS), less extreme
-values (\emph{pex} parameter; STATS), and a greater tendency to answer
-one relative to zero (\emph{bex} parameter; STATS).
+scores of reality beliefs
+(\(\mu_{~\text{Female}} = 0.21,~95\%~ CI~[0.02, 0.40], ~pd = 98.52\%\)),
+less extreme values
+(\(pex_{~\text{Female}} = -1.34,~95\%~ CI~[-2.56, -0.17], ~pd = 98.75\%\)),
+and a greater tendency to answer one relative to zero
+(\(bex_{~\text{Female}} = 1.13,~95\%~ CI~[0.34, 1.91], ~pd = 99.76\%\)).
 
 The CHOCO model shows that women had a higher probability \emph{p} of
-judging faces as real (STATS), but are not more confident when doing so
-(\emph{confright} parameter; STATS). However, they were less confident
-when answering that an image was AI-generated (\emph{confleft}
-parameter; STATS). There were also less likely to produce extreme
-answers (\emph{pex} parameter; STATS), but no strong evidence supporting
-a directional bias was observed (\emph{bex} parameter; STATS).
+judging faces as real
+(\(P_{~\text{Female}} = 0.45,~95\%~ CI~[0.05, 0.86], ~pd = 98.54\%\)),
+but are not more confident when doing so
+(\(confright_{~\text{Female}} = -0.13,~95\%~ CI~[-0.47, 0.21], ~pd = 77.73\%\)).
+However, they were less confident when answering that an image was
+AI-generated
+(\(confleft_{~\text{Female}} = -0.53,~95\%~ CI~[-0.89, -0.17], ~pd = 99.84\%\)).
+There were also less likely to produce extreme answers
+(\(pex_{~\text{Female}} = -1.19,~95\%~ CI~[-2.40, 0.01], ~pd = 97.64\%\)),
+but no strong evidence supporting a directional bias was observed
+(\(bex_{~\text{Female}} = 0.48,~95\%~ CI~[-0.12, 1.09], ~pd = 94.32\%\)).
 
 Across all these models, no effect of Sex on the precision parameter was
 observed.
@@ -761,9 +775,21 @@ Parameters}\label{individual-level-parameters}
 
 \begin{figure*}[!htbp]
 
-{\caption{{TODO.}{\label{fig-four}}}}
+{\caption{{Top: the participant and item-level estimates for the CHOCO
+parameters, under the distribution of their point-estimates. Reliable
+effects are characterised by a higher between-group variability relative
+(the dispersion of the distribution of point-estimates) to its
+within-group variability (the average uncertainty of individual
+estimates represented by the error bar). For example, inter-individual
+variability in the parameters reflecting the confidence in left and
+right choices is reliably capture, as opposed to the inter-individual
+variability in the `bex' parameter. Bottom: correlation matrix between
+participant-level estimates from different models and empirical indices
+(e.g., the raw proportion of responses on the right per participant).
+The CHOCO parameters are easily interpretable, strongly correlating with
+their empirical counterparts.}{\label{fig-four}}}}
 
-\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{./figures/fig4.png}
+\includegraphics[width=0.95\linewidth,height=\textheight,keepaspectratio]{./figures/fig4.png}
 
 \end{figure*}
 
@@ -778,12 +804,12 @@ results: a high reliability of participant's \emph{phi} parameter
 parameter's variability was reliably captured for items (D-vour = 0.85)
 and moderately for participants (D-vour = 0.72).
 
-The CHOCO model yielded reliable estimates for all parameters except
-\emph{bex} for participants (\emph{confright} D-vour = 0.94,
-\emph{confleft} D-vour = 0.91, \emph{pex} D-vour = 0.79, \emph{p} D-vour
-= 0.73, \emph{precright} D-vour = 0.77, \emph{precleft} D-vour = 0.67).
-Item's variability was primarily reflected through the \emph{p}
-parameter (D-vour = 0.86).
+The CHOCO model yielded reliable estimates (Figure~\ref{fig-four}) for
+all parameters except \emph{bex} for participants (\emph{confright}
+D-vour = 0.94, \emph{confleft} D-vour = 0.91, \emph{pex} D-vour = 0.79,
+\emph{p} D-vour = 0.73, \emph{precright} D-vour = 0.77, \emph{precleft}
+D-vour = 0.67). Item's variability was primarily reflected through the
+\emph{p} parameter (D-vour = 0.86).
 
 Finally, the empirical average correlated the most strongly with CHOCO's
 \emph{p} (r = .86), rather than ZOIB's \emph{mu} (r = .77) or
@@ -824,10 +850,10 @@ measure inter-individual differences. An interesting dissociation
 emerged between participant- and item-level variability: the latter
 seemed mostly to be represented in the \emph{p} parameter, while
 participants reliably varied in most of the components (aside from
-\emph{bex}). This could be interpreted as that external item
-characteristics primarily influence the probability of being judged as
-real vs.~fake, while the expressed confidence is first and foremost an
-individual characteristic.
+\emph{bex}). This could suggest that external item characteristics
+primarily influence the probability of being judged as real vs.~fake,
+while the expressed confidence is first and foremost an individual
+characteristic.
 
 \section{Study 2}\label{study-2}
 
@@ -855,80 +881,82 @@ known to be automatic and unconscious (\citeproc{ref-hou2023neural}{Hou
 et al., 2023}; \citeproc{ref-hung2016unconscious}{Hung et al., 2016};
 \citeproc{ref-luo2019robust}{Luo et al., 2019}), and carry strong
 real-life consequences, as demonstrated by the large body of literature
-on the ``beauty premium'' (\citeproc{ref-gulati2024beautiful}{Gulati et
-al., 2024}; \citeproc{ref-kukkonen2024beauty}{Kukkonen et al., 2024};
-\citeproc{ref-little2021facial}{Little, 2021};
-\citeproc{ref-pandey2021face}{Pandey \& Zayas, 2021})\footnote{As an
-  eloquent example, Monk Jr et al.
-  (\citeproc{ref-monk2021beholding}{2021}) reported in a large
+on the ``beauty premium''\footnote{As an eloquent example, Monk Jr et
+  al. (\citeproc{ref-monk2021beholding}{2021}) reported in a large
   representative US sample that the magnitude of earnings disparities
   among white women along the perceived attractiveness continuum exceeds
   in magnitude the canonical black-white race gap.}
-
-\textbf{TODO:} However, it is important to allow for the possibility of
-a U-shaped relationship. For instance, Peng et al.
-(\citeproc{ref-peng2020faces}{2020}) reported that both attractive and
-unattractive people sold more products (underlining a ``plainness
-penalty'').
+(\citeproc{ref-gulati2024beautiful}{Gulati et al., 2024};
+\citeproc{ref-kukkonen2024beauty}{Kukkonen et al., 2024};
+\citeproc{ref-little2021facial}{Little, 2021};
+\citeproc{ref-pandey2021face}{Pandey \& Zayas, 2021}).
 
 Although its role as a potential modulator of reality beliefs remains
-underexplored, Makowski et al. (\citeproc{ref-makowski2025too}{2025})
-found significant associations between participants' realness ratings
-and facial salience. Female participants judged both highly attractive
-and highly unattractive faces as more likely to be real, whereas for
-male participants, this effect was limited to highly attractive faces.
-These findings offer a complementary perspective to those of Miller et
-al. (\citeproc{ref-miller2023ai}{2023}), who reported that AI-generated
-faces tend to be rated as more attractive, and that participants used
-attractiveness as a distinguishing cue between real and AI-generated
-faces. Together, these results highlight a possible bidirectional and
-context-dependent role of attractiveness in shaping reality judgments.
-
-In this study, we will apply the CHOCO model to the data of MAKOWSKI,
-and see whether different analysis approaches lead to different
-conclusions. We will then try to replicate these findings in a new
-sample of participants.
+under-explored, Makowski, Te, et al.
+(\citeproc{ref-makowski2025too}{2025}) found significant associations
+between participants' realness ratings and facial attractiveness, with a
+potential sexual dymorphism: male participants judged attractive faces
+as being likely more real, whereas evidence suggested a milder and
+quadratic (U-shaped) relationship between attractiveness and reality
+beliefs for females. These findings offer a complementary perspective to
+those of Miller et al. (\citeproc{ref-miller2023ai}{2023}), who reported
+that participants used attractiveness as a distinguishing cue between
+real and AI-generated faces. These results highlight a possible
+bidirectional and context-dependent influence of attractiveness on
+reality judgments, of which the exact shape needs further investigation.
 
 \subsection{Methods}\label{methods-1}
 
 \subsubsection{Participants}\label{participants-1}
 
-The first sample includes the same participants as study 1 (see above).
-
-\textbf{TODO} for sample 2.
-
-The final sample included 189 participants (Mean age = 28.4, SD = 14.0,
-range: {[}18, 69{]}; Sex: 76.2\% females).
+The first sample includes the same participants as study 1 (N = 141, see
+above). For the second sample (data and preprocessing information
+available at https://github.com/RealityBending/FakeFace2), 248
+participants were initially recruited through academic platforms (SONA
+and SurveySwap). We removed 15 participants with data suggesting
+low-effort responding as well as those (N=16) that did not believe in
+the experimental manipulation and were fully confident that all images
+were real or fake. Similarly to the first sample, we included all hetero
+and bisexual participants and stimuli from the opposite gender,
+resulting in a final sample included 189 participants (Mean age = 28.4,
+SD = 14.0, range: {[}18, 69{]}; Sex: 76.2\% females). The study was
+approved by the University of Sussex Ethics Board (ER/ST633/1).
 
 \subsubsection{Procedure}\label{procedure-1}
 
-For the second sample, the procedure was relatively similar with a few
-key differences. Most importantly, subjective ratings were collected
-using a 7-point Likert scale ranging from 0 to 6, rather than a visual
-analog scale, which included a clear midpoint. Additionally, the
-familiarity rating was removed from the set of facial evaluations. In
-the second phase, realness judgments were also recorded on a 7-point
-Likert scale, this time ranging from -3 to +3, again with a defined
-midpoint, replacing the visual analog format used in the first study.
-For this scale, the endpoints were labeled `AI-generated' and
-`Photograph', replacing the `Fake' and `Real' anchors used in Study 1.
+For the second sample, the procedure was relatively similar to that of
+the first sample (described above in Study 1) with a few key
+differences.
 
-There were also modifications to the instructions provided to
-participants and in the paradigm. In Phase 1, an additional prompt was
-introduced, stating that the study was conducted in partnership with a
-young AI startup. This was intended to strengthen participants' belief
-that the faces they were shown could plausibly be either real or
-AI-generated. In this phase, a prompt appeared for 1--2 seconds before
-each face, informing participants whether the upcoming image was
-``AI-generated'' or ``Photograph'', notably, all faces were in fact real
-photograph.
+The main difference was the introduction of an experimental
+manipulation: while for sample 1, participants were simply informed of
+the presence of AI-generated stimuli among photographs (not providing
+information as to specifically which image), the reality beliefs were
+directly manipulated in sample 2. At the beginning of the experiment, a
+cover story presented the study as a partnership with an AI startup
+aimed at testing the quality of a new face AI-generation algorithm.
+Following that, participants would see the 109 neutral-expression
+photographs from the AMFD database (1 s), each preceded by a randomly
+assigned textual cue indicating whether the image was ``AI-generated''
+or ``Photograph'' (2 s). Ratings of attractiveness, beauty and
+trustworthiness were collected after each image.
 
-In Phase 2, participants were not informed about the proportion of
-AI-generated versus real faces encountered during Phase 1. This omission
-was deliberate, aimed at reducing demand characteristics and preventing
-participants from mechanically selecting half the faces as real and half
-as AI-generated. Instead, they were encouraged to base their responses
-solely on their level of confidence regarding the origin of each image.
+This phase of the experiment concluded with multi-choice questions
+asking participants to indicate whether they believed in the cover
+story. The second phase would start with a new set of instructions
+(falsely) revealing that the cues were ``mixed up'' (shuffled randomly),
+and that they would now be presented with the faces again (1 s) followed
+by an assessment of their own beliefs about whether the image was real
+or fake.
+
+The second main difference was the subjective ratings' format, collected
+using a 7-point Likert scale ranging from 0 to 6 (which included a clear
+midpoint option), rather than a visual analog scale for sample 1. The 3
+buttons on the left side (0, 1, 2) were colored in red and corresponded
+to the more-or-less pronounced belief that the image was
+``AI-generated'', the 3 values on the right (4, 5, 6) for ``Photograph''
+were colored in green, and the middle value (3), representing an
+undecided option, was colored in yellow.
 
 \subsubsection{Data Analysis}\label{data-analysis-1}
 
@@ -936,26 +964,32 @@ To compare the benefits of CHOCO models to a ``traditional'' analytic
 approach, we started by fitting a frequentist linear mixed model to
 predict reality beliefs with the formula
 \(Real\sim Sex / poly(Attractive, 2) + (poly(Attractive, 2)|Participant) + (1|Item)\).
-The 2nd degree raw polynomial term was included to allow for potentially
-non-linear relationships (note that the first and second degree effects
-of \emph{raw} polynomials can be interpreted independently as the linear
-part and the ``curvy'' part of the relationship). For the CHOCO model,
-mildly informative and effect-agnostic (i.e., centered at zero) priors
-were used. The same formula was used for all parameters, except that
-(based on the reliability analysis of Study 1), items were only included
-as random effects for \emph{p}, and participants were not included for
-\emph{bex}.
+The second degree orthogonal polynomial term was included to allow for
+potentially non-linear relationships (note that the first and second
+degree effects of orthogonal polynomials can be interpreted
+independently as the linear part and the ``curvy'' part of the
+relationship). For the CHOCO model, mildly informative and
+effect-agnostic (i.e., centered at zero) priors were used. The same
+formula was used for all parameters, except that items were only
+included as random effects for \emph{p}, and participants were not
+included for \emph{bex} (based on the reliability analysis of Study 1).
 
-\textbf{TODO}. For sample 2, the analysis was based on that of Sample 1.
-The main differences are 1) the inclusion of the ``Condition'' (whether
-the picture was presented as ``Real'' of ``Fake'' in the first phase of
-the experiment) as an additional predictor (it was entered as the only
-random slope for all participant random effects); 2) the inclusion of an
-additional parameters, \emph{pmid}, modelling the probability of
-answering the middle-point of the Likert scale (representing an
-``undecided'' option).
-
-The same analysis was applied for Beauty.
+For sample 2, the analysis was based on that of Sample 1. The main
+differences are 1) the inclusion of the ``Condition'' (whether the
+picture was presented as ``Real'' of ``Fake'' in the first phase of the
+experiment) as an additional predictor (entered as the only random slope
+for all participant random effects); 2) the inclusion of an additional
+parameters, \emph{pmid}, modelling the probability of answering the
+middle-point of the Likert scale (representing an ``undecided'' option);
+3) as they were effectively only 3 distinct values on each side of the
+scale, and to showcase the flexibility of the CHOCO model, we decided to
+\emph{not} treat the extreme values as 0 and 1 (and model them via the
+separate parameters \emph{pex} and \emph{bex}, which would distributions
+to be estimated from only 2 values), but instead to treat them as part
+of the continuous distribution. The 7 response options were rescaled to
+be evenly spaced between 0 and 1 excluded (i.e., {[}0.125, 0.875{]}).
+The \emph{pex} and \emph{bex} parameters were fixed to 0, making for a
+slightly more parsimonious model.
 
 \subsection{Results}\label{results-1}
 
@@ -965,49 +999,91 @@ reporting noteworthy findings below.
 
 \subsubsection{Sample 1}\label{sample-1}
 
+\begin{figure*}[!htbp]
+
+{\caption{{The effect of attractiveness on reality beliefs. Top: the
+effect of different levels of attractiveness (shades of red) on the
+CHOCO distribution of the reality ratings in both samples, showing
+primarily that, for male participants, more attractive faces were judged
+more likely as a photograph rather than an AI-generated image. For the
+second sample, stimuli that were during the initial viewing presented as
+`AI-generated' are represented via a dotted line. Bottom: The impact of
+attractiveness (x-axis) on different CHOCO distribution parameters, for
+male and female participants (the AI-generated condition is added as a
+transparent line for sample 2). Given the presence of polynomial terms,
+significant effects are denoted by a symbol representing the shape of
+the relationship (/ or \textbackslash{} for linear, U or inverse-U for
+quadratic links).}{\label{fig-five}}}}
+
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{./figures/fig5.png}
+
+\end{figure*}
+
 In sample 1, the traditional approach suggested a significant linear
 relationship between the mean level of ``Reality'' and attractiveness
-(\(\beta_{poly1}=3.42, ~95\%~CI [2.50, 4.34], p < .001\%\)) for males
-only. The CHOCO model revealed that attractiveness had a significantly
-positive linear relationship with the probability \emph{p} of judging
-faces as real (STATS), but a quadratic relationship with the confidence
-in real judgments (\emph{confright}; STATS). Attractiveness was also
-associated with less confidence in fake judgments (\emph{confleft};
-STATS), a quadratic relationship with left precision (\emph{precleft};
-STATS), and related linearly with a stronger bias towards extreme Real
-responses (\emph{bex}; STATS). These effects were present for males
-only, and no relationship was found for females. The reliability of the
-effect of attractiveness (the random slopes) was very low for all
-parameters (D-vour \textless{} 0.01). The effect of Beauty was the same
-as of attractiveness.
+for males only
+(\(\beta_{~\text{poly1}}=3.42, ~95\%~CI [2.50, 4.34], ~p < .001\)), the
+second largest effect being that of a quadratic link for women
+(\(\beta_{~\text{poly2}}=1.82, ~95\%~CI [-0.27, 3.92], ~p = .09\)). The
+CHOCO model revealed that, for males only, attractiveness had a
+significantly positive linear relationship with the probability \emph{p}
+of judging faces as real
+(\(P_{~\text{poly1}}=13.64, ~95\%~CI [8.42, 18.99], ~pd = 100\%\)), but
+a quadratic relationship with the confidence in real judgments
+(\(confright_{~\text{poly2}}=3.70, ~95\%~CI [0.80, 6.40], ~pd = 99.53\%\)).
+Attractiveness was also associated with less confidence in fake
+judgments
+(\(confleft_{~\text{poly1}}=-5.49, ~95\%~CI [-8.84, -2.11], ~pd =  99.92\%\)),
+a quadratic relationship with left precision
+(\(precleft_{~\text{poly2}}=-12.65    , ~95\%~CI [-24.59, -0.36], ~pd = 97.86\%\)),
+and related linearly with a stronger bias towards extreme Real responses
+(\(bex_{~\text{poly1}}=9.56    , ~95\%~CI [2.44, 16.73], ~pd = 99.55\%\)).
+No significant relationship was found for females. The reliability of
+the effect of attractiveness (the random slopes) was very low for all
+parameters (D-vour \textless{} 0.01).
 
 \subsubsection{Sample 2}\label{sample-2}
 
 In Sample 2, the traditional approach suggested a significant linear
 relationship between the mean level of ``Reality'' and attractiveness
-for males (STATS) and women (STATS), with no effect of the Condition.
-The CHOCO model revealed that attractiveness had a significantly
-positive linear relationship with the probability \emph{p} of judging
-faces as real for males (STATS) and females (STATS). It also had a
-linear relationship with the confidence in real judgments
-(\emph{confright}) for males (STATS) and females (STATS), as well as a
-significant quadratic curvature for males only (STATS). Attractiveness
-also linearly decreased the confidence in fake judgments only for males
-(\emph{confleft}; STATS), but increased the probability of an undecided
-response (\emph{pmid}) in women (STATS), and displayed in females only a
-quadratic relationship with the amount of extreme answers (\emph{pex};
-STATS) and its bias in favour of right-side extreme response
-(\emph{bex}; STATS). No consistent and reliable effect of condition was
-found.
+for males
+(\(\beta_{~\text{poly1}}=3.87, ~95\%~CI [2.91, 4.83], ~p < .001\)) and
+females
+(\(\beta_{~\text{poly1}}=1.88, ~95\%~CI [0.74, 3.01], ~p < .001\)), with
+no effect of the Condition. The CHOCO model revealed that attractiveness
+had a significantly positive linear relationship with the probability
+\emph{p} of judging faces as real for males
+(\(P_{~\text{poly1}}=18.44, ~95\%~CI [11.36, 25.31], ~pd = 100\%\)) and
+females
+(\(P_{~\text{poly1}}=9.08, ~95\%~CI [1.90, 16.35], ~pd = 99.27\%\)). It
+also had a linear relationship with the confidence in real judgments for
+males
+(\(confright_{~\text{poly1}}=7.51, ~95\%~CI [3.90, 11.30], ~pd = 99.99\%\)),
+as well as a significant quadratic relationship for females
+(\(confright_{~\text{poly2}}=4.48, ~95\%~CI [0.74, 8.18], ~pd = 99.09\%\)).
+Attractiveness also linearly decreased the confidence in fake judgments
+only for males
+(\(confleft_{~\text{poly1}}=-6.67, ~95\%~CI [-10.04, -3.38], ~pd = 100\%\)).
+Marginal contrasts suggested that stimuli previously labelled as
+photographs increased the probability \emph{p} of judging faces as real,
+only for females
+(\(P \Delta_{~\text{real - fake}}=0.06, ~95\%~CI [0.00, 0.11], ~pd = 98.36\%\)).
 
-The effect of Beauty was\ldots{}
+\subsubsection{Beauty}\label{beauty}
+
+The same analysis was run for Beauty, which indicated the following
+differences: \textbf{ANA: can you report the main differences?}
 
 \subsection{Discussion}\label{discussion-1}
+
+\textbf{WIP}
 
 The fact that the effect was less obvious in women in the sample 1 might
 be explained with power (less relevant items were included for women).
 
 \section{General Discussion}\label{general-discussion}
+
+\textbf{WIP}
 
 This study introduces a new statistical model to analyze bimodal data,
 which can be observed for instance when using subjective rating scales
@@ -1017,9 +1093,9 @@ in which the two sides correspond to a different ``choice'' (e.g.,
 one for each choice, and models the probability of choosing one or the
 other as well as the degree of confidence in each choice. We validated
 this model on real-life data by appling it to the reality beliefs of
-Makowski et al. (\citeproc{ref-makowski2025too}{2025}), and showed that
-it was able to capture the bimodal nature of the data and provides a
-more accurate representation of the underlying processes than other
+Makowski, Te, et al. (\citeproc{ref-makowski2025too}{2025}), and showed
+that it was able to capture the bimodal nature of the data and provides
+a more accurate representation of the underlying processes than other
 alternative approaches, including Zero-or-One inflated Beta (ZOIB)
 models.
 
@@ -1052,8 +1128,20 @@ lead to a lesser ability to detect finer grain changes, including
 U-shaped relationships. Having 7-points (or 6 with no mid-value) is the
 strict minimum to use the CHOCO model.
 
+While our study was pertaining to \emph{simulation monitoring}, the
+process of assessing and forming beliefs about the nature of external
+stimuli (REF makowski phenomenological), we believe that it is part of
+the mechanisms at play in the fabric of our sense of reality (REF
+makowski thesis), alongside others, such as presence (the embodied
+feeling of being physically ``in'' an experience) or \emph{reality
+monitoring} (the process of distinguishing between internally generated
+and externally perceived events, i.e., imagination vs.~perception).
+Interestingly, recent studies about the latter support a possible
+distinction at a neural level between \ldots{} and (binary) decision
+making. (https://www.cell.com/neuron/fulltext/S0896-6273(25)00362-9).
+
 Future studies should assess psychometric property liek the minimum
-amount of data required to estimate all parameters reliably.
+amount of data required to estimate and recover all parameters reliably.
 
 Future studies should assess the ability of CHOCO models to also fit
 unimodal distributions (so it can be used more generally), as well as
@@ -1072,8 +1160,8 @@ implemented in the \emph{cogmod} R package
 \section{Acknowledgements}\label{acknowledgements}
 
 We would like to thank the dissertation students from the University of
-Sussex for their help in data collection. DM would also like to thank
-\ldots{} for the motivation provided to write this paper.
+Sussex for their help in data collection. DM would also like to thank F.
+Rocher for inspiring some aspects of this paper.
 
 \section{References}\label{references}
 
@@ -1140,32 +1228,33 @@ misinformation: Understanding and coping with the {``post-truth''} era.
 Little, A. C. (2021). Facial attractiveness. \emph{Encyclopedia of
 Evolutionary Psychological Science}, 2887--2891.
 
+\bibitem[\citeproctext]{ref-ludecke2020extracting}
+Lüdecke, D., Ben-Shachar, M. S., Patil, I., \& Makowski, D. (2020).
+Extracting, computing and exploring the parameters of statistical models
+using r. \emph{Journal of Open Source Software}, \emph{5}(53), 2445.
+
 \bibitem[\citeproctext]{ref-ludecke2021performance}
 Lüdecke, D., Ben-Shachar, M. S., Patil, I., Waggoner, P., \& Makowski,
 D. (2021). Performance: An r package for assessment, comparison and
 testing of statistical models. \emph{Journal of Open Source Software},
 \emph{6}(60).
 
-\bibitem[\citeproctext]{ref-easystats2022}
-Lüdecke, D., Ben-Shachar, M. S., Patil, I., Wiernik, B. M., Bacher, E.,
-Thériault, R., \& Makowski, D. (2022). Easystats: Framework for easy
-statistical modeling, visualization, and reporting. \emph{CRAN}.
-\url{https://doi.org/10.32614/CRAN.package.easystats}
-
 \bibitem[\citeproctext]{ref-luo2019robust}
 Luo, Q., Rossion, B., \& Dzhelyova, M. (2019). A robust implicit measure
 of facial attractiveness discrimination. \emph{Social Cognitive and
 Affective Neuroscience}, \emph{14}(7), 737--746.
 
-\bibitem[\citeproctext]{ref-makowski2018cognitive}
-Makowski, D. (2018). \emph{Cognitive neuropsychology of implicit emotion
-regulation through fictional reappraisal} {[}PhD thesis{]}. Sorbonne
-Paris Cit{é}.
-
 \bibitem[\citeproctext]{ref-makowski2019indices}
 Makowski, D., Ben-Shachar, M. S., Chen, S. A., \& Lüdecke, D. (2019).
 Indices of effect existence and significance in the bayesian framework.
 \emph{Frontiers in Psychology}, \emph{10}, 2767.
+
+\bibitem[\citeproctext]{ref-makowski2025modelbased}
+Makowski, D., Ben-Shachar, M. S., Wiernik, B. M., Patil, I., Thériault,
+R., \& Lüdecke, D. (2025). Modelbased: An r package to make the most out
+of your statistical models through marginal means, marginal effects, and
+model predictions. \emph{Journal of Open Source Software},
+\emph{10}(109), 7969.
 
 \bibitem[\citeproctext]{ref-makowski2019phenomenal}
 Makowski, D., Sperduti, M., Pelletier, J., Blondé, P., La Corte, V.,
@@ -1213,16 +1302,22 @@ Pandey, G., \& Zayas, V. (2021). What is a face worth? Facial
 attractiveness biases experience-based monetary decision-making.
 \emph{British Journal of Psychology}, \emph{112}(4), 934--963.
 
-\bibitem[\citeproctext]{ref-peng2020faces}
-Peng, L., Cui, G., Chung, Y., \& Zheng, W. (2020). The faces of success:
-Beauty and ugliness premiums in e-commerce platforms. \emph{Journal of
-Marketing}, \emph{84}(4), 67--85.
+\bibitem[\citeproctext]{ref-patil2022datawizard}
+Patil, I., Makowski, D., Ben-Shachar, M. S., Wiernik, B. M., Bacher, E.,
+\& Lüdecke, D. (2022). Datawizard: An r package for easy data
+preparation and statistical transformations. \emph{Journal of Open
+Source Software}, \emph{7}(78), 4684.
 
 \bibitem[\citeproctext]{ref-rouder2024hierarchical}
 Rouder, J. N., \& Mehrvarz, M. (2024). Hierarchical-model insights for
 planning and interpreting individual-difference studies of cognitive
 abilities. \emph{Current Directions in Psychological Science},
 \emph{33}(2), 128--135.
+
+\bibitem[\citeproctext]{ref-tucciarelli2022realness}
+Tucciarelli, R., Vehar, N., Chandaria, S., \& Tsakiris, M. (2022). On
+the realness of people who do not exist: The social processing of
+artificial faces. \emph{Iscience}, \emph{25}(12).
 
 \bibitem[\citeproctext]{ref-vehtari2017practical}
 Vehtari, A., Gelman, A., \& Gabry, J. (2017). Practical bayesian model

@@ -13,7 +13,6 @@ execute:
   cache-lazy: false
 ---
 
-
 ```{r}
 #| message: false
 #| warning: false
@@ -32,7 +31,11 @@ library(rstan)
 
 
 
+
+
 ## Data Preprocessing
+
+
 
 
 ```{r}
@@ -41,9 +44,13 @@ df$Sex <- factor(df$Sex, levels = c("Male", "Female"))
 ```
 
 
+
+
 ## Sample 1
 
 ### Attractiveness
+
+
 
 ```{r}
 m <- lme4::lmer(Real ~ Sex / poly(Attractive, 2) + (1|Participant) + (1|Item), data = df)
@@ -60,11 +67,15 @@ estimate_relation(m, length = 30) |>
 ```
 
 
+
+
 #### Model Description
 
 ::: {.panel-tabset}
 
 ##### Effect of Attractiveness
+
+
 
 ```{r}
 m1_chocoat <- readRDS("models/sample1_chocoattractiveness.rds")
@@ -93,7 +104,11 @@ params_table(m1_chocoat, keep = "polyAttractive")
 ```
 
 
+
+
 ##### Random Effects
+
+
 
 ```{r}
 table_dvour <- function(g) {
@@ -108,16 +123,24 @@ g1 <- modelbased::estimate_grouplevel(m1_chocoat)
 table_dvour(g1)
 ```
 
+
+
 ##### Full
+
+
 
 ```{r}
 summary(m1_chocoat, robust = TRUE)
 ```
 
 
+
+
 :::
 
 #### Model Visualization
+
+
 
 ```{r}
 visualize_dchoco <- function(m, newdata, x = c(-0.005, seq(0, 1, length.out = 1001), 1.005)) {
@@ -201,7 +224,6 @@ p3_density <- pred1$densities |>
 p3_density
 ```
 
-
 ```{r}
 #| cache-lazy: false
 
@@ -212,8 +234,7 @@ plot_params1 <- function(m, xlabel = "Attractiveness") {
   pred_params <- data.frame()
   for(param in c("mu", "confright", "confleft", "precright", "precleft", "pex", "bex")) {
     pred_params <- m |> 
-      modelbased::estimate_prediction(data = "grid", length = 40, preserve_range = FALSE, 
-                                      predict = param, iterations = 200) |>
+      modelbased::estimate_prediction(data = "grid", length = 40, preserve_range = FALSE, predict = param, iterations = 10) |>
       as.data.frame() |> 
       dplyr::mutate(Parameter = param) |> 
       rbind(pred_params)
@@ -233,7 +254,7 @@ plot_params1 <- function(m, xlabel = "Attractiveness") {
     geom_ribbon(aes(ymin = CI_low, ymax = CI_high, fill = Parameter, group = Sex), alpha = 0.2) +
     geom_line(aes(color = Parameter, linetype = Sex), linewidth = 1) +
     facet_wrap(~Parameter, scales = "free_y", ncol=3, strip.position = "left") +
-    labs(x = xlabel, title = "Effect on model parameters") +
+    labs(x = xlabel, title = "Marginal effect on model parameters") +
     scale_fill_manual(values = colors, guide = "none") +
     scale_color_manual(values = colors, guide = "none") +
     scale_x_continuous(breaks = c(0, 0.25, 0.5, 0.75, 1), labels = c(" 0", "0.25", "0.5", "0.75", "1 ")) +
@@ -269,7 +290,11 @@ p3_paramssig
 
 
 
+
+
 ### Beauty
+
+
 
 ```{r}
 m <- lme4::lmer(Real ~ Sex / poly(Beauty, 2) + (1|Participant) + (1|Item), data = df)
@@ -286,32 +311,48 @@ estimate_relation(m, length = 30) |>
   theme_minimal()
 ```
 
+
+
 #### Model Description
 
 ::: {.panel-tabset}
 
 ##### Effect of Beauty
 
+
+
 ```{r}
 m1_chocobeauty <- readRDS("models/sample1_chocobeauty.rds")
 params_table(m1_chocobeauty, keep = "polyBeauty")
 ```
 
+
+
 ##### Random Effects
+
+
 
 ```{r}
 table_dvour(modelbased::estimate_grouplevel(m1_chocobeauty))
 ```
 
+
+
 ##### Full
+
+
 
 ```{r}
 summary(m1_chocobeauty, robust = TRUE)
 ```
 
+
+
 :::
 
 #### Model Visualization
+
+
 
 
 ```{r}
@@ -341,7 +382,11 @@ p4_density
 ```
 
 
+
+
 ## Sample 2
+
+
 
 ```{r}
 #| eval: false
@@ -393,7 +438,11 @@ df$Condition <- factor(df$Condition, levels = c("Photograph", "AI-Generated"))
 
 
 
+
+
 ### Attractiveness
+
+
 
 ```{r}
 ggplot(df, aes(x=Real)) +
@@ -416,9 +465,13 @@ estimate_relation(m, length = 30) |>
   theme_minimal()
 ```
 
+
+
 #### Model Comparison 
 
 Interestingly, Beta-gate appears as a better fit, but this is likely related to the nature of the index used, WAIC, which heavily penalizes for the number of parameters (which is *much* larger for CHOCO). Probably not a very meaningful result, especially since the posterior checks clearly show its misfit.
+
+
 
 ```{r}
 # m2_betagate <- readRDS("models/sample2_betagate.rds")
@@ -437,7 +490,11 @@ report::report(loocomp)
 
 
 
+
+
 ##### Posterior Predictive Check
+
+
 
 ```{r}
 make_ppcheck  <- function(m, fill = "#FF9800") {
@@ -473,17 +530,25 @@ p_ppc2 <- make_ppcheck(m2_betagate, fill = "#FF9800") +
 p_ppc1 / p_ppc2 
 ```
 
+
+
 #### Model Description
 
 ::: {.panel-tabset}
 
 ##### Effect of Attractiveness
 
+
+
 ```{r}
 params_table(m2_chocoat, keep = "polyAttractive|Condition")
 ```
 
+
+
 ##### Effect of Condition
+
+
 
 ```{r}
 c <- data.frame()
@@ -496,24 +561,30 @@ for(param in c("mu", "confright", "confleft", "precright", "precleft", "pmid")) 
 c
 ```
 
-
-
 ```{r}
 estimate_contrasts(m2_chocoat, contrast = "Condition", by = c("Attractive", "Sex"), 
                    predict = "mu", length = 5, backend = "emmeans", test = "pd") 
 ```
 
+
+
 ##### Full
+
+
 
 ```{r}
 summary(m2_chocoat, robust = TRUE)
 ```
+
+
 
 :::
 
 
 
 #### Model Visualization
+
+
 
 
 ```{r}
@@ -545,14 +616,11 @@ p4_density <- pred2$densities |>
 p4_density
 ```
 
-
-
 ```{r}
 # pred <- visualize_dchoco(m2_chocoat,
 #                          newdata=insight::get_datagrid(m2_chocoat, length = 5, preserve_range = FALSE),
 #                          x = seq(0, 1, length.out=7))
 ```
-
 
 ```{r}
 #| cache-lazy: false
@@ -582,7 +650,7 @@ plot_params2 <- function(m, xlabel = "Attractiveness") {
     geom_line(aes(color = Parameter, linetype = Sex, 
                   alpha = interaction(Sex, Condition), group = interaction(Sex, Condition)), linewidth = 1) +
     facet_wrap(~Parameter, scales = "free_y", ncol=3, strip.position = "left") +
-    labs(x = xlabel, title = "Effect on model parameters") +
+    labs(x = xlabel, title = "Marginal effect on model parameters") +
     scale_fill_manual(values = colors, guide = "none") +
     scale_color_manual(values = colors, guide = "none") +
     scale_alpha_manual(values = c("Photograph" = 0.2, "AI-Generated" = 0, 
@@ -618,7 +686,11 @@ p4_paramssig
 ```
 
 
+
+
 ### Beauty
+
+
 
 ```{r}
 m <- lme4::lmer(RealNoex ~ Sex / poly(Beauty, 2) * Condition + (1|Participant) + (1|Item), data = df)
@@ -635,33 +707,49 @@ estimate_relation(m, length = 30) |>
   theme_minimal()
 ```
 
+
+
 #### Model Description
 
 ::: {.panel-tabset}
 
 ##### Effect of Beauty
 
+
+
 ```{r}
 m2_chocobeauty <- readRDS("models/sample2noex_chocobeauty.rds")
 params_table(m2_chocobeauty, keep = "polyBeauty|Condition")
 ```
 
+
+
 ##### Random Effects
+
+
 
 ```{r}
 table_dvour(modelbased::estimate_grouplevel(m2_chocobeauty))
 ```
 
+
+
 ##### Full
+
+
 
 ```{r}
 summary(m2_chocobeauty, robust = TRUE)
 ```
 
+
+
 :::
 
 
 #### Model Visualization
+
+
 
 
 ```{r}
@@ -694,7 +782,11 @@ p5_density
 ```
 
 
+
+
 ## Figures
+
+
 
 ```{r}
 #| eval: false
@@ -715,3 +807,4 @@ p5 <- (p3_a | p4_a) +
 
 ggsave("../paper/figures/fig5.png", p5, width = 13, height = 11, dpi = 300)
 ```
+
