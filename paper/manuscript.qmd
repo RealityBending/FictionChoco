@@ -127,10 +127,10 @@ $$
 
 Decision-making is often conceptualized as involving distinct processes: the choice itself, and the confidence associated with that choice. 
 In experimental paradigms, these can be somewhat disentangled by prompting participants to make a discrete choice selection (e.g., "True" vs. "False"), followed by a separate confidence rating. 
-However, this artificial separation makes its joint analysis difficulty, and may not reflect real-world decision-making, where individuals often express both choice and confidence simultaneously using a single, continuous scale. In such scales, each side can represent a distinct latent category, and the distance from the midpoint can indicates the level of confidence or certainty.
+However, this artificial separation makes its joint analysis difficult, and may not reflect real-world scenarios, where individuals often express both choice and confidence simultaneously using a single, continuous scale. In such scales, each side can represent a distinct latent category, and the distance from the midpoint can indicate the level of confidence or certainty.
 This integrated response format typically results in bimodal distributions, with peaks corresponding to the mean confidence on either side.
 Traditional beta regression models, which assume unimodal distributions within the (0,1) interval, are ill-suited for such data. One alternative is to transform the data into two variables a posteriori: binarizing the side to represent choice and calculating the absolute distance from the midpoint to represent confidence. 
-These can then be modeled separately, for instance, using logistic regression for choice and beta regression for confidence [see @makowski2025too for an example]. 
+These can then be modeled separately, for instance, using logistic regressions for choice and beta regressions for confidence [see @makowski2025too for an example]. 
 While this approach can provide additional insights into underlying mechanisms compared to a unique model, it assumes psychological and statistical independence between choice and confidence, which may not hold true in practice.
 
 ```{r}

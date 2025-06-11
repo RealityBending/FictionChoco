@@ -193,7 +193,7 @@ AI-generated faces, attractiveness}
 Makowski}{0000-0001-5375-9967}}\par{\addORCIDlink{Ana
 Neves}{0009-0006-0020-7599}}\par{\addORCIDlink{Andy Field}{true}} 
 \par{ }
-\par{     \begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-note-color-frame, leftrule=.75mm, breakable, rightrule=.15mm, bottomrule=.15mm, toprule=.15mm, left=2mm, arc=.35mm, opacityback=0, colback=white]
+\par{     \begin{tcolorbox}[enhanced jigsaw, breakable, toprule=.15mm, leftrule=.75mm, bottomrule=.15mm, opacityback=0, arc=.35mm, colback=white, rightrule=.15mm, left=2mm, colframe=quarto-callout-note-color-frame]
 
 This preprint is a non-peer-reviewed work from the
 \href{https://realitybending.github.io/}{\textbf{Reality Bending Lab}}.
@@ -478,11 +478,11 @@ the choice itself, and the confidence associated with that choice. In
 experimental paradigms, these can be somewhat disentangled by prompting
 participants to make a discrete choice selection (e.g., ``True''
 vs.~``False''), followed by a separate confidence rating. However, this
-artificial separation makes its joint analysis difficulty, and may not
-reflect real-world decision-making, where individuals often express both
+artificial separation makes its joint analysis difficult, and may not
+reflect real-world scenarios, where individuals often express both
 choice and confidence simultaneously using a single, continuous scale.
 In such scales, each side can represent a distinct latent category, and
-the distance from the midpoint can indicates the level of confidence or
+the distance from the midpoint can indicate the level of confidence or
 certainty. This integrated response format typically results in bimodal
 distributions, with peaks corresponding to the mean confidence on either
 side. Traditional beta regression models, which assume unimodal
@@ -490,8 +490,8 @@ distributions within the (0,1) interval, are ill-suited for such data.
 One alternative is to transform the data into two variables a
 posteriori: binarizing the side to represent choice and calculating the
 absolute distance from the midpoint to represent confidence. These can
-then be modeled separately, for instance, using logistic regression for
-choice and beta regression for confidence (see
+then be modeled separately, for instance, using logistic regressions for
+choice and beta regressions for confidence (see
 \citeproc{ref-makowski2025too}{Makowski, Te, et al., 2025} for an
 example). While this approach can provide additional insights into
 underlying mechanisms compared to a unique model, it assumes
