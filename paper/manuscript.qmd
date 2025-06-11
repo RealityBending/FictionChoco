@@ -65,7 +65,7 @@ abstract: |
   TO DO.
 #   **Significance Statement**. TODO.
 keywords: "subjective scales, choice confidence model, reality beliefs, AI-generated faces, attractiveness"
-numbered-lines: false
+numbered-lines: true
 floatsintext: true
 mask: false
 bibliography: bibliography.bib
@@ -243,7 +243,7 @@ Across all these models, no effect of Sex on the precision parameter was observe
 #| label: fig-four
 #| fig-cap: "Top: the participant and item-level estimates for the CHOCO parameters, under the distribution of their point-estimates. Reliable effects are characterised by a higher between-group variability relative (the dispersion of the distribution of point-estimates) to its within-group variability (the average uncertainty of individual estimates represented by the error bar). For example, inter-individual variability in the parameters reflecting the confidence in left and right choices is reliably capture, as opposed to the inter-individual variability in the 'bex' parameter. Bottom: correlation matrix between participant-level estimates from different models and empirical indices (e.g., the raw proportion of responses on the right per participant). The CHOCO parameters are easily interpretable, strongly correlating with their empirical counterparts."
 #| apa-twocolumn: true  # A Figure Spanning Two Columns When in Journal Mode
-#| out-width: "95%"
+#| out-width: "80%"
 
 knitr::include_graphics("./figures/fig4.png")
 ```
