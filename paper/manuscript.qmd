@@ -1,5 +1,5 @@
 ---
-title: "**Introducing the Choice-Confidence (CHOCO) Model for Bimodal Scales Data: Application to the Relationship between Reality Beliefs about AI-Generated Faces and Beauty**"
+title: "**Introducing the Choice-Confidence (CHOCO) Model for Bimodal Data from Subjective Ratings: Application to the Effect of Attractiveness on Reality Beliefs about AI-Generated Faces**"
 shorttitle: "Choice-Confidence (CHOCO) Model"
 author:
   - name: Dominique Makowski
@@ -65,6 +65,7 @@ abstract: |
   TO DO.
 #   **Significance Statement**. TODO.
 keywords: "subjective scales, choice confidence model, reality beliefs, AI-generated faces, attractiveness"
+# Add more keywords if possible: beauty, Ordered Beta model, Bimodal data, decision-making
 numbered-lines: true
 floatsintext: true
 mask: false
@@ -79,7 +80,7 @@ format:
 # Introduction
 
 <!-- Problem statement -->
-Despite significant advancements in psychological science following the replication crisis [@open2015estimating], its progress is still hindered by its sub-optimal (or inappropriate) usage of statistical tools [@makowski2023we]. 
+Despite significant advancements in psychological science following the replication crisis [@open2015estimating], its progress is still hindered by its sub-optimal (or inappropriate) usage of statistical tools [@makowski2023we; @cumming2014new; @blanca2018current]. 
 A prevalent issue is the continued reliance on linear models that assume normally distributed (Gaussian) data^[More specifically, that the outcome is distributed according to a Normal distribution which parameters are expressed as a linear function of the predictors.] - as this assumption often does not hold true for many types of psychological outcomes.
 For instance, reaction times typically exhibit skewed distributions, choices can be represented as binary variables, and count data consists of strictly positive integers. 
 Applying models that presume normality and model the "mean" of the outcome variable can lead to misinterpretation and potentially misleading conclusions when applied indiscriminately. It is thus important that psychologists use models that can best describe (or generate) the data they collect, to fully exploit them and bring more nuance and accuracy to their conclusions. 
@@ -182,7 +183,7 @@ Images of faces - socially and perceptually rich stimuli for which AI-generation
 
 ### Participants
 
-Using the open-accss data from @makowski2025too, we included all heterosexual and bisexual (as these two groups did not seem to differ based on preliminary analyses and were thus grouped to maximize power) male and female participants, for a final sample of 141 participants (Mean age = 28.4, SD = 9.0, range: [19, 66]; Sex: 47.5% females). For each participant, we included only stimuli of the opposite gender (i.e., all 89 female faces for men and 20 male faces for women).
+Using the open-access data from @makowski2025too, we included all heterosexual and bisexual (as these two groups did not seem to differ based on preliminary analyses and were thus grouped to maximize power) male and female participants, for a final sample of 141 participants (Mean age = 28.4, SD = 9.0, range: [19, 66]; Sex: 47.5% females). For each participant, we included only stimuli of the opposite gender (i.e., all 89 female faces for men and 20 male faces for women).
 
 ### Procedure
 
@@ -344,6 +345,13 @@ The same analysis was run for Beauty, which indicated the following differences:
 
 **WIP**
 
+The findings of Study 2 replicate and extend those of Study 1, supporting the idea that facial attractiveness significantly shapes participants' beliefs about reality beliefs pertaining to human faces. This effect was particularly strong and robust among male participants. For females, the effect was weaker in Study 1 but more pronounced in Study 2, which might partly reflect increased statistical power.
+
+
+Another possibility, however, is that the second sample's experimental manipulation introduced conflicting cues (e.g., faces labelled "AI-generated") that could have disrupted intuitive heuristics, thereby increasing reliance on attractiveness as a diagnostic cue, particularly in ambiguous trials.
+<!-- This could be tested by analyzing believed vs. non-believed items -->
+
+
 The fact that the effect was less obvious in women in the sample 1 might be explained with power (less relevant items were included for women). 
 
 
@@ -372,10 +380,13 @@ While this is far from ideal, the CHOCO model still provided a better fit to the
 
 While our study was pertaining to *simulation monitoring*, the process of assessing and forming beliefs about the nature of external stimuli (REF makowski phenomenological), we believe that it is part of the mechanisms at play in the fabric of our sense of reality (REF makowski thesis), alongside others, such as presence (the embodied feeling of being physically "in" an experience) or *reality monitoring* (the process of distinguishing between internally generated and externally perceived events, i.e., imagination vs. perception). Interestingly, recent studies about the latter support a possible distinction at a neural level between ... and (binary) decision making. (https://www.cell.com/neuron/fulltext/S0896-6273(25)00362-9).
 
+Also: https://www.cell.com/neuron/fulltext/S0896-6273(16)30016-2
 
 Future studies should assess psychometric property liek the minimum amount of data required to estimate and recover all parameters reliably.
 
 Future studies should assess the ability of CHOCO models to also fit unimodal distributions (so it can be used more generally), as well as the benefits of more parsimonious parametrization (for instance, a unique precision parameter controlling both the left and right sides, or a linked confidence parameter e.g. where *confleft* is expressed as a function of *confright*).
+
+
 
 # Data Availability
 
