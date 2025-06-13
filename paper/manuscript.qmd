@@ -337,23 +337,31 @@ In Sample 2, the traditional approach suggested a significant linear relationshi
 ### Beauty
 
 The same analysis was run for Beauty, which indicated the following differences: 
-**ANA: can you report the main differences?**
+**ANA: can you check and write down the main differences?**
 
 
 
 ## Discussion
 
-**WIP**
-
-The findings of Study 2 replicate and extend those of Study 1, supporting the idea that facial attractiveness significantly shapes participants' beliefs about reality beliefs pertaining to human faces. This effect was particularly strong and robust among male participants. For females, the effect was weaker in Study 1 but more pronounced in Study 2, which might partly reflect increased statistical power.
-
-
-Another possibility, however, is that the second sample's experimental manipulation introduced conflicting cues (e.g., faces labelled "AI-generated") that could have disrupted intuitive heuristics, thereby increasing reliance on attractiveness as a diagnostic cue, particularly in ambiguous trials.
+This study provides further evidence that attractive faces are more likely to be judged as real (*vs.* AI-generated), This effect was particularly strong and robust among male participants. For females, the effect was weaker in sample 1 but more pronounced in sample 2, which might partly reflect increased statistical power. An alternative possibility is that the second sample's experimental manipulation introduced conflicting cues (e.g., faces labelled "AI-generated") that could have disrupted intuitive heuristics, thereby increasing reliance on attractiveness as a diagnostic cue, particularly in ambiguous trials.
 <!-- This could be tested by analyzing believed vs. non-believed items -->
 
+<!-- Paragraph about potential mechanisms -->
+However, the mechanisms that underlie why attractiveness predicts reality judgments remains unclear.
+One possibility is that this positive link reflects a broader bias toward attributing positive qualities to attractive individuals, in-line with the substantial body of literature on the "beauty-is-good" stereotype, whereby attractive faces are judged as more trustworthy [@eagly1991beautiful], warmer and more approachable [@fiske2002model], and perceived as more authentic and sincere [@little2021facial]. These traits may implicitly overlap with qualities ascribed to "real" humans. In this sense, reality judgments could be an extension of existing social heuristics that conflate visual appeal with genuineness.
 
-The fact that the effect was less obvious in women in the sample 1 might be explained with power (less relevant items were included for women). 
+Alternatively, the effect might be primarily driven by attention. Attractive faces tend to capture and hold visual attention more effectively [@nakamura2014attractive], which could lead to a deeper processing. 
+This greater accumulation of evidence could influence the bias systematically towards a particular category ("reality") or perhaps, towards the "true" category of the stimulus (which we cannot delineate from our data as all our stimuli were actually real photographs). Alternatively, such attentional bias may boost perceptual fluency and subjective certainty, that would be predominantly reflected in the confidence parameter of the CHOCO model. The attention hypothesis could be formally tested via incorporating a reality judgment task of real and actual AI-generated faces within attentional paradigms to see whether the confidence and bias changes as a function of attentional engagement. 
+<!-- This could be tested via an attention (ANT) paradigm. -->
 
+Importantly for the scope of this study, the CHOCO model allowed us to dissect this effect in greater detail compared to traditional analyses, revealing that attractiveness not only shifted the choice toward "real" judgments but also modulated the confidence and extremity of those judgments. With the second sample, we demonstrated the flexibility of this model by fitting it to discrete ratings with a mid-point - providing potential insight into epistemic uncertainty in decision-making tasks. 
+
+However, one might be concerned about the application of the CHOCO model (a mixture of two continuous Beta distributions) to ordinal data in Sample 2 (where a 7-point Likert scale was used). Ordinal ratings (limited number of discrete options represented numerically by integers) are commonly used in psychology, and often modeled as continuous. While this fact has spurred its own polarized debate (REFS), our position is that the model used should ideally reflect the data *generating* mechanism rather than necessarily focus on the *observed* data^[Ideally, the data recording method should be aligned with the assumed generating mechanism, which is an experiment design issue rather than a statistical one.] - although the former cannot always be easily inferred or known. 
+For the data of Sample 2, we held the assumption that the underlying latent distribution was CHOCO distributed (as there is no reason to assume it would be different from Sample 1), treated as continuous CHOCO-distributed data, despite the fact that it was collected on a 7-point scale. 
+The motivation was to see if the model could extrapolate and reliably estimate all the parameters based on a limited number of data points but means in our case that, effectively, each Beta distribution was extrapolated from the frequency of only three unique values. 
+While this is far from ideal, the CHOCO model still proved insightful, although it might have impacted its ability detect finer-grain changes, including quadratic relationships.
+
+<!-- Interestingly, in Sample 2, prior labels (“AI-generated” vs. “Photograph”) had a modest but significant influence on beliefs—particularly for females—suggesting that top-down expectations can modulate reality perception. This effect was small but detectable, and illustrates how pre-existing contextual information can shape subjective reality beliefs, possibly interacting with heuristic features such as attractiveness. -->
 
 
 
@@ -369,20 +377,13 @@ This study introduces a new statistical model to analyze bimodal data, which can
 
 Little difference between Beauty and Attractiveness, aside that Beauty revealed more effects in women. Why?
 
-We demonstrated the flexibility of the CHOCO model, being usable in analog scales as well as discrete ratings with a mid-point. 
 
-Likert-scales (with a limited number of discrete options) are commonly used in psychology, and often modeled as continuous.
-While this fact has spurred its own polarized debate (REFS), our position is that the model used should ideally reflect the data *generating* mechanism rather than necessarily focus on the *observed* data^[Ideally, the data recording method should be aligned with the assumed generating mechanism, which is an experiment design issue rather than a statistical one.] - although the former cannot always be easily inferred or known. 
-For the data of Sample 2, we held the assumption that the underlying latent distribution was CHOCO distributed (as there is no reason to assume it would be different from Sample 1), treated as continuous CHOCO-distributed data, despite the fact that it was collected on a 7-point Likert scale. 
-The motivation was to see if the model could extrapolate and reliably estimate all the parameters based on a limited number of data points but means in our case that, effectively, each Beta distribution was extrapolated from the frequency of only two unique values (or 3 for the no-extreme version). 
-While this is far from ideal, the CHOCO model still provided a better fit to the data than alternative approaches. 
-**TODO** However, it might have lead to a lesser ability to detect finer grain changes, including U-shaped relationships. Having 7-points (or 6 with no mid-value) is the strict minimum to use the CHOCO model.
 
 While our study was pertaining to *simulation monitoring*, the process of assessing and forming beliefs about the nature of external stimuli (REF makowski phenomenological), we believe that it is part of the mechanisms at play in the fabric of our sense of reality (REF makowski thesis), alongside others, such as presence (the embodied feeling of being physically "in" an experience) or *reality monitoring* (the process of distinguishing between internally generated and externally perceived events, i.e., imagination vs. perception). Interestingly, recent studies about the latter support a possible distinction at a neural level between ... and (binary) decision making. (https://www.cell.com/neuron/fulltext/S0896-6273(25)00362-9).
 
 Also: https://www.cell.com/neuron/fulltext/S0896-6273(16)30016-2
 
-Future studies should assess psychometric property liek the minimum amount of data required to estimate and recover all parameters reliably.
+Future studies should assess psychometric property like the minimum amount of data required to estimate and recover all parameters reliably. As well as the minimum amount of unique value (for Likert scales) requires to detect weak or non-linearly shaped effects.
 
 Future studies should assess the ability of CHOCO models to also fit unimodal distributions (so it can be used more generally), as well as the benefits of more parsimonious parametrization (for instance, a unique precision parameter controlling both the left and right sides, or a linked confidence parameter e.g. where *confleft* is expressed as a function of *confright*).
 

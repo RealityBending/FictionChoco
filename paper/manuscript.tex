@@ -193,7 +193,7 @@ AI-generated faces, attractiveness}
 Makowski}{0000-0001-5375-9967}}\par{\addORCIDlink{Ana
 Neves}{0009-0006-0020-7599}}\par{\addORCIDlink{Andy Field}{true}} 
 \par{ }
-\par{     \begin{tcolorbox}[enhanced jigsaw, colframe=quarto-callout-note-color-frame, opacityback=0, colback=white, bottomrule=.15mm, breakable, toprule=.15mm, rightrule=.15mm, arc=.35mm, left=2mm, leftrule=.75mm]
+\par{     \begin{tcolorbox}[enhanced jigsaw, breakable, colback=white, opacityback=0, rightrule=.15mm, arc=.35mm, bottomrule=.15mm, left=2mm, toprule=.15mm, colframe=quarto-callout-note-color-frame, leftrule=.75mm]
 
 This preprint is a non-peer-reviewed work from the
 \href{https://realitybending.github.io/}{\textbf{Reality Bending Lab}}.
@@ -1083,21 +1083,78 @@ differences: \textbf{ANA: can you report the main differences?}
 
 \textbf{WIP}
 
-The findings of Study 2 replicate and extend those of Study 1,
-supporting the idea that facial attractiveness significantly shapes
-participants' beliefs about reality beliefs pertaining to human faces.
-This effect was particularly strong and robust among male participants.
-For females, the effect was weaker in Study 1 but more pronounced in
-Study 2, which might partly reflect increased statistical power.
+This study provides further evidence that attractive faces are more
+likely to be judged as real (vs.~AI-generated), This effect was
+particularly strong and robust among male participants. For females, the
+effect was weaker in sample 1 but more pronounced in sample 2, which
+might partly reflect increased statistical power. An alternative
+possibility is that the second sample's experimental manipulation
+introduced conflicting cues (e.g., faces labelled ``AI-generated'') that
+could have disrupted intuitive heuristics, thereby increasing reliance
+on attractiveness as a diagnostic cue, particularly in ambiguous trials.
 
-Another possibility, however, is that the second sample's experimental
-manipulation introduced conflicting cues (e.g., faces labelled
-``AI-generated'') that could have disrupted intuitive heuristics,
-thereby increasing reliance on attractiveness as a diagnostic cue,
-particularly in ambiguous trials.
+However, the mechanisms that underlie why attractiveness predicts
+reality judgments remains unclear. One possibility is that this positive
+link reflects a broader bias toward attributing positive qualities to
+attractive individuals, in-line with the substantial body of literature
+on the ``beauty-is-good'' stereotype, whereby attractive faces are
+judged as more trustworthy (\citeproc{ref-eagly1991beautiful}{Eagly et
+al., 1991}), warmer and more approachable
+(\citeproc{ref-fiske2002model}{Fiske et al., 2002}), and perceived as
+more authentic and sincere (\citeproc{ref-little2021facial}{Little,
+2021}). These traits may implicitly overlap with qualities ascribed to
+``real'' humans. In this sense, reality judgments could be an extension
+of existing social heuristics that conflate visual appeal with
+genuineness.
 
-The fact that the effect was less obvious in women in the sample 1 might
-be explained with power (less relevant items were included for women).
+Alternatively, the effect might be primarily driven by attention.
+Attractive faces tend to capture and hold visual attention more
+effectively (\citeproc{ref-nakamura2014attractive}{Nakamura \& Kawabata,
+2014}), which could lead to a deeper processing. This greater
+accumulation of evidence could influence the bias systematically towards
+a particular category (``reality'') or perhaps, towards the ``true''
+category of the stimulus (which we cannot delineate from our data as all
+our stimuli were actually real photographs). Alternatively, such
+attentional bias may boost perceptual fluency and subjective certainty,
+that would be predominantly reflected in the confidence parameter of the
+CHOCO model. The attention hypothesis could be formally tested via
+incorporating a reality judgment task of real and actual AI-generated
+faces within attentional paradigms to see whether the confidence and
+bias changes as a function of attentional engagement.
+
+Importantly for the scope of this study, the CHOCO model allowed us to
+dissect this effect in greater detail compared to traditional analyses,
+revealing that attractiveness not only shifted the choice toward
+``real'' judgments but also modulated the confidence and extremity of
+those judgments. With the second sample, we demonstrated the flexibility
+of this model by fitting it to discrete ratings with a mid-point -
+providing potential insight into epistemic uncertainty in
+decision-making tasks.
+
+However, one might be concerned about the application of a continuous
+distribution (the CHOCO mixture of two Beta distributions) to ordinal
+data (in Sample 2, where a 7-point Likert scale was used), as it
+translated effectively to only three unique values used to estimate a
+Beta distribution. Ordinal ratings (limited number of discrete options
+represented numerically by integers) are commonly used in psychology,
+and often modeled as continuous. While this fact has spurred its own
+polarized debate (REFS), our position is that the model used should
+ideally reflect the data \emph{generating} mechanism rather than
+necessarily focus on the \emph{observed} data\footnote{Ideally, the data
+  recording method should be aligned with the assumed generating
+  mechanism, which is an experiment design issue rather than a
+  statistical one.} - although the former cannot always be easily
+inferred or known. For the data of Sample 2, we held the assumption that
+the underlying latent distribution was CHOCO distributed (as there is no
+reason to assume it would be different from Sample 1), treated as
+continuous CHOCO-distributed data, despite the fact that it was
+collected on a 7-point scale. The motivation was to see if the model
+could extrapolate and reliably estimate all the parameters based on a
+limited number of data points but means in our case that, effectively,
+each Beta distribution was extrapolated from the frequency of only three
+unique values. While this is far from ideal, the CHOCO model still
+proved insightful, although it might have impacted its ability detect
+finer-grain changes, including quadratic relationships.
 
 \section{General Discussion}\label{general-discussion}
 
@@ -1120,32 +1177,6 @@ models.
 Little difference between Beauty and Attractiveness, aside that Beauty
 revealed more effects in women. Why?
 
-We demonstrated the flexibility of the CHOCO model, being usable in
-analog scales as well as discrete ratings with a mid-point.
-
-Likert-scales (with a limited number of discrete options) are commonly
-used in psychology, and often modeled as continuous. While this fact has
-spurred its own polarized debate (REFS), our position is that the model
-used should ideally reflect the data \emph{generating} mechanism rather
-than necessarily focus on the \emph{observed} data\footnote{Ideally, the
-  data recording method should be aligned with the assumed generating
-  mechanism, which is an experiment design issue rather than a
-  statistical one.} - although the former cannot always be easily
-inferred or known. For the data of Sample 2, we held the assumption that
-the underlying latent distribution was CHOCO distributed (as there is no
-reason to assume it would be different from Sample 1), treated as
-continuous CHOCO-distributed data, despite the fact that it was
-collected on a 7-point Likert scale. The motivation was to see if the
-model could extrapolate and reliably estimate all the parameters based
-on a limited number of data points but means in our case that,
-effectively, each Beta distribution was extrapolated from the frequency
-of only two unique values (or 3 for the no-extreme version). While this
-is far from ideal, the CHOCO model still provided a better fit to the
-data than alternative approaches. \textbf{TODO} However, it might have
-lead to a lesser ability to detect finer grain changes, including
-U-shaped relationships. Having 7-points (or 6 with no mid-value) is the
-strict minimum to use the CHOCO model.
-
 While our study was pertaining to \emph{simulation monitoring}, the
 process of assessing and forming beliefs about the nature of external
 stimuli (REF makowski phenomenological), we believe that it is part of
@@ -1160,8 +1191,10 @@ making. (https://www.cell.com/neuron/fulltext/S0896-6273(25)00362-9).
 
 Also: https://www.cell.com/neuron/fulltext/S0896-6273(16)30016-2
 
-Future studies should assess psychometric property liek the minimum
+Future studies should assess psychometric property like the minimum
 amount of data required to estimate and recover all parameters reliably.
+As well as the minimum amount of unique value (for Likert scales)
+requires to detect weak or non-linearly shaped effects.
 
 Future studies should assess the ability of CHOCO models to also fit
 unimodal distributions (so it can be used more generally), as well as
@@ -1219,6 +1252,18 @@ psychological science. \emph{Science}, \emph{349}(6251), aac4716.
 \bibitem[\citeproctext]{ref-cumming2014new}
 Cumming, G. (2014). The new statistics: Why and how. \emph{Psychological
 Science}, \emph{25}(1), 7--29.
+
+\bibitem[\citeproctext]{ref-eagly1991beautiful}
+Eagly, A. H., Ashmore, R. D., Makhijani, M. G., \& Longo, L. C. (1991).
+What is beautiful is good, but\ldots: A meta-analytic review of research
+on the physical attractiveness stereotype. \emph{Psychological
+Bulletin}, \emph{110}(1), 109.
+
+\bibitem[\citeproctext]{ref-fiske2002model}
+Fiske, S. T., Cuddy, A. J., Glick, P., \& Xu, J. (2002). A model of
+(often mixed) stereotype content: Competence and warmth respectively
+follow from perceived status and competition. \emph{Journal of
+Personality and Social Psychology}, \emph{82}(6), 878.
 
 \bibitem[\citeproctext]{ref-gulati2024beautiful}
 Gulati, A., Martı́nez-Garcia, M., Fernández, D., Lozano, M. A., Lepri,
@@ -1314,6 +1359,11 @@ Monk Jr, E. P., Esposito, M. H., \& Lee, H. (2021). Beholding
 inequality: Race, gender, and returns to physical attractiveness in the
 united states. \emph{American Journal of Sociology}, \emph{127}(1),
 194--241.
+
+\bibitem[\citeproctext]{ref-nakamura2014attractive}
+Nakamura, K., \& Kawabata, H. (2014). Attractive faces temporally
+modulate visual attention. \emph{Frontiers in Psychology}, \emph{5},
+620.
 
 \bibitem[\citeproctext]{ref-nightingale2022ai}
 Nightingale, S. J., \& Farid, H. (2022). AI-synthesized faces are
