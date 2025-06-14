@@ -209,7 +209,7 @@ AI-generated faces, attractiveness, simulation monitoring}
 Makowski}{0000-0001-5375-9967}}\par{\addORCIDlink{Ana
 Neves}{0009-0006-0020-7599}}\par{\addORCIDlink{Andy Field}{true}} 
 \par{ }
-\par{     \begin{tcolorbox}[enhanced jigsaw, breakable, colframe=quarto-callout-note-color-frame, bottomrule=.15mm, left=2mm, rightrule=.15mm, arc=.35mm, opacityback=0, colback=white, leftrule=.75mm, toprule=.15mm]
+\par{     \begin{tcolorbox}[enhanced jigsaw, breakable, arc=.35mm, colframe=quarto-callout-note-color-frame, colback=white, leftrule=.75mm, opacityback=0, rightrule=.15mm, bottomrule=.15mm, toprule=.15mm, left=2mm]
 
 This preprint is a non-peer-reviewed work from the
 \href{https://realitybending.github.io/}{\textbf{Reality Bending Lab}}.
@@ -710,15 +710,16 @@ corresponds to the normalized ratio of observed variability to
 uncertainty in random effect estimates, defined as:
 
 \[
-D_{\text{vour}} = \frac{\sigma_B^2}{\sigma_B^2 + \mu_{\text{SE}}^2}
+D_{\text{vour}} = \frac{\sigma_{\text{between}}^2}{\sigma_{\text{between}}^2 + \mu_{\text{within}}^2}
 \]
 
-Where \(\sigma_B^2\) is the between-group variability (computed as the
-SD of the random effect point-estimates) and \(\mu_{\text{SE}}^2\) is
-the mean squared uncertainty in random effect estimates (i.e., the
-average uncertainty). We use as \emph{D-vour} = 0.666 as the threshold
-for moderately reliable random effect estimates, which corresponds to a
-2:1 ratio of between-group variance to uncertainty.
+Where \(\sigma_{between}^2\) is the between-group variability (computed
+as the SD of the random effect point-estimates) and
+\(\mu_{\text{within}}^2\) is the mean squared uncertainty (SE) in random
+effect estimates (i.e., the average uncertainty). We use as
+\emph{D-vour} = 0.666 as the threshold for moderately reliable random
+effect estimates, which corresponds to a 2:1 ratio of between-group
+variance to uncertainty.
 
 Finally, we will run a correlation analysis of the models'
 individual-level estimates against ``empirical'' (indices computed

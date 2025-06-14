@@ -203,10 +203,10 @@ Model comparisons were performed using the *loo* R package [@vehtari2017practica
 For the population-level effects, we will consider significant and report (using the median of the posterior distribution) effects for which the 95% Credible Interval (CI) does not include zero [and when the probability of direction *pd* is > \~97\%, @makowski2019indices]. For the individual-level parameters (i.e., the random intercepts of each parameter for each participant and each item), we will first analyze their reliability using the Variance-Over-Uncertainty Ratio index (*D-vour*). This index, implemented in the *performance* package [@ludecke2021performance], is inspired by recent work on mixed models reliability [@williams2021beneath; @rouder2024hierarchical], and corresponds to the normalized ratio of observed variability to uncertainty in random effect estimates, defined as:
 
 $$
-D_{\text{vour}} = \frac{\sigma_B^2}{\sigma_B^2 + \mu_{\text{SE}}^2}
+D_{\text{vour}} = \frac{\sigma_{\text{between}}^2}{\sigma_{\text{between}}^2 + \mu_{\text{within}}^2}
 $$
 
-Where $\sigma_B^2$ is the between-group variability (computed as the SD of the random effect point-estimates) and $\mu_{\text{SE}}^2$ is the mean squared uncertainty in random effect estimates (i.e., the average uncertainty).
+Where $\sigma_{between}^2$ is the between-group variability (computed as the SD of the random effect point-estimates) and $\mu_{\text{within}}^2$ is the mean squared uncertainty (SE) in random effect estimates (i.e., the average uncertainty).
 We use as *D-vour* = 0.666 as the threshold for moderately reliable random effect estimates, which corresponds to a 2:1 ratio of between-group variance to uncertainty.
 
 Finally, we will run a correlation analysis of the models' individual-level estimates against "empirical" (indices computed directly on the observed data), including the empirical *p*, the overall *conf*, *pex* and *bex* (respectively calculated as $P(y > 0.5)$; $mean(|y - 0.5|)$; $P(y \in [0, 1])$; and $P(y == 1) / P(y \in [0, 1])$), assessing whether the model's estimate are in-line with easily interpretable indices.
