@@ -62,9 +62,9 @@ author-note:
     financial-support: ~
     authorship-agreements: ~
 abstract: |
-  TO DO.
+  As AI-generated content becomes increasingly indistinguishable from real stimuli, understanding how individuals form beliefs about the reality of what they perceive is both theoretically and practically urgent. This study introduces the Choice-Confidence (CHOCO) model as a tool to dissect the cognitive mechanisms underlying decision-making judgments. Conceptualized as a mixture of two Beta distributions, CHOCO simultaneously estimates the probability of selecting one category (e.g., "real" vs. "AI-generated") and the confidence associated with each choice. We apply this model to two datasets (N=141 and N=189) in which participants judged whether faces were real photographs or AI-generated images, finding that facial attractiveness systematically increased the likelihood of being judged as "real", particularly for male participants. We discuss how these findings relate to the broader effect of facial attractiveness, and suggest future directions for both the cognitive and psychometric application of the CHOCO framework.
 #   **Significance Statement**. TODO.
-keywords: "subjective scales, choice confidence model, reality beliefs, AI-generated faces, attractiveness"
+keywords: "subjective scales, choice confidence model, reality beliefs, AI-generated faces, attractiveness, simulation monitoring"
 # Add more keywords if possible: beauty, Ordered Beta model, Bimodal data, decision-making
 numbered-lines: true
 floatsintext: true
@@ -76,6 +76,10 @@ format:
     keep-tex: true
   apaquarto-docx: default
 ---
+
+<!-- https://royalsocietypublishing.org/journal/rsos -->
+<!-- Scientific reports -->
+<!-- BRM -->
 
 # Introduction
 
@@ -126,8 +130,8 @@ $$
 
 ## The Choice-Confidence (CHOCO) Model
 
-Decision-making is often conceptualized as involving distinct processes: the choice itself, and the confidence associated with that choice. 
-In experimental paradigms, these can be somewhat disentangled by prompting participants to make a discrete choice selection (e.g., "True" vs. "False"), followed by a separate confidence rating. 
+Decision-making is often conceptualized as involving distinct processes: the choice itself, and the confidence associated with that choice [@sanders2016signatures]. 
+In experimental paradigms, these can be somewhat disentangled by prompting participants to make a discrete choice selection (e.g., "True" *vs.* "False"), followed by a separate confidence rating. 
 However, this artificial separation makes its joint analysis difficult, and may not reflect real-world scenarios, where individuals often express both choice and confidence simultaneously using a single, continuous scale. In such scales, each side can represent a distinct latent category, and the distance from the midpoint can indicate the level of confidence or certainty.
 This integrated response format typically results in bimodal distributions, with peaks corresponding to the mean confidence on either side.
 Traditional beta regression models, which assume unimodal distributions within the (0,1) interval, are ill-suited for such data. One alternative is to transform the data into two variables a posteriori: binarizing the side to represent choice and calculating the absolute distance from the midpoint to represent confidence. 
@@ -260,11 +264,11 @@ Of note that the parameters of Beta-Gate and ZOIB correlate almost perfectly, un
 
 ## Discussion
 
-Study 1 revealed that the Choice-Confidence (CHOCO) model was a much better fit for bimodal bounded data, compared to other alternatives like the Zero-and-One Inflated Beta (ZOIB) and Beta-Gate (Ordered Beta) models. It also allowed for a deeper understanding through its interpretable parameters, offering insights into possibly distinct cognitive mechanisms, such as the probability of answering real vs. fake, and the associated confidence in these two choices. This was illustrated by modelling the effect of sex on all the CHOCO parameters.
+Study 1 revealed that the Choice-Confidence (CHOCO) model was a much better fit for bimodal bounded data, compared to other alternatives like the Zero-and-One Inflated Beta (ZOIB) and Beta-Gate (Ordered Beta) models. It also allowed for a deeper understanding through its interpretable parameters, offering insights into possibly distinct cognitive mechanisms, such as the probability of answering real *vs.* fake, and the associated confidence in these two choices. This was illustrated by modelling the effect of sex on all the CHOCO parameters.
 
 Note that the observed gender differences are primarily presented as a proof-of-principle, to showcase the model's ability to capture group-level effects and to provide deeper insights compared to other models. However, given that they were based on different items (female and male faces), these differences might just be a reflection of stimuli characteristics rather than true sex dymorphism in the formation of reality beliefs.
 
-Finally, we also show that the CHOCO model was able to capture reliable and interpretable individual-level parameters, supporting its value to measure inter-individual differences. An interesting dissociation emerged between participant- and item-level variability: the latter seemed mostly to be represented in the *p* parameter, while participants reliably varied in most of the components (aside from *bex*). This could suggest that external item characteristics primarily influence the probability of being judged as real vs. fake, while the expressed confidence is first and foremost an individual characteristic. 
+Finally, we also show that the CHOCO model was able to capture reliable and interpretable individual-level parameters, supporting its value to measure inter-individual differences. An interesting dissociation emerged between participant- and item-level variability: the latter seemed mostly to be represented in the *p* parameter, while participants reliably varied in most of the components (aside from *bex*). This could suggest that external item characteristics primarily influence the probability of being judged as real *vs.* fake, while the expressed confidence is first and foremost an individual characteristic. 
 
 
 # Study 2
@@ -346,6 +350,8 @@ The same analysis was run for Beauty, which indicated the following differences:
 This study provides further evidence that attractive faces are more likely to be judged as real (*vs.* AI-generated), This effect was particularly strong and robust among male participants. For females, the effect was weaker in sample 1 but more pronounced in sample 2, which might partly reflect increased statistical power. An alternative possibility is that the second sample's experimental manipulation introduced conflicting cues (e.g., faces labelled "AI-generated") that could have disrupted intuitive heuristics, thereby increasing reliance on attractiveness as a diagnostic cue, particularly in ambiguous trials.
 <!-- This could be tested by analyzing believed vs. non-believed items -->
 
+<!-- Difference with Makowski 2025? Explaiend by different model but also the fact that we only included Hetero participants with sexually-relevant items. -->
+
 <!-- Paragraph about potential mechanisms -->
 However, the mechanisms that underlie why attractiveness predicts reality judgments remains unclear.
 One possibility is that this positive link reflects a broader bias toward attributing positive qualities to attractive individuals, in-line with the substantial body of literature on the "beauty-is-good" stereotype, whereby attractive faces are judged as more trustworthy [@eagly1991beautiful], warmer and more approachable [@fiske2002model], and perceived as more authentic and sincere [@little2021facial]. These traits may implicitly overlap with qualities ascribed to "real" humans. In this sense, reality judgments could be an extension of existing social heuristics that conflate visual appeal with genuineness.
@@ -356,8 +362,8 @@ This greater accumulation of evidence could influence the bias systematically to
 
 Importantly for the scope of this study, the CHOCO model allowed us to dissect this effect in greater detail compared to traditional analyses, revealing that attractiveness not only shifted the choice toward "real" judgments but also modulated the confidence and extremity of those judgments. With the second sample, we demonstrated the flexibility of this model by fitting it to discrete ratings with a mid-point - providing potential insight into epistemic uncertainty in decision-making tasks. 
 
-However, one might be concerned about the application of the CHOCO model (a mixture of two continuous Beta distributions) to ordinal data in Sample 2 (where a 7-point Likert scale was used). Ordinal ratings (limited number of discrete options represented numerically by integers) are commonly used in psychology, and often modeled as continuous. While this fact has spurred its own polarized debate (REFS), our position is that the model used should ideally reflect the data *generating* mechanism rather than necessarily focus on the *observed* data^[Ideally, the data recording method should be aligned with the assumed generating mechanism, which is an experiment design issue rather than a statistical one.] - although the former cannot always be easily inferred or known. 
-For the data of Sample 2, we held the assumption that the underlying latent distribution was CHOCO distributed (as there is no reason to assume it would be different from Sample 1), treated as continuous CHOCO-distributed data, despite the fact that it was collected on a 7-point scale. 
+However, one might be concerned about the application of the CHOCO model (a mixture of two continuous Beta distributions) to ordinal data in Sample 2 (where a 7-point Likert scale was used). Ordinal ratings (limited number of discrete options represented numerically by integers) are commonly used in psychology, and often modeled as continuous. While this fact has spurred its own polarized debate [@norman2010likert; @sullivan2013analyzing; @liddell2018analyzing], our position is that the model used should ideally reflect the data *generating* mechanism rather than necessarily focus on the *observed* data^[Ideally, the data recording method should be aligned with the assumed generating mechanism, which is an experiment design issue rather than a statistical one.] - although the former cannot always be easily inferred or known. 
+For the data of Sample 2, we held the assumption that the underlying latent distribution was CHOCO distributed (as there is no reason to assume it would be different from Sample 1), and thus treated as continuous CHOCO-distributed data, despite the fact that it was collected on a 7-point scale. 
 The motivation was to see if the model could extrapolate and reliably estimate all the parameters based on a limited number of data points but means in our case that, effectively, each Beta distribution was extrapolated from the frequency of only three unique values. 
 While this is far from ideal, the CHOCO model still proved insightful, although it might have impacted its ability detect finer-grain changes, including quadratic relationships.
 
@@ -367,26 +373,32 @@ While this is far from ideal, the CHOCO model still proved insightful, although 
 
 # General Discussion
 
-**WIP**
+<!-- Summary of s tudy 1-->
+This study introduces a new statistical model to analyze bimodal data, which can be observed when using subjective rating scales in which the two sides correspond to a different category (e.g., "false" vs. "true", "real" vs "fake", "positive" vs. "negative). The Choice-Confidence (CHOCO) model conceptualizes the data as a mixture of two distributions, one for each choice, and models the probability of choosing one or the other as well as the degree of confidence in each choice. We validated this model on real-life data by applying it to the reality beliefs of @makowski2025too as well as to a new sample, showing that it captures the underlying cognitive processes more accurately than alternative models (e.g., linear or ZOIB models), and provides interpretable psychological parameters. These parameters, such as the choice probability and respective confidence, offer a cognitively meaningful decomposition of subjective decisions, applicable to a wide range of tasks.
+
+<!-- Link with sense of reality -->
+Beyond the statistical contribution, the study also replicates and expands findings on the mechanisms that underpin simulation monitoring, or judgments pertaining to beliefs about the real *vs.* simulated (or synthetic) nature of external stimuli. This process, important for navigating and making sense of our environment, is likely contributing to our sense of reality [the feeling and belief of being real in a real environment, @makowski2018cognitive], together with other mechanisms such as presence (the embodied feeling of being physically "in" an experience) and reality monitoring (the process of distinguishing between internally generated and externally perceived events, i.e., imagination *vs.* perception).
+
+<!-- Possible Neuroscientific support -->
+Interestingly, recent studies about the latter support a possible distinction at a neural level between a graded "reality signal" strength, primarily tracked by the fusiform gyrus, and its categorical thresholding supporting the binary classification of reality *vs.* imagination, supported by a frontal network of brain regions, including dorsomedial prefrontal cortex and the anterior insula [@dijkstra2025neural]. Although tangential, these findings might provide potential neuroscientific empirical grounding for the CHOCO's model usefulness in investigating dimensions of the sense of reality, opening the doors for future research exploring the neural correlates of the CHOCO parameters.
+
+<!-- Attractiveness and faces -->
+The main empirical finding replicated in our study is that perceived facial attractiveness predicts the likelihood of believing that a face is real (*vs.* AI-generated). In both samples, males were more likely to identify highly attractive faces as real. The effect was weaker for females, possibly clouded by statistical power and/or the presence of other interacting moderators. Our work highlights how this key social heuristic not only biases trait perceptions (i.e., ratings of trustworthiness, competence, etc.) but also extends into other types of judgments, including reality beliefs. 
 
 
-This study introduces a new statistical model to analyze bimodal data, which can be observed for instance when using subjective rating scales in which the two sides correspond to a different "choice" (e.g., "false" vs. "true", "real" vs "fake").  The Choice-Confidence (CHOCO) model conceptualizes the data as a mixture of two distributions, one for each choice, and models the probability of choosing one or the other as well as the degree of confidence in each choice. We validated this model on real-life data by appling it to the reality beliefs of @makowski2025too, and showed that it was able to capture the bimodal nature of the data and provides a more accurate representation of the underlying processes than other alternative approaches, including Zero-or-One inflated Beta (ZOIB) models.
+
+<!-- Limitations -->
+Despite these promising findings, several limitations must be acknowledged. First, the stimuli shown to male and female participants were not identical, each group rated faces of the opposite sex, limiting our ability to make direct sex-based comparisons and fully answer the potential sexual dimorphism existing in the formation of reality beliefs. Second, all faces presented were real photographs, which could raise concerns about the validity of the procedure. This however was a deliberate design feature: our goal was not to assess the detectability of current AI-generated images and study true discrimination abilities, but rather to study the cognitive mechanisms that shape reality judgments assuming the simulation is perceptually flawless. Nevertheless, future work could leverage generative AI to systematically manipulate facial attributes, such as attractiveness, while holding other features constant, offering greater experimental control and the ability to test causal hypotheses about the role of attractiveness for simulation monitoring.
+
+<!-- Future directions -->
+While our application focused on facial judgments, the CHOCO model has broader potential. Many real-world rating tasks - whether about emotions, morality, authenticity, political veracity, or aesthetic appeal—produce bimodal or skewed response distributions that traditional models fail to capture well. CHOCO offers a flexible, interpretable approach that accommodates both the binary outcome of decision-making and its related continuous evaluations. However, some methodological and practical questions remain to be answered.
+
+First, future studies should investigate the psychometric quality of the CHOCO model to derive practical guidelines for its optimal use. These include assessing the minimum amount of data required to reliably estimate and recover the different CHOCO parameters. When applying the model to ordinal data (such as Likert scales), another key question is the minimum number of unique response categories needed to detect subtle or nonlinear effects, such as quadratic modulation of confidence. Second, assessing the model’s robustness when applied to unimodal or skewed data would extend its utility beyond strictly bimodal contexts and support its general applicability. Third, more parsimonious variants of the model could be explored, such as versions with a single shared precision parameter for both sides or formulations where the confidence on one side is modeled as a function of the other. Such simplifications may retain interpretability while reducing parameter overhead and improving model stability.
 
 
+In conclusion, we developed and validated the CHOCO model, a theoretically grounded and practically flexible tool for modeling subjective judgments and delineating choice from confidence processes. It not only advances statistical modeling of decision-making data but opens new avenues for dissecting the cognitive mechanisms of belief, confidence, and reality perception.
 
-
-Little difference between Beauty and Attractiveness, aside that Beauty revealed more effects in women. Why?
-
-
-
-While our study was pertaining to *simulation monitoring*, the process of assessing and forming beliefs about the nature of external stimuli (REF makowski phenomenological), we believe that it is part of the mechanisms at play in the fabric of our sense of reality (REF makowski thesis), alongside others, such as presence (the embodied feeling of being physically "in" an experience) or *reality monitoring* (the process of distinguishing between internally generated and externally perceived events, i.e., imagination vs. perception). Interestingly, recent studies about the latter support a possible distinction at a neural level between ... and (binary) decision making. (https://www.cell.com/neuron/fulltext/S0896-6273(25)00362-9).
-
-Also: https://www.cell.com/neuron/fulltext/S0896-6273(16)30016-2
-
-Future studies should assess psychometric property like the minimum amount of data required to estimate and recover all parameters reliably. As well as the minimum amount of unique value (for Likert scales) requires to detect weak or non-linearly shaped effects.
-
-Future studies should assess the ability of CHOCO models to also fit unimodal distributions (so it can be used more generally), as well as the benefits of more parsimonious parametrization (for instance, a unique precision parameter controlling both the left and right sides, or a linked confidence parameter e.g. where *confleft* is expressed as a function of *confright*).
-
+<!-- Little difference between Beauty and Attractiveness, aside that Beauty revealed more effects in women. Why? -->
 
 
 # Data Availability
