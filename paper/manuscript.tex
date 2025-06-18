@@ -209,7 +209,7 @@ AI-generated faces, attractiveness, simulation monitoring}
 Makowski}{0000-0001-5375-9967}}\par{\addORCIDlink{Ana
 Neves}{0009-0006-0020-7599}}\par{\addORCIDlink{Andy Field}{true}} 
 \par{ }
-\par{     \begin{tcolorbox}[enhanced jigsaw, breakable, arc=.35mm, colframe=quarto-callout-note-color-frame, colback=white, leftrule=.75mm, opacityback=0, rightrule=.15mm, bottomrule=.15mm, toprule=.15mm, left=2mm]
+\par{     \begin{tcolorbox}[enhanced jigsaw, breakable, opacityback=0, colframe=quarto-callout-note-color-frame, arc=.35mm, colback=white, left=2mm, rightrule=.15mm, leftrule=.75mm, bottomrule=.15mm, toprule=.15mm]
 
 This preprint is a non-peer-reviewed work from the
 \href{https://realitybending.github.io/}{\textbf{Reality Bending Lab}}.
@@ -1160,6 +1160,7 @@ are commonly used in psychology, and often modeled as continuous. While
 this fact has spurred its own polarized debate
 (\citeproc{ref-liddell2018analyzing}{Liddell \& Kruschke, 2018};
 \citeproc{ref-norman2010likert}{Norman, 2010};
+\citeproc{ref-rausch2014comparison}{Rausch \& Zehetleitner, 2014};
 \citeproc{ref-sullivan2013analyzing}{Sullivan \& Artino Jr, 2013}), our
 position is that the model used should ideally reflect the data
 \emph{generating} mechanism rather than necessarily focus on the
@@ -1258,9 +1259,9 @@ interpretable approach that accommodates both the binary outcome of
 decision-making and its related continuous evaluations. However, some
 methodological and practical questions remain to be answered.
 
-First, future studies should investigate the psychometric quality of the
-CHOCO model to derive practical guidelines for its optimal use. These
-include assessing the minimum amount of data required to reliably
+Firstly, future studies should investigate the psychometric quality of
+the CHOCO model to derive practical guidelines for its optimal use.
+These include assessing the minimum amount of data required to reliably
 estimate and recover the different CHOCO parameters. When applying the
 model to ordinal data (such as Likert scales), another key question is
 the minimum number of unique response categories needed to detect subtle
@@ -1274,8 +1275,38 @@ on one side is modeled as a function of the other. Such simplifications
 may retain interpretability while reducing parameter overhead and
 improving model stability.
 
+In the domain of reaction times, researchers distinguish between
+``descriptive'' models (e.g., ex-Gaussian or log-normal distributions)
+that capture characteristic distributional shapes, and
+``data-generating'' models like the Drift Diffusion Model (DDM,
+\citeproc{ref-ratcliff2016diffusion}{Ratcliff et al., 2016}) or Linear
+Ballistic Accumulator (LBA, \citeproc{ref-brown2008simplest}{Brown \&
+Heathcote, 2008}), which simulate an assumed generative process
+(typically, sequential evidence accumulation). Drawing a comparison with
+this distinction, CHOCO was designed as a descriptive model to flexibly
+fit bimodal confidence data from subjective scales where responses
+implicitly reflect two categories. However, CHOCO remains agnostic about
+the underlying cognitive dynamics that generate those confidence
+ratings. In contrast, the field of metacognition has developed cognitive
+models that conceptualize confidence generation as a second-order
+inference. These include approaches derived from Signal Detection
+Theory, such as the meta-d' method which quantifies metacognitive
+sensitivity by assessing how well confidence discriminates between
+correct and incorrect decisions
+(\citeproc{ref-fleming2017hmeta}{Fleming, 2017};
+\citeproc{ref-maniscalco2012signal}{Maniscalco \& Lau, 2012}), as well
+as dynamic models like the Weighted Evidence and Visibility model or the
+Post-Decisional Accumulation model, which propose that confidence arises
+from mechanisms like post-decisional evidence sampling
+(\citeproc{ref-rausch2021modelling}{Rausch et al., 2021}). A critical
+distinction is that these models are typically applied to two-step
+paradigms, where participants first make a categorical decision and then
+separately report their confidence. Future studies could investigate the
+differences and potential overlap in the applicability area and insights
+provided by these two classes of models.
+
 In conclusion, we developed and validated the CHOCO model, a
-theoretically grounded and practically flexible tool for modeling
+mathematically grounded and practically flexible tool for modeling
 subjective judgments and delineating choice from confidence processes.
 It not only advances statistical modeling of decision-making data but
 opens new avenues for dissecting the cognitive mechanisms of belief,
@@ -1314,6 +1345,11 @@ Bozkir, E., Riedmiller, C., Skodras, A. N., Kasneci, G., \& Kasneci, E.
 computer-generated faces by humans. \emph{ACM Transactions on Applied
 Perception}, \emph{22}(2), 1--23.
 
+\bibitem[\citeproctext]{ref-brown2008simplest}
+Brown, S. D., \& Heathcote, A. (2008). The simplest complete model of
+choice response time: Linear ballistic accumulation. \emph{Cognitive
+Psychology}, \emph{57}(3), 153--178.
+
 \bibitem[\citeproctext]{ref-burkner2017brms}
 Bürkner, P.-C. (2017). Brms: An r package for bayesian multilevel models
 using stan. \emph{Journal of Statistical Software}, \emph{80}, 1--28.
@@ -1346,6 +1382,11 @@ Fiske, S. T., Cuddy, A. J., Glick, P., \& Xu, J. (2002). A model of
 (often mixed) stereotype content: Competence and warmth respectively
 follow from perceived status and competition. \emph{Journal of
 Personality and Social Psychology}, \emph{82}(6), 878.
+
+\bibitem[\citeproctext]{ref-fleming2017hmeta}
+Fleming, S. M. (2017). HMeta-d: Hierarchical bayesian estimation of
+metacognitive efficiency from confidence ratings. \emph{Neuroscience of
+Consciousness}, \emph{2017}(1), nix007.
 
 \bibitem[\citeproctext]{ref-gulati2024beautiful}
 Gulati, A., Martı́nez-Garcia, M., Fernández, D., Lozano, M. A., Lepri,
@@ -1440,6 +1481,11 @@ Makowski, D., \& Waggoner, P. D. (2023). Where are we going with
 statistical computing? From mathematical statistics to collaborative
 data science. In \emph{Mathematics} (8; Vol. 11, p. 1821). MDPI.
 
+\bibitem[\citeproctext]{ref-maniscalco2012signal}
+Maniscalco, B., \& Lau, H. (2012). A signal detection theoretic approach
+for estimating metacognitive sensitivity from confidence ratings.
+\emph{Consciousness and Cognition}, \emph{21}(1), 422--430.
+
 \bibitem[\citeproctext]{ref-miller2023ai}
 Miller, E. J., Steward, B. A., Witkower, Z., Sutherland, C. A.,
 Krumhuber, E. G., \& Dawel, A. (2023). AI hyperrealism: Why AI faces are
@@ -1483,6 +1529,23 @@ Patil, I., Makowski, D., Ben-Shachar, M. S., Wiernik, B. M., Bacher, E.,
 \& Lüdecke, D. (2022). Datawizard: An r package for easy data
 preparation and statistical transformations. \emph{Journal of Open
 Source Software}, \emph{7}(78), 4684.
+
+\bibitem[\citeproctext]{ref-ratcliff2016diffusion}
+Ratcliff, R., Smith, P. L., Brown, S. D., \& McKoon, G. (2016).
+Diffusion decision model: Current issues and history. \emph{Trends in
+Cognitive Sciences}, \emph{20}(4), 260--281.
+
+\bibitem[\citeproctext]{ref-rausch2021modelling}
+Rausch, M., Hellmann, S., \& Zehetleitner, M. (2021). Modelling
+visibility judgments using models of decision confidence.
+\emph{Attention, Perception, \& Psychophysics}, \emph{83}(8),
+3311--3336.
+
+\bibitem[\citeproctext]{ref-rausch2014comparison}
+Rausch, M., \& Zehetleitner, M. (2014). A comparison between a visual
+analogue scale and a four point scale as measures of conscious
+experience of motion. \emph{Consciousness and Cognition}, \emph{28},
+126--140.
 
 \bibitem[\citeproctext]{ref-rouder2024hierarchical}
 Rouder, J. N., \& Mehrvarz, M. (2024). Hierarchical-model insights for
