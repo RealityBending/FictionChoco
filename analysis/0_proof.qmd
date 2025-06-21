@@ -1,0 +1,213 @@
+---
+title: "Proof of Concept"
+editor: source
+editor_options: 
+  chunk_output_type: console
+format:
+  html:
+    toc: true
+    code-fold: true
+    self-contained: false
+execute: 
+  cache: true
+  cache-lazy: false
+---
+
+
+```{r}
+#| message: false
+#| warning: false
+
+options(mc.cores = parallel::detectCores() - 2)
+
+library(tidyverse)
+library(easystats)
+library(patchwork)
+library(ggside)
+library(ggdist)
+library(brms)
+library(cmdstanr)
+library(rstan)
+library(cogmod)
+library(gt)
+library(webshot2)
+Sys.setenv(CHROMOTE_CHROME = "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe")
+```
+
+
+## Data
+
+```{r}
+set.seed(33)
+
+c <- c("Condition A: CHOCO(p = 0.5, confleft = 0.3, confright = 0.3)",
+       "Condition B: CHOCO(p = 0.3, confleft = 0.3, confright = 0.7)")
+
+df <- data.frame(
+  y = c(
+    rchoco(1000, p = 0.5, confleft = 0.3, confright = 0.3, pex = 0),
+    rchoco(1000, p = 0.3, confleft = 0.3, confright = 0.7, pex = 0)
+    ),
+  Condition = c(rep(c("A", "B"), each = 1000))
+)
+
+p1 <- data.frame(
+  x = c(seq(0, 1, length.out = 1000), seq(0, 1, length.out = 1000)),
+  y = c(
+    dchoco(seq(0, 1, length.out = 1000), p = 0.5, confleft = 0.3, confright = 0.3, pex = 0),
+    dchoco(seq(0, 1, length.out = 1000), p = 0.3, confleft = 0.3, confright = 0.7, pex = 0)
+  ),
+  Condition = rep(c, each = 1000)
+) |> 
+  ggplot(aes(x = x, y = y)) +
+  geom_histogram(data = df, aes(x = y, y = after_stat(density), fill = Condition),
+                bins = 35, alpha = 0.5, position = "identity") +
+  geom_line(aes(color = Condition), linewidth = 2, alpha = 0.95) +
+  scale_fill_manual(values = c("#0072B2", "#FF5722"), guide = "none") +
+  scale_color_manual(values = c("#0072B2", "#FF5722")) +
+  labs(x = "Confidence", y = "Distribution", title = "Usage Example") +
+  theme_minimal() +
+  theme(legend.position = "top",
+        legend.direction='vertical',
+        legend.title = element_blank(),
+        legend.justification = c(0, 0.5),
+        axis.text.y = element_blank(),
+        plot.title = element_text(face = "bold"))
+p1
+```
+
+## Linear model
+
+```{r}
+
+
+model1 <- lm(y ~ Condition, data = df)
+
+t1 <- parameters::parameters(model1) |> 
+  format_table(zap_small = TRUE) |> 
+  data_select(exclude = "SE") |> 
+  data_rename(select = "Parameter", "Effect") |> 
+  gt() |> 
+  data_color(
+    columns = "Effect",
+    palette = c("#0072B2", "#FF5722")) |>
+  data_color(
+    columns = "p",
+    rows = 2,
+    palette = "red") |> 
+  tab_header(
+    title = html("<strong>Linear Model</strong>"),
+    subtitle = html("<p style='text-align: left;'><code>lm(y ~ Condition)</code><br></p>")) |> 
+  cols_align(columns = -Effect, align = "right")|>
+  cols_label(Effect = md("***Effect***"),
+             `95% CI` = md("***95% CI***"),
+             Coefficient = md("***Coefficient***"),
+             `t(1998)` = md("***t(1998)***"),
+             p = md("***p***")) 
+t1
+
+gtsave(t1, "table1.png", path="./", vwidth = 1280)
+p_t1 <- png::readPNG("table1.png") |> 
+  grid::rasterGrob()
+file.remove("table1.png")
+```
+
+## CHOCO
+
+```{r}
+model2 <- brm(bf(
+    y ~ Condition,
+    confleft ~ Condition,
+    confright ~ Condition,
+    precright ~ 1,
+    precleft ~ 1,
+    pex = 0,
+    bex = 0.5,
+    pmid = 0),
+  data = df,
+  family = choco(link_mu = "identity", 
+                 link_confleft = "identity", 
+                 link_confright = "identity"),
+  stanvars = cogmod::choco_stanvars(),
+  init = 0.5,
+  iter = 2000,
+  warmup = 1000,
+  chains = 4,
+  refresh = 0,
+  cores = parallel::detectCores() - 2,
+  backend = "cmdstanr"
+)
+
+t2 <- parameters::parameters(model2, dispersion = TRUE) |> 
+  as.data.frame() |> 
+  mutate(t = Median / MAD, p = bayestestR::pd_to_p(pd)) |> 
+  head(6) |> 
+  select(Parameter = Component, Effect = Parameter, Coefficient = Median, CI, CI_low, CI_high, t, p) |> 
+  mutate(Effect = rep(c("(Intercept)", "Condition [B]"), 3),
+         Parameter = ifelse(Parameter == "conditional", "p", Parameter)) |> 
+  format_table(zap_small = TRUE) |> 
+  gt() |> 
+  data_color(
+    columns = "Effect",
+    palette = rep(c("#0072B2", "#FF5722"), 3)) |> 
+  data_color(
+    columns = "Parameter",
+    palette = c("#9a7b78", "#c09569", "#9C27B0")) |> 
+  data_color(
+    columns = "p",
+    rows = c(2, 6),
+    palette = "green") |>
+   data_color(
+    columns = "p",
+    rows = c(4),
+    palette = "red") |>
+  tab_header(
+    title = html("<strong>CHOCO Model</strong>"),
+    subtitle = html("<p style='text-align: left;'><code>brm(bf(<br>&emsp;&emsp;y ~ Condition, <br>&emsp;&emsp;confleft ~ Condition, <br>&emsp;&emsp;confright ~ Condition), <br>family = cogmod::choco())</code><br></p>")) |>
+  cols_align(columns = -c(Effect, Parameter), align = "right") |>
+  cols_label(Effect = md("***Effect***"),
+             Parameter = md("***Parameter***"),
+             Coefficient = md("***Coefficient***"),
+             `95% CI` = md("***95% CI***"),
+             `t` = md("***t***"),
+             `p` = md("***p***"))
+
+t2
+
+gtsave(t2, "table2.png", path="./", vwidth = 1280)
+p_t2 <- png::readPNG("table2.png") |> 
+  grid::rasterGrob()
+file.remove("table2.png")
+```
+
+
+## Figure
+
+```{r}
+# p2 <- wrap_elements(wrap_elements(p_t1) / wrap_elements(p_t2) + 
+#          patchwork::plot_annotation(title = "Effect of Condition", theme = theme(plot.title = element_text(face = "bold"))) +
+#          patchwork::plot_layout(heights = c(0.35, 0.65)))
+p2 <- gridExtra::grid.arrange(p_t1, p_t2, heights = c(0.35, 0.65))
+
+ggsave("table3.png", p2, width = 10, height = 10, dpi = 300)
+p2 <- png::readPNG("table3.png") |> 
+  grid::rasterGrob()
+file.remove("table3.png")
+
+fig <- gridExtra::grid.arrange(p1, p2, ncol = 2, widths = c(0.45, 0.55))
+ggsave("../paper/figures/fig2b.png", fig, dpi = 300, width = 9, height=6)
+
+# ----
+fig2a <- grid::rasterGrob(png::readPNG("../paper/figures/fig2.png"))
+fig2b <- grid::rasterGrob(png::readPNG("../paper/figures/fig2b.png"))
+
+
+
+
+figfinal <- gridExtra::grid.arrange(fig2a, fig2b,
+  ncol = 1, heights = c(0.5, 0.5))
+figfinal
+ggsave("../paper/figures/fig2final.png", figfinal, dpi = 600, 
+       width = grid::resolveRasterSize(fig2a)$width,
+       height = grid::resolveRasterSize(fig2a)$height + grid::resolveRasterSize(fig2b)$height)
+```

@@ -376,5 +376,5 @@ rbind(
 ```{r}
 features <- rbind(features1)
 
-write.csv(features, "../data/features_ega.csv", row.names = FALSE)
+# write.csv(features, "../data/features_ega.csv", row.names = FALSE)
 ```
