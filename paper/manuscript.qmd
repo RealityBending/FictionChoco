@@ -39,7 +39,7 @@ author:
     affiliations:
       - ref: "id1"
   - name: Andy Field 
-    orcid: ""
+    orcid: "0000-0003-3306-4695"
     role:
       - Writing – review & editing
     affiliations:
@@ -61,7 +61,7 @@ author-note:
     financial-support: ~
     authorship-agreements: ~
 abstract: |
-  We introduce the Choice-Confidence (CHOCO) model as a tool to dissect the cognitive mechanisms underlying decision-making judgments, offering a better fit for data from subjective rating scales for which the two extremes correspond to discrete choices (e.g., "positive" *vs.* "negative", "true" *vs.* false", "real" *vs.* "AI-generated", ...), and for which the distance from the center might reflect a gradual process, such as confidence or certainty in that choice. Conceptualized as a mixture of two Beta distributions, CHOCO simultaneously estimates the probability of selecting one category (the right side of the scale over the left side) and the confidence associated with each choice. To demonstrate its usage, we apply this model to two datasets (N=141 and N=189) in which participants judged whether face images were real photographs or AI-generated images, finding that facial attractiveness increased the likelihood of being judged as "real", particularly for male participants. As AI-generated content becomes increasingly indistinguishable from real stimuli, understanding how individuals form beliefs about the reality of what they perceive is both theoretically and practically urgent. We discuss how these findings relate to the broader effect of facial attractiveness, and suggest future directions for both the cognitive and psychometric application of the CHOCO framework.
+  We introduce the Choice-Confidence (CHOCO) model as a tool to dissect the cognitive mechanisms underlying decision-making judgments, offering a better fit for data from subjective rating scales for which the two extremes correspond to discrete choices (e.g., "positive" *vs.* "negative", "true" *vs.* false", "real" *vs.* "AI-generated"), and for which the distance from the center might reflect a gradual process, such as confidence or certainty in that choice. Conceptualized as a mixture of two Beta distributions, CHOCO simultaneously estimates the probability of selecting one category (the right side of the scale over the left side) and the confidence associated with each choice. To demonstrate its usage, we apply this model to two datasets (N=141 and N=189) in which participants judged whether face images were real photographs or AI-generated images, finding that facial attractiveness increased the likelihood of being judged as "real", particularly for male participants. Given that AI-generated content is becoming increasingly indistinguishable from real stimuli, understanding how individuals form beliefs about the reality of what they perceive is both theoretically important and practically urgent. We discuss how these findings relate to the broader effect of facial attractiveness, and suggest future directions for both the cognitive and psychometric application of the CHOCO framework.
 #   **Significance Statement**. TODO.
 keywords: "subjective scales, choice confidence model, reality beliefs, AI-generated faces, attractiveness, simulation monitoring, zero-and-one inflated Beta regression"
 # Add more keywords if possible: beauty, Ordered Beta model, Bimodal data, decision-making
@@ -298,11 +298,11 @@ Although the role of attractiveness as a potential modulator of reality beliefs 
 The first sample includes the same participants as study 1 (N = 141, see above). 
 For the second sample (data and preprocessing information available at https://github.com/RealityBending/FakeFace2), 248 participants were initially recruited through academic platforms (SONA and SurveySwap). We removed 15 participants with data suggesting low-effort responding (no variation in their responses indicative of straightlining) as well as those (N=16) that did not believe in the experimental manipulation and were fully confident that all images were real or fake.
 <!-- 8 (3.23%) participants with no variation in their responses and 7 (2.92%) participants with no coherence (r < 0.1) b -->
-Similarly to the first sample, we included all hetero and bisexual participants and stimuli from the opposite gender, resulting in a final sample included 189 participants (Mean age = 28.4, SD = 14.0, range: [18, 69]; Sex: 76.2% females). The study was approved by the University of Sussex Ethics Board (ER/ST633/1).
+Similarly to the first sample, we included all hetero and bisexual participants and stimuli from the opposite gender, resulting in a final sample included 189 participants (Mean age = 28.4, SD = 14.0, range: [18, 69]; Sex: 76.2% females). The study was approved by the University of Sussex Ethics Board (ER/ST633/1), but not preregistered.
 
 ### Procedure
 
-For the second sample, the procedure was relatively similar to that of the first sample (described above in Study 1) with a few key differences.
+The procedure for the first sample is described in study 1. For the second sample, the procedure was relatively similar to that of the first sample (described above in Study 1) with a few key differences.
 
 The main difference was the introduction of an experimental manipulation: while for sample 1, participants were simply informed of the presence of AI-generated stimuli among photographs (not providing information as to specifically which image), the reality beliefs were directly manipulated in sample 2. At the beginning of the experiment, a cover story presented the study as a partnership with an AI startup aimed at testing the quality of a new face AI-generation algorithm. Following that, participants would see the 109 neutral-expression pictures (all real photographs) from the AMFD database (1 s), each preceded by a randomly assigned textual cue indicating whether the image was "AI-generated" or "Photograph" (2 s). Ratings of attractiveness, beauty and trustworthiness were collected after each image.
 
